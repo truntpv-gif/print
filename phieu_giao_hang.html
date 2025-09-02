@@ -2,33 +2,73 @@
 <html>
 <head>
     <title>PHIẾU GIAO HÀNG</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* CSS để hiển thị trên màn hình giống trang A4 */
+        body {
+            background-color: #f0f0f0; /* Màu nền xám để làm nổi bật trang giấy */
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .page {
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 2cm;
+            margin: 1cm auto;
+            border: 1px #D3D3D3 solid;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* CSS cho việc in ấn */
         @page {
             size: A4;
             margin: 0;
         }
 
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            margin: 0;
-            padding: 2cm;
-            box-sizing: border-box;
-            position: relative;
+        @media print {
+            html, body {
+                width: 21cm;
+                height: 29.7cm;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
+            .print-button-container {
+                display: none; /* Ẩn nút in khi in */
+            }
         }
 
         .watermark {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
             font-size: 80px;
             color: rgba(0, 0, 0, 0.1);
-            z-index: -1;
+            z-index: 1;
             white-space: nowrap;
             pointer-events: none;
-            display: none; /* Hidden by default, shown if demo data is used */
+            display: none; /* Ẩn mặc định, chỉ hiện khi dùng data demo */
         }
-
+        
+        /* --- Các style còn lại giữ nguyên hoặc tinh chỉnh nhỏ --- */
         .header {
             display: flex;
             justify-content: space-between;
@@ -47,7 +87,7 @@
         }
 
         .logo {
-            width: 150px; /* Adjusted for the new logo, you might need to fine-tune */
+            width: 150px;
             height: auto;
         }
 
@@ -58,8 +98,8 @@
             margin-top: 30px;
             margin-bottom: 5px;
         }
-
-        .date {
+        
+        .order-info {
             text-align: center;
             font-size: 12px;
             margin-bottom: 20px;
@@ -76,8 +116,9 @@
         }
 
         .customer-info div span:first-child {
-            width: 120px;
+            width: 150px; /* Tăng chiều rộng để hiển thị đẹp hơn */
             flex-shrink: 0;
+            font-weight: bold;
         }
 
         table {
@@ -103,23 +144,27 @@
             justify-content: space-around;
             text-align: center;
             font-size: 12px;
+            margin-top: 40px;
         }
 
         .signature-block {
             width: 40%;
         }
 
-        .signature-block p {
-            margin-bottom: 60px; /* Space for signature */
+        .signature-block .role {
+            font-weight: bold;
+            margin-bottom: 60px; /* Khoảng trống để ký */
+        }
+        .signature-block .signer-name {
+            font-style: italic;
         }
 
         .print-button-container {
-            text-align: right;
-            margin-bottom: 20px;
-            /* Only show button on screen, hide when printing */
-            @media print {
-                display: none;
-            }
+            text-align: center;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
         }
         .print-button {
             padding: 10px 20px;
@@ -133,139 +178,144 @@
     </style>
 </head>
 <body>
-    <div class="watermark" id="watermark">PHIẾU GIAO HÀNG DEMO</div>
-
     <div class="print-button-container">
-        <button class="print-button" onclick="window.print()">In Phiếu Giao Hàng</button>
+        <button class="print-button" onclick="window.print()">In Phiếu</button>
     </div>
 
-    <div class="header">
-        <div class="company-info">
-            <strong>CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
-            Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM<br>
-            VP MT: Khối 3, phường Điện Bàn, TP Đà Nẵng<br>
-            VP MB: số 117 Trần Duy Hưng, P. Trung Hòa, TP Hà Nội.<br>
-            ĐT: 0933 676 123<br>
-            Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu">zalo.me/sieuthivattu</a>)<br>
-            Email: vattutinthinh@gmail.com
+    <div class="page">
+        <div class="watermark" id="watermark">PHIẾU DEMO</div>
+
+        <div class="header">
+            <div class="company-info">
+                <strong>CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
+                Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM<br>
+                VP MT: Khối 3, phường Điện Bàn, TP Đà Nẵng<br>
+                VP MB: số 117 Trần Duy Hưng, P. Trung Hòa, TP Hà Nội.<br>
+                ĐT: 0933 676 123<br>
+                Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu">zalo.me/sieuthivattu</a>)<br>
+                Email: vattutinthinh@gmail.com
+            </div>
+            <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
-        <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="SIÊU THỊ VẬT TƯ.COM Logo" class="logo">
-    </div>
 
-    <p class="delivery-note-title">PHIẾU GIAO HÀNG</p>
-    <p class="date">Ngày: <span id="deliveryDate"></span></p>
-
-    <div class="customer-info">
-        <div><span>Khách hàng</span> : <span id="customerName"></span></div>
-        <div><span>Dự án</span> : <span id="projectName"></span></div>
-        <div><span>Địa chỉ nhận hàng</span> : <span id="deliveryAddress"></span></div>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>TÊN VẬT TƯ</th>
-                <th>ĐƠN VỊ</th>
-                <th>SỐ LƯỢNG</th>
-                <th>GHI CHÚ</th>
-            </tr>
-        </thead>
-        <tbody id="itemTableBody">
-            <!-- Items will be inserted here by JavaScript -->
-        </tbody>
-    </table>
-
-    <div class="signatures">
-        <div class="signature-block">
-            <p>Người nhận hàng</p>
-            <p>(Ký tên)</p>
+        <p class="delivery-note-title">PHIẾU GIAO HÀNG</p>
+        <div class="order-info">
+            Ngày lập: <span id="ngay_lap"></span><br>
+            Số đơn hàng: <strong id="so_dh"></strong>
         </div>
-        <div class="signature-block">
-            <p>Người lập</p>
-            <p>(Ký tên)</p>
+
+        <div class="customer-info">
+            <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
+            <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
+            <div><span>Người nhận hàng</span>: <span id="nguoi_nhan_hang"></span></div>
+            <div><span>Số điện thoại</span>: <span id="sdt"></span></div>
+            <div><span>Ghi chú đơn hàng</span>: <span id="ghi_chu_dh"></span></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">STT</th>
+                    <th style="width: 45%;">TÊN VẬT TƯ</th>
+                    <th style="width: 15%;">ĐƠN VỊ</th>
+                    <th style="width: 15%;">SỐ LƯỢNG</th>
+                    <th style="width: 20%;">GHI CHÚ</th>
+                </tr>
+            </thead>
+            <tbody id="itemTableBody">
+                <!-- Items sẽ được chèn vào đây bằng JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="signatures">
+            <div class="signature-block">
+                <p class="role">Người nhận hàng</p>
+                <p class="signer-name" id="signature_recipient"></p>
+            </div>
+            <div class="signature-block">
+                <p class="role">Người lập phiếu</p>
+                <p class="signer-name" id="signature_creator"></p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Function to get query parameters
-        function getQueryParams() {
-            const params = {};
-            window.location.search.substring(1).split('&').forEach(param => {
-                const parts = param.split('=');
-                if (parts[0]) {
-                    params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || '');
-                }
-            });
-            return params;
+        // Hàm lấy tham số từ URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
 
-        // Function to populate data
+        // Hàm để điền dữ liệu vào template
         function populateData() {
-            const params = getQueryParams();
+            const dataParam = getQueryParam('data');
             let isDemo = true;
+            let data = {};
 
-            // Populate header info
-            document.getElementById('deliveryDate').textContent = params.deliveryDate || '01/09/2025';
-            document.getElementById('customerName').textContent = params.customerName || 'CÔNG TY CỔ PHẦN THIẾT BỊ VÀ CÔNG NGHỆ XÂY DỰNG KEY GROUP';
-            document.getElementById('projectName').textContent = params.projectName || 'STVT';
-            document.getElementById('deliveryAddress').textContent = params.deliveryAddress || '';
-
-            // Populate table items
-            const itemTableBody = document.getElementById('itemTableBody');
-            let items = [];
-
-            // Process json_detail parameter
-            if (params.json_detail) {
+            if (dataParam) {
                 try {
-                    const parsedDetails = JSON.parse(params.json_detail);
-                    // AppSheet might pass an array of JSON strings, or a single JSON array string
-                    if (Array.isArray(parsedDetails)) {
-                        // If it's an array of JSON objects (e.g., from SELECT(..., TRUE))
-                        items = parsedDetails.map(detail => {
-                            if (typeof detail === 'string') { // If elements are still JSON strings
-                                try { return JSON.parse(detail); } catch (e) { return null; }
-                            }
-                            return detail;
-                        }).filter(item => item !== null);
-                    } else if (typeof parsedDetails === 'object') {
-                         // If it's a single JSON object (e.g., if only one item is passed)
-                         items = [parsedDetails];
-                    }
-                    if (items.length > 0) isDemo = false;
+                    // Giải mã và phân tích chuỗi JSON từ tham số 'data'
+                    data = JSON.parse(decodeURIComponent(dataParam));
+                    isDemo = false;
                 } catch (e) {
-                    console.error("Error parsing json_detail:", e);
-                    // Fallback to demo if parsing fails
+                    console.error("Lỗi phân tích JSON từ URL:", e);
+                    // Nếu lỗi, sẽ chuyển sang dùng dữ liệu demo
+                    isDemo = true;
                 }
             }
-
-            if (items.length === 0) { // If no data from URL or parsing failed, use demo data
-                items = [
-                    { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: '' },
-                    { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' },
-                    { ten_sanpham: 'Miễn phí vận chuyển', dvt: 'Chuyến', so_luong: 1, ghi_chu: '' }
-                ];
-                isDemo = true;
-            } else {
-                isDemo = false;
-            }
-
-            items.forEach((item, index) => {
-                const row = itemTableBody.insertRow();
-                row.insertCell(0).textContent = index + 1; // Auto-generated STT
-                row.insertCell(1).textContent = item.ten_sanpham;
-                row.insertCell(2).textContent = item.dvt;
-                row.insertCell(3).textContent = item.so_luong;
-                row.insertCell(4).textContent = item.ghi_chu;
-            });
-
-            // Show watermark if using demo data
+            
+            // Nếu không có dữ liệu hoặc lỗi, dùng dữ liệu demo
             if (isDemo) {
                 document.getElementById('watermark').style.display = 'block';
+                data = {
+                    so_dh: "DH-DEMO-001",
+                    ten_kh: "CÔNG TY CỔ PHẦN ABC",
+                    ngay_lap: "01/01/2025",
+                    dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM",
+                    nguoi_nhan_hang: "Nguyễn Văn A",
+                    sdt: "0909123456",
+                    ghi_chu_dh: "Giao hàng trong giờ hành chính.",
+                    nguoi_lap_ky: "Trần Thị B",
+                    products: [
+                        { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' },
+                        { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' },
+                        { ten_sanpham: 'Miễn phí vận chuyển', dvt: 'Chuyến', so_luong: 1, ghi_chu: '' }
+                    ]
+                };
+            }
+
+            // Điền thông tin chung vào các thẻ span tương ứng bằng ID
+            // Sử dụng || '' để tránh lỗi nếu key không tồn tại trong JSON
+            document.getElementById('so_dh').textContent = data.so_dh || '';
+            document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
+            document.getElementById('ten_kh').textContent = data.ten_kh || '';
+            document.getElementById('dia_chi_giao').textContent = data.dia_chi_giao || '';
+            document.getElementById('nguoi_nhan_hang').textContent = data.nguoi_nhan_hang || '';
+            document.getElementById('sdt').textContent = data.sdt || '';
+            document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
+            
+            // Điền tên người ký
+            document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '(Ký và ghi rõ họ tên)';
+            document.getElementById('signature_creator').textContent = data.nguoi_lap_ky || '(Ký và ghi rõ họ tên)';
+
+            // Điền thông tin chi tiết sản phẩm vào bảng
+            const itemTableBody = document.getElementById('itemTableBody');
+            itemTableBody.innerHTML = ''; // Xóa các dòng cũ (nếu có)
+            const items = data.products || [];
+
+            if (Array.isArray(items)) {
+                items.forEach((item, index) => {
+                    const row = itemTableBody.insertRow();
+                    row.insertCell(0).textContent = index + 1;
+                    row.insertCell(1).textContent = item.ten_sanpham || '';
+                    row.insertCell(2).textContent = item.dvt || '';
+                    row.insertCell(3).textContent = item.so_luong || 0;
+                    row.insertCell(4).textContent = item.ghi_chu || '';
+                });
             }
         }
 
-        // Run when the page loads
+        // Chạy hàm khi trang được tải xong
         document.addEventListener('DOMContentLoaded', populateData);
     </script>
 </body>
