@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BÁO GIÁ VẬT TƯ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS CHUNG & BỐ CỤC */
+        body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
+        .page { width: 21cm; min-height: 29.7cm; padding: 1.5cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
+        @page { size: A4; margin: 0; }
+        @media print { html, body { width: 21cm; height: 29.7cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
+        .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
+        .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+
+        /* THÔNG TIN CÔNG TY & KHÁCH HÀNG */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
+        .company-info strong { font-size: 14pt; }
+        #company_address { font-size: 9pt; }
+        .logo { width: 250px; height: auto; }
+        .title-section { text-align: center; margin: 30px 0; }
+        .title-section h1 { font-size: 18pt; margin: 0; }
+        .title-section p { margin: 5px 0; font-size: 11pt; }
+        .customer-info { margin-bottom: 20px; line-height: 1.6; }
+        .customer-info table { border-collapse: collapse; width: 100%; }
+        .customer-info td { padding: 2px 5px; vertical-align: top; }
+        .customer-info td:first-child { width: 100px; }
+        .intro-line { margin-bottom: 10px; }
+
+        /* BẢNG SẢN PHẨM & TỔNG CỘNG */
+        table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
+        table.products th, table.products td { border: 1px solid #000; padding: 6px 8px; vertical-align: top; }
+        table.products th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
+        table.products td:nth-child(1), table.products td:nth-child(3) { text-align: center; }
+        table.products td:nth-child(4), table.products td:nth-child(5), table.products td:nth-child(6) { text-align: right; }
+        
+        table.products tfoot td { font-weight: bold; }
+        table.products tfoot tr:not(:last-child) td { background-color: #e0e0e0; }
+        
+        /* THAY ĐỔI 1: CSS cho bố cục 3 cột trong footer */
+        .grand-total-container { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px; }
+        .bank-info-small { font-size: 9pt; line-height: 1.4; font-weight: normal; flex-basis: 45%; }
+        .bank-info-small p { margin: 2px 0; }
+        .qr-code-container-small { text-align: center; }
+        #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; display: block; }
+        .total-text-section { text-align: right; flex-basis: 40%; }
+        #grand_total_in_words { font-size: 11pt; font-style: italic; font-weight: bold; }
+
+        /* GHI CHÚ, ĐIỀU KIỆN, CHỮ KÝ */
+        .notes-block { margin-top: 20px; }
+        .notes-block p { margin: 0; padding-left: 15px; }
+        .signatures-section { display: flex; justify-content: space-between; margin-top: 40px; text-align: center; }
+        .signature-block { width: 45%; }
+        .signature-block .role { font-weight: bold; }
+        .signature-block .instruction { font-style: italic; }
+        .stamp-container { position: relative; height: 120px; margin-top: 10px; }
+        .stamp-container img { max-width: 100%; max-height: 120px; }
+        .signature-name { margin-top: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
+    <div class="page">
+        <div class="header">
+            <div class="company-info"><strong id="company_name"></strong><br><span id="company_address"></span>ĐT: <span id="company_phone"></span><br>Zalo OA: <span id="company_zalo_display"></span> (<a href="#" id="company_zalo_link"></a>)<br>Email: <span id="company_email"></span></div>
+            <img id="company_logo" src="" alt="Logo" class="logo">
+        </div>
+        <div class="title-section"><h1>BÁO GIÁ VẬT TƯ</h1><p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p><p>Dự án: <span id="project_name"></span></p></div>
+        <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
+        <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
+        
+        <table class="products">
+            <thead><tr><th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th><th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th></tr></thead>
+            <tbody id="product_table_body"></tbody>
+            <tfoot>
+                <tr><td colspan="5" style="text-align: right;">Tổng thành Tiền:</td><td colspan="2" style="text-align: right;"><span id="subtotal"></span></td></tr>
+                <tr><td colspan="5" style="text-align: right;">Thuế VAT:</td><td colspan="2" style="text-align: right;"><span id="vat_amount"></span></td></tr>
+                <tr>
+                    <td colspan="7">
+                        <!-- THAY ĐỔI 2: Cấu trúc lại toàn bộ nội dung trong hàng cuối cùng của tfoot -->
+                        <div class="grand-total-container">
+                            <div class="bank-info-small">
+                                <strong>Thông tin chuyển khoản:</strong>
+                                <p><strong>Tên tk:</strong> <span id="bank_account_name"></span></p>
+                                <p><strong>Số tk:</strong> <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
+                                <p><strong>Nội dung:</strong> <span id="payment_reference_text"></span></p>
+                                <p style="font-style: italic;">( Quý cty ghi đúng số đơn hàng này <strong id="quote_number_ref"></strong> hoặc số hóa đơn )</p>
+                            </div>
+                            <div class="qr-code-container-small">
+                                <img id="vietqr_code_small" src="" alt="VietQR Code">
+                            </div>
+                            <div class="total-text-section">
+                                <strong>Tổng tiền đơn hàng: <span id="grand_total"></span></strong><br>
+                                <span id="grand_total_in_words"></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="notes-block"><strong>Lưu ý:</strong><p id="general_notes"></p></div>
+        
+        <div class="signatures-section">
+            <div class="signature-block"><p class="role">XÁC NHẬN ĐẶT HÀNG</p><p class="instruction">(ký tên, đóng dấu)</p></div>
+            <div class="signature-block"><p class="role" id="company_name_signature"></p><p class="instruction">Giám đốc</p><div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div><p class="signature-name" id="director_name"></p></div>
+        </div>
+
+        <div class="notes-block"><strong>Điều kiện thương mại:</strong><p id="commercial_terms"></p></div>
+
+        <!-- THAY ĐỔI 3: Xóa khối bank-info-section khỏi vị trí này -->
+
+    </div>
+
+    <script>
+        const GITHUB_SIGNATURE_BASE_URL = "https://raw.githubusercontent.com/your-username/your-repo/main/signatures/";
+        const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
+        
+        function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
+
+        function docso(s) { /* ... function đọc số không đổi ... */ }
+
+        function generateVietQR(bankName, accountNumber, amount, description, accountName) { /* ... function QR không đổi ... */ }
+
+        function populateData() {
+            const dataParam = getQueryParam('data'); let data = {};
+            const demoData = {
+                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_logo_url: "https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439", company_branch_code: "CNSG", director_name: "PHAN VĂN TRUNG",
+                quote_number: "002-BTBD-DEMO", quote_date: "04/09/2025", project_name: "Dự án ABC",
+                customer_name: "CÔNG TY TNHH MTV XÂY DỰNG BÀN THẠCH BÌNH DƯƠNG", customer_address: "C63-C64 Khu dân cư Việt Sing, Phường An Phú, Thành phố Thuận An, Tỉnh Bình Dương, Việt Nam", customer_contact_person: "Chị Tiểu Nghiêm", customer_phone: "0912345678", customer_email: "contact@customer.com",
+                products: [{ ten_sanpham: 'Vải địa kỹ thuật ART25 (4x100m)', dvt: 'm2', so_luong: '1,000.00', don_gia: '16,500', thanh_tien: '16,500,000', thue_vat_percent: '8.00%' }, { ten_sanpham: 'Vận chuyển', dvt: 'Chuyến', so_luong: '1.00', don_gia: '1,300,000', thanh_tien: '1,300,000', thue_vat_percent: '8.00%' }],
+                subtotal: "17,800,000", vat_amount: "1,424,000", grand_total: "19,224,000",
+                general_notes: "- Đã bao gồm phí vận chuyển đến KCN Thành Thành Công.", commercial_terms: "- Đặt cọc trước 30% giá trị đơn hàng, thanh toán phần còn lại của đơn hàng khi giao hàng đến công trình.",
+                bank_account_name: "Chi nhánh Công ty TNHH xây dựng Tín Thịnh", bank_account_number: "19036483626016", bank_name: "Techcombank", payment_reference_text: "thanh toán cho đơn hàng số 002-BTBD-DEMO hoặc số hóa đơn đã gởi"
+            };
+
+            if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); data = demoData; } } else { data = demoData; }
+            
+            const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
+            const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
+
+            // Logic điền dữ liệu không thay đổi vì các ID vẫn được giữ nguyên
+            fill('company_name', data.company_name); fill('company_address', data.company_address, true); fill('company_phone', data.company_phone); fill('company_zalo_display', data.company_zalo_display); fill('company_email', data.company_email);
+            fillAttr('company_zalo_link', 'href', data.company_zalo_link); document.getElementById('company_zalo_link').textContent = (data.company_zalo_link || '').replace(/https?:\/\//, ''); fillAttr('company_logo', 'src', data.company_logo_url);
+            fill('quote_number', data.quote_number); fill('quote_date', data.quote_date); fill('project_name', data.project_name);
+            fill('customer_name', data.customer_name); fill('customer_address', data.customer_address, true);
+            const contactParts = [];
+            if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); }
+            if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); }
+            if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); }
+            fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
+            fill('subtotal', data.subtotal); fill('vat_amount', data.vat_amount); fill('grand_total', data.grand_total);
+            const amountInNumber = (data.grand_total || '0').replace(/,/g, '');
+            const amountInWords = docso(amountInNumber);
+            fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
+            fill('general_notes', data.general_notes, true); fill('commercial_terms', data.commercial_terms, true);
+            fill('company_name_signature', data.company_name); 
+            const stampImg = document.getElementById('company_stamp');
+            if (data.company_branch_code && stampImg) { const signatureUrl = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg"; stampImg.src = signatureUrl; }
+            fill('director_name', data.director_name);
+            fill('bank_account_name', data.bank_account_name); fill('bank_account_number', data.bank_account_number); fill('bank_name', data.bank_name); fill('payment_reference_text', data.payment_reference_text); fill('quote_number_ref', data.quote_number);
+            const tableBody = document.getElementById('product_table_body');
+            tableBody.innerHTML = '';
+            (data.products || []).forEach((item, index) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = index + 1; row.insertCell(1).textContent = item.ten_sanpham; row.insertCell(2).textContent = item.dvt;
+                row.insertCell(3).textContent = item.so_luong; row.insertCell(4).textContent = item.don_gia; row.insertCell(5).textContent = item.thanh_tien; row.insertCell(6).textContent = item.thue_vat_percent;
+            });
+            generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number}`, data.bank_account_name);
+        }
+        document.addEventListener('DOMContentLoaded', populateData);
+    </script>
+</body>
+</html>
