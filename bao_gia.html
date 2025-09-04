@@ -72,8 +72,15 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
+        <div id="watermark">BẢN NHÁP</div>
         <div class="header">
-            <div class="company-info"><strong id="company_name"></strong><br><span id="company_address"></span>ĐT: <span id="company_phone"></span><br>Zalo OA: <span id="company_zalo_display"></span> (<a href="#" id="company_zalo_link"></a>)<br>Email: <span id="company_email"></span></div>
+            <!-- THAY ĐỔI: Gộp SĐT và Email vào một dòng -->
+            <div class="company-info">
+                <strong id="company_name"></strong><br>
+                <span id="company_address"></span>
+                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
+                Zalo OA: <span id="company_zalo_display"></span> (<a href="#" id="company_zalo_link"></a>)
+            </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
         <div class="title-section"><h1>BÁO GIÁ VẬT TƯ</h1><p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p><p>Dự án: <span id="project_name"></span></p></div>
@@ -118,77 +125,35 @@
         
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
-        // THAY ĐỔI: HÀM ĐỌC SỐ ĐÃ ĐƯỢC VIẾT LẠI HOÀN TOÀN
         function docso(number) {
             const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
             const chuHangDonVi = ('1 một' + defaultNumbers).split(' ');
             const chuHangChuc = ('lẻ mười' + defaultNumbers).split(' ');
             const chuHangTram = ('không một' + defaultNumbers).split(' ');
-
             function convert_block_three(number) {
-                number = number.replace(/^0+/, '');
-                if (number == '') return '';
-                let a = number.split('');
+                number = number.replace(/^0+/, ''); if (number == '') return ''; let a = number.split('');
                 switch (a.length) {
-                    case 0: return '';
-                    case 1: return chuHangDonVi[a[0]];
-                    case 2: return convert_block_two(a[0], a[1]);
-                    case 3:
-                        let chuc_dv = '';
-                        if (a[1] != 0 || a[2] != 0) {
-                            chuc_dv = ' ' + convert_block_two(a[1], a[2]);
-                        }
-                        let tram = chuHangTram[a[0]] + ' trăm';
-                        return tram + chuc_dv;
+                    case 0: return ''; case 1: return chuHangDonVi[a[0]]; case 2: return convert_block_two(a[0], a[1]);
+                    case 3: let chuc_dv = ''; if (a[1] != 0 || a[2] != 0) { chuc_dv = ' ' + convert_block_two(a[1], a[2]); } let tram = chuHangTram[a[0]] + ' trăm'; return tram + chuc_dv;
                 }
             }
-
             function convert_block_two(b, c) {
-                let chuc = chuHangChuc[b];
-                let donvi = chuHangDonVi[c];
-                if (b == 1) {
-                    if (c == 0) return chuc;
-                    if (c == 5) return chuc + " lăm";
-                    return chuc + " " + donvi;
-                }
-                if (b > 1) {
-                    if (c == 1) return chuc + " mốt";
-                    if (c == 5) return chuc + " lăm";
-                    if (c == 0) return chuc;
-                    return chuc + " " + donvi;
-                }
-                if (b == 0) {
-                    if (c == 0) return "";
-                    return "lẻ " + donvi;
-                }
+                let chuc = chuHangChuc[b]; let donvi = chuHangDonVi[c];
+                if (b == 1) { if (c == 0) return chuc; if (c == 5) return chuc + " lăm"; return chuc + " " + donvi; }
+                if (b > 1) { if (c == 1) return chuc + " mốt"; if (c == 5) return chuc + " lăm"; if (c == 0) return chuc; return chuc + " " + donvi; }
+                if (b == 0) { if (c == 0) return ""; return "lẻ " + donvi; }
             }
-
-            let str = parseInt(number) + '';
-            if (str == 0) return "Không";
-            let i = 0, j = str.length;
-            let result = "";
-            let arr = [];
-            while (i < j) {
-                arr.push(str.substring(i, i + 3));
-                i += 3;
-            }
-            let newArr = arr.reverse();
-            let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
-            for (let i = newArr.length - 1; i >= 0; i--) {
-                let k = newArr[i];
-                if (k != '000') {
-                    result += convert_block_three(k) + hang[i];
-                }
-            }
-            result = result.replace(/ +/g, " ").trim();
-            return result.charAt(0).toUpperCase() + result.slice(1);
+            let str = parseInt(number) + ''; if (str == 0) return "Không"; let i = 0, j = str.length; let result = ""; let arr = [];
+            while (i < j) { arr.push(str.substring(i, i + 3)); i += 3; }
+            let newArr = arr.reverse(); let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+            for (let i = newArr.length - 1; i >= 0; i--) { let k = newArr[i]; if (k != '000') { result += convert_block_three(k) + hang[i]; } }
+            result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
-            const dataParam = getQueryParam('data'); let data = {};
-            let isDemo = true;
+            const dataParam = getQueryParam('data'); let data = {}; let isDemo = true;
             const demoData = {
                 company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_branch_code: "CNHN",
                 quote_number: "BG-DEMO-001", quote_date: "01/01/2025", project_name: "Dự án Demo",
