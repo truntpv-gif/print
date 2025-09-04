@@ -197,6 +197,7 @@
         <div class="header">
             <div class="company-info">
                 <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
+                <!-- Thẻ span này sẽ được điền nội dung có thể chứa <br> -->
                 <span id="company_address">Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM</span><br>
                 <span id="company_phone">ĐT: 0933 676 123</span><br>
                 <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
@@ -213,8 +214,8 @@
 
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
+            <!-- Thẻ span này sẽ được điền nội dung có thể chứa <br> -->
             <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
-            <!-- Đã xóa Người nhận hàng và Số điện thoại khỏi đây -->
         </div>
 
         <table>
@@ -227,12 +228,9 @@
                     <th style="width: 20%;">GHI CHÚ</th>
                 </tr>
             </thead>
-            <tbody id="itemTableBody">
-                <!-- Items sẽ được chèn vào đây bằng JavaScript -->
-            </tbody>
+            <tbody id="itemTableBody"></tbody>
         </table>
 
-        <!-- Ghi chú đơn hàng được chuyển xuống đây -->
         <div class="order-notes">
             <span>Ghi chú đơn hàng:</span> <span id="ghi_chu_dh"></span>
         </div>
@@ -274,7 +272,8 @@
                 document.getElementById('watermark').style.display = 'block';
                 data = {
                     company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
-                    company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)",
+                    /* Dữ liệu demo có chứa \n để kiểm tra */
+                    company_address: "VP Miền Nam: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)\\nVP Miền Trung: 123 Đường ABC, Đà Nẵng",
                     company_phone: "0933 676 123 (DEMO)",
                     company_zalo_display: "Siêu Thị Vật Tư (DEMO)",
                     company_zalo_link: "https://zalo.me/sieuthivattu",
@@ -282,9 +281,9 @@
                     so_dh: "DH-DEMO-001",
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
                     ngay_lap: "01/01/2025",
-                    dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM",
+                    /* Dữ liệu demo có chứa \n để kiểm tra */
+                    dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
                     nguoi_nhan_hang: "Nguyễn Văn A",
-                    // sdt đã bị xóa khỏi đây, không cần thiết nữa
                     ghi_chu_dh: "Giao hàng trong giờ hành chính.",
                     nguoi_lap_ky: "Trần Thị B",
                     products: [
@@ -297,7 +296,12 @@
 
             // Điền thông tin CÔNG TY
             document.getElementById('company_name').textContent = data.company_name || 'TÊN CÔNG TY CỦA BẠN';
-            document.getElementById('company_address').textContent = 'Địa chỉ: ' + (data.company_address || 'Địa chỉ công ty');
+            
+            /* ---- THAY ĐỔI Ở ĐÂY ---- */
+            // Thay thế \n bằng <br> cho địa chỉ công ty
+            const companyAddressText = data.company_address || 'Địa chỉ công ty';
+            document.getElementById('company_address').innerHTML = 'Địa chỉ: ' + companyAddressText.replace(/\\n/g, '<br>');
+            
             document.getElementById('company_phone').textContent = 'ĐT: ' + (data.company_phone || 'Số điện thoại công ty');
             
             const zaloText = data.company_zalo_display || 'Zalo OA của bạn';
@@ -310,7 +314,12 @@
             document.getElementById('so_dh').textContent = data.so_dh || '';
             document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
             document.getElementById('ten_kh').textContent = data.ten_kh || '';
-            document.getElementById('dia_chi_giao').textContent = data.dia_chi_giao || '';
+
+            /* ---- THAY ĐỔI Ở ĐÂY ---- */
+            // Thay thế \n bằng <br> cho địa chỉ giao hàng
+            const deliveryAddressText = data.dia_chi_giao || '';
+            document.getElementById('dia_chi_giao').innerHTML = deliveryAddressText.replace(/\\n/g, '<br>');
+
             document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
             
             // Điền tên người ký
