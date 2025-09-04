@@ -87,7 +87,7 @@
         }
 
         .logo {
-            width: 150px;
+            width: 250px;
             height: auto;
         }
 
@@ -187,13 +187,12 @@
 
         <div class="header">
             <div class="company-info">
-                <strong>CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
-                Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM<br>
-                VP MT: Khối 3, phường Điện Bàn, TP Đà Nẵng<br>
-                VP MB: số 117 Trần Duy Hưng, P. Trung Hòa, TP Hà Nội.<br>
-                ĐT: 0933 676 123<br>
-                Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu">zalo.me/sieuthivattu</a>)<br>
-                Email: vattutinthinh@gmail.com
+                <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
+                <span id="company_address">Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM</span><br>
+                <!-- Bạn có thể thêm các dòng địa chỉ VP MT và VP MB nếu muốn truyền từ AppSheet, hoặc giữ cố định -->
+                <span id="company_phone">ĐT: 0933 676 123</span><br>
+                <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
+                <span id="company_email">Email: vattutinthinh@gmail.com</span>
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
@@ -268,6 +267,15 @@
             if (isDemo) {
                 document.getElementById('watermark').style.display = 'block';
                 data = {
+                    // Dữ liệu công ty demo
+                    company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
+                    company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)",
+                    company_phone: "0933 676 123 (DEMO)",
+                    company_zalo_display: "Siêu Thị Vật Tư (DEMO)",
+                    company_zalo_link: "https://zalo.me/sieuthivattu",
+                    company_email: "vattutinthinh@gmail.com (DEMO)",
+                    
+                    // Dữ liệu đơn hàng demo
                     so_dh: "DH-DEMO-001",
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
                     ngay_lap: "01/01/2025",
@@ -284,7 +292,19 @@
                 };
             }
 
-            // Điền thông tin chung vào các thẻ span tương ứng bằng ID
+            // Điền thông tin CÔNG TY
+            document.getElementById('company_name').textContent = data.company_name || 'TÊN CÔNG TY CỦA BẠN';
+            document.getElementById('company_address').textContent = 'Địa chỉ: ' + (data.company_address || 'Địa chỉ công ty');
+            document.getElementById('company_phone').textContent = 'ĐT: ' + (data.company_phone || 'Số điện thoại công ty');
+            
+            const zaloText = data.company_zalo_display || 'Zalo OA của bạn';
+            const zaloLink = data.company_zalo_link || '#'; // Link mặc định nếu không có
+            document.getElementById('company_zalo').innerHTML = `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace('https://', '').replace('http://', '')}</a>)`;
+            
+            document.getElementById('company_email').textContent = 'Email: ' + (data.company_email || 'Email công ty');
+
+
+            // Điền thông tin đơn hàng chung vào các thẻ span tương ứng bằng ID
             // Sử dụng || '' để tránh lỗi nếu key không tồn tại trong JSON
             document.getElementById('so_dh').textContent = data.so_dh || '';
             document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
