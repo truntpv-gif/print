@@ -48,7 +48,7 @@
         
         /* GHI CHÚ & CHỮ KÝ */
         .notes-block { margin-top: 10px; font-size: 10pt; }
-        .notes-block p { margin: 0; padding-left: 10px; }
+        .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
         .signatures-section { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 0; text-align: center; }
         .signature-block { width: 45%; }
         .signature-block .role, .signature-block .instruction { margin: 0; padding: 0; line-height: 1.2; }
@@ -68,6 +68,7 @@
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
             color: #002B5B;
         }
+        #bank_account_name, #bank_account_number, #bank_name { font-weight: bold; }
     </style>
 </head>
 <body>
@@ -111,30 +112,18 @@
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
         
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-
         function docso(s) { let S = String(s); if (!S || isNaN(S)) return ""; S = S.replace(/,/g, ""); S = S.split("").reverse().join(""); let mangso = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]; let result = ""; let dem = 0; for (let i = 0; i < S.length; i++) { dem++; let so = S[i]; let prev_so = (i < S.length - 1) ? S[i + 1] : "x"; let next_so = (i > 0) ? S[i - 1] : "y"; if (dem == 1) { if (so == 1 && prev_so != 1 && prev_so != 0) result = "mốt " + result; else if (so == 5 && prev_so != 0) result = "lăm " + result; else if (so != 0) result = mangso[so] + " " + result; } else if (dem == 2) { if (so == 1) result = "mười " + result; else if (so == 0 && next_so != 0) result = "lẻ " + result; else if (so != 0) result = mangso[so] + " mươi " + result; } else if (dem == 3) { if (so != 0 || prev_so != 0 || S[i + 2] != 0) result = mangso[so] + " trăm " + result; dem = 0; } if (i == 2) result = "nghìn " + result; if (i == 5) result = "triệu " + result; if (i == 8) result = "tỷ " + result; } result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1); }
-
-        function generateVietQR(bankName, accountNumber, amount, description, accountName) {
-            const qrImgElement = document.getElementById('vietqr_code_small');
-            if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; }
-            const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName];
-            if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; }
-            // THAY ĐỔI: Xóa cả dấu chấm và dấu phẩy khỏi số tiền
-            const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); 
-            const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || '');
-            const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`;
-            qrImgElement.src = qrUrl;
-        }
-
+        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
+        
         function populateData() {
             const dataParam = getQueryParam('data'); let data = {};
             const demoData = {
                 company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_logo_url: "https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439", company_branch_code: "CNHN",
                 quote_number: "002-BTBD-DEMO", quote_date: "04/09/2025", project_name: "Dự án ABC",
                 customer_name: "CÔNG TY TNHH MTV XÂY DỰNG BÀN THẠCH BÌNH DƯƠNG", customer_address: "C63-C64 Khu dân cư Việt Sing, Phường An Phú, Thành phố Thuận An, Tỉnh Bình Dương, Việt Nam", customer_contact_person: "Chị Tiểu Nghiêm", customer_phone: "0912345678", customer_email: "contact@customer.com",
-                products: [{ ten_sanpham: 'Vải địa kỹ thuật ART25 (4x100m)', dvt: 'm2', so_luong: '1,000.00', don_gia: '16,500', thanh_tien: '16,500,000', thue_vat_percent: '8.00%' }, { ten_sanpham: 'Vận chuyển', dvt: 'Chuyến', so_luong: '1.00', don_gia: '1,300,000', thanh_tien: '1,300,000', thue_vat_percent: '8.00%' }],
-                subtotal: "17.800.000", vat_amount: "1.424.000", grand_total: "19.224.000",
-                notes_and_terms: "- Đã bao gồm phí vận chuyển đến KCN Thành Thành Công.\\n- Đặt cọc trước 30% giá trị đơn hàng, thanh toán phần còn lại của đơn hàng khi giao hàng đến công trình.",
+                products: [{ ten_sanpham: 'Vải địa kỹ thuật ART25 (4x100m)', dvt: 'm2', so_luong: 1000.00, don_gia: 16500, thanh_tien: 16500000, thue_vat_rate: 0.08, ghi_chu: '' }],
+                subtotal: 17800000, vat_amount: 1424000, grand_total: 19224000,
+                notes_and_terms: "- Đã bao gồm phí vận chuyển đến KCN Thành Thành Công.\\n- Đặt cọc trước 30% giá trị đơn hàng...",
                 bank_account_name: "Chi nhánh Công ty TNHH xây dựng Tín Thịnh", bank_account_number: "19036483626016", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG 002-BTBD-DEMO"
             };
 
@@ -142,19 +131,15 @@
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
-
+            const formatNumber = (num) => { return new Intl.NumberFormat('de-DE').format(num || 0); };
+            
             fill('company_name', data.company_name); fill('company_address', data.company_address, true); fill('company_phone', data.company_phone); fill('company_zalo_display', data.company_zalo_display); fill('company_email', data.company_email);
             fillAttr('company_zalo_link', 'href', data.company_zalo_link); document.getElementById('company_zalo_link').textContent = (data.company_zalo_link || '').replace(/https?:\/\//, ''); fillAttr('company_logo', 'src', data.company_logo_url);
             fill('quote_number', data.quote_number); fill('quote_date', data.quote_date); fill('project_name', data.project_name);
             fill('customer_name', data.customer_name); fill('customer_address', data.customer_address, true);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             
-            // THAY ĐỔI: Hiển thị trực tiếp chuỗi đã định dạng từ AppSheet
-            fill('subtotal', data.subtotal); 
-            fill('vat_amount', data.vat_amount); 
-            fill('grand_total', data.grand_total);
-            
-            // THAY ĐỔI: Xóa cả dấu chấm và dấu phẩy khỏi số tiền trước khi đọc thành chữ
+            fill('subtotal', formatNumber(data.subtotal)); fill('vat_amount', formatNumber(data.vat_amount)); fill('grand_total', formatNumber(data.grand_total));
             const amountInNumber = String(data.grand_total || '0').replace(/[.,]/g, '');
             const amountInWords = docso(amountInNumber);
             fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
@@ -162,7 +147,6 @@
             fill('notes_and_terms', data.notes_and_terms, true);
             fill('company_name_signature', data.company_name); 
             const stampImg = document.getElementById('company_stamp'); if (data.company_branch_code && stampImg) { const signatureUrl = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true"; stampImg.src = signatureUrl; }
-            
             fill('bank_account_name', data.bank_account_name); fill('bank_account_number', data.bank_account_number); fill('bank_name', data.bank_name); fill('payment_reference_text', data.payment_reference_text);
             
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
@@ -171,11 +155,12 @@
                 row.insertCell(0).textContent = index + 1;
                 row.insertCell(1).textContent = item.ten_sanpham;
                 row.insertCell(2).textContent = item.dvt;
-                // THAY ĐỔI: Hiển thị trực tiếp chuỗi đã định dạng từ AppSheet
-                row.insertCell(3).textContent = item.so_luong;
-                row.insertCell(4).textContent = item.don_gia;
-                row.insertCell(5).textContent = item.thanh_tien;
-                row.insertCell(6).textContent = item.thue_vat_percent;
+                row.insertCell(3).textContent = formatNumber(item.so_luong);
+                row.insertCell(4).textContent = formatNumber(item.don_gia);
+                row.insertCell(5).textContent = formatNumber(item.thanh_tien);
+                // THAY ĐỔI: Xử lý thue_vat_rate
+                const vatPercent = (item.thue_vat_rate * 100).toFixed(1);
+                row.insertCell(6).textContent = `${vatPercent}%`;
             });
             
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number}`, data.bank_account_name);
