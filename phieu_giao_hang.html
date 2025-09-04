@@ -16,7 +16,7 @@
         .page {
             width: 21cm;
             min-height: 29.7cm;
-            padding: 2cm;
+            padding: 15cm;
             margin: 1cm auto;
             border: 1px #D3D3D3 solid;
             background: white;
@@ -68,7 +68,7 @@
             display: none; /* Ẩn mặc định, chỉ hiện khi dùng data demo */
         }
         
-        /* --- Các style còn lại giữ nguyên hoặc tinh chỉnh nhỏ --- */
+        /* --- Các style còn lại --- */
         .header {
             display: flex;
             justify-content: space-between;
@@ -116,7 +116,7 @@
         }
 
         .customer-info div span:first-child {
-            width: 150px; /* Tăng chiều rộng để hiển thị đẹp hơn */
+            width: 150px;
             flex-shrink: 0;
             font-weight: bold;
         }
@@ -124,8 +124,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 50px;
             font-size: 12px;
+            margin-bottom: 20px; /* Giảm khoảng cách dưới bảng */
         }
 
         table th, table td {
@@ -137,6 +137,15 @@
         table th {
             background-color: #f2f2f2;
             text-align: center;
+        }
+
+        /* Style cho phần ghi chú mới */
+        .order-notes {
+            font-size: 12px;
+            margin-bottom: 30px; /* Khoảng cách đến phần chữ ký */
+        }
+        .order-notes span:first-child {
+            font-weight: bold;
         }
 
         .signatures {
@@ -189,7 +198,6 @@
             <div class="company-info">
                 <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
                 <span id="company_address">Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM</span><br>
-                <!-- Bạn có thể thêm các dòng địa chỉ VP MT và VP MB nếu muốn truyền từ AppSheet, hoặc giữ cố định -->
                 <span id="company_phone">ĐT: 0933 676 123</span><br>
                 <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
                 <span id="company_email">Email: vattutinthinh@gmail.com</span>
@@ -206,9 +214,7 @@
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
             <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
-            <div><span>Người nhận hàng</span>: <span id="nguoi_nhan_hang"></span></div>
-            <div><span>Số điện thoại</span>: <span id="sdt"></span></div>
-            <div><span>Ghi chú đơn hàng</span>: <span id="ghi_chu_dh"></span></div>
+            <!-- Đã xóa Người nhận hàng và Số điện thoại khỏi đây -->
         </div>
 
         <table>
@@ -226,6 +232,11 @@
             </tbody>
         </table>
 
+        <!-- Ghi chú đơn hàng được chuyển xuống đây -->
+        <div class="order-notes">
+            <span>Ghi chú đơn hàng:</span> <span id="ghi_chu_dh"></span>
+        </div>
+
         <div class="signatures">
             <div class="signature-block">
                 <p class="role">Người nhận hàng</p>
@@ -239,13 +250,11 @@
     </div>
 
     <script>
-        // Hàm lấy tham số từ URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // Hàm để điền dữ liệu vào template
         function populateData() {
             const dataParam = getQueryParam('data');
             let isDemo = true;
@@ -253,35 +262,29 @@
 
             if (dataParam) {
                 try {
-                    // Giải mã và phân tích chuỗi JSON từ tham số 'data'
                     data = JSON.parse(decodeURIComponent(dataParam));
                     isDemo = false;
                 } catch (e) {
                     console.error("Lỗi phân tích JSON từ URL:", e);
-                    // Nếu lỗi, sẽ chuyển sang dùng dữ liệu demo
                     isDemo = true;
                 }
             }
             
-            // Nếu không có dữ liệu hoặc lỗi, dùng dữ liệu demo
             if (isDemo) {
                 document.getElementById('watermark').style.display = 'block';
                 data = {
-                    // Dữ liệu công ty demo
                     company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
                     company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)",
                     company_phone: "0933 676 123 (DEMO)",
                     company_zalo_display: "Siêu Thị Vật Tư (DEMO)",
                     company_zalo_link: "https://zalo.me/sieuthivattu",
                     company_email: "vattutinthinh@gmail.com (DEMO)",
-                    
-                    // Dữ liệu đơn hàng demo
                     so_dh: "DH-DEMO-001",
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
                     ngay_lap: "01/01/2025",
                     dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM",
                     nguoi_nhan_hang: "Nguyễn Văn A",
-                    sdt: "0909123456",
+                    // sdt đã bị xóa khỏi đây, không cần thiết nữa
                     ghi_chu_dh: "Giao hàng trong giờ hành chính.",
                     nguoi_lap_ky: "Trần Thị B",
                     products: [
@@ -298,20 +301,16 @@
             document.getElementById('company_phone').textContent = 'ĐT: ' + (data.company_phone || 'Số điện thoại công ty');
             
             const zaloText = data.company_zalo_display || 'Zalo OA của bạn';
-            const zaloLink = data.company_zalo_link || '#'; // Link mặc định nếu không có
+            const zaloLink = data.company_zalo_link || '#';
             document.getElementById('company_zalo').innerHTML = `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace('https://', '').replace('http://', '')}</a>)`;
             
             document.getElementById('company_email').textContent = 'Email: ' + (data.company_email || 'Email công ty');
 
-
-            // Điền thông tin đơn hàng chung vào các thẻ span tương ứng bằng ID
-            // Sử dụng || '' để tránh lỗi nếu key không tồn tại trong JSON
+            // Điền thông tin đơn hàng chung
             document.getElementById('so_dh').textContent = data.so_dh || '';
             document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
             document.getElementById('ten_kh').textContent = data.ten_kh || '';
             document.getElementById('dia_chi_giao').textContent = data.dia_chi_giao || '';
-            document.getElementById('nguoi_nhan_hang').textContent = data.nguoi_nhan_hang || '';
-            document.getElementById('sdt').textContent = data.sdt || '';
             document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
             
             // Điền tên người ký
@@ -320,7 +319,7 @@
 
             // Điền thông tin chi tiết sản phẩm vào bảng
             const itemTableBody = document.getElementById('itemTableBody');
-            itemTableBody.innerHTML = ''; // Xóa các dòng cũ (nếu có)
+            itemTableBody.innerHTML = '';
             const items = data.products || [];
 
             if (Array.isArray(items)) {
@@ -335,7 +334,6 @@
             }
         }
 
-        // Chạy hàm khi trang được tải xong
         document.addEventListener('DOMContentLoaded', populateData);
     </script>
 </body>
