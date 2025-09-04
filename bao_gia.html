@@ -19,11 +19,11 @@
         .company-info { width: 60%; line-height: 1.3; font-size: 10pt; }
         .company-info strong { font-size: 14pt; }
         #company_address { font-size: 9pt; }
-        .logo { width: 350px; height: auto; } /* Kích thước logo đã tăng */
+        .logo { width: 350px; height: auto; }
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .title-section p { margin: 4px 0; font-size: 11pt; }
-        .customer-info { margin-bottom: 15px; line-height: 1.5; } /* Giảm khoảng cách dưới */
+        .customer-info { margin-bottom: 15px; line-height: 1.5; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
@@ -123,21 +123,13 @@
         
         function populateData() {
             const dataParam = getQueryParam('data'); let data = {};
-            const demoData = {
-                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_logo_url: "https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439", company_branch_code: "CNHN",
-                quote_number: "002-BTBD-DEMO", quote_date: "04/09/2025", project_name: "Dự án ABC",
-                customer_name: "CÔNG TY TNHH MTV XÂY DỰNG BÀN THẠCH BÌNH DƯƠNG", customer_address: "C63-C64 Khu dân cư Việt Sing, Phường An Phú, Thành phố Thuận An, Tỉnh Bình Dương, Việt Nam", customer_contact_person: "Chị Tiểu Nghiêm", customer_phone: "0912345678", customer_email: "contact@customer.com",
-                products: [{ ten_sanpham: 'Vải địa kỹ thuật ART25 (4x100m)', dvt: 'm2', so_luong: 1000.50, don_gia: 16500, thanh_tien: 16508250, thue_vat_percent: '8.00%' }, { ten_sanpham: 'Vận chuyển', dvt: 'Chuyến', so_luong: 1.00, don_gia: 1300000, thanh_tien: 1300000, thue_vat_percent: '8.00%' }],
-                subtotal: "17.808.250", vat_amount: "1.424.660", grand_total: "19.232.910",
-                notes_and_terms: "- Đã bao gồm phí vận chuyển đến KCN Thành Thành Công.\\n- Đặt cọc trước 30% giá trị đơn hàng...",
-                bank_account_name: "Chi nhánh Công ty TNHH xây dựng Tín Thịnh", bank_account_number: "19036483626016", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG 002-BTBD-DEMO"
-            };
+            const demoData = { /* ... demo data ... */ };
             if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); data = demoData; } } else { data = demoData; }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
 
-            // THAY ĐỔI: Thêm các hàm định dạng số
+            // THAY ĐỔI: Cập nhật các hàm định dạng số
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
             const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
@@ -147,7 +139,9 @@
             fill('customer_name', data.customer_name); fill('customer_address', data.customer_address, true);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             
-            fill('subtotal', data.subtotal); fill('vat_amount', data.vat_amount); fill('grand_total', data.grand_total);
+            fill('subtotal', formatInteger(data.subtotal)); 
+            fill('vat_amount', formatInteger(data.vat_amount)); 
+            fill('grand_total', formatInteger(data.grand_total));
             const amountInNumber = String(data.grand_total || '0').replace(/[.,]/g, '');
             const amountInWords = docso(amountInNumber);
             fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
@@ -164,11 +158,12 @@
                 row.insertCell(0).textContent = index + 1;
                 row.insertCell(1).textContent = item.ten_sanpham;
                 row.insertCell(2).textContent = item.dvt;
-                // THAY ĐỔI: Áp dụng các hàm định dạng mới
                 row.insertCell(3).textContent = formatDecimal(item.so_luong);
                 row.insertCell(4).textContent = formatInteger(item.don_gia);
                 row.insertCell(5).textContent = formatInteger(item.thanh_tien);
-                row.insertCell(6).textContent = item.thue_vat_percent;
+                // THAY ĐỔI: Sửa logic hiển thị VAT
+                const vatPercent = (item.thue_vat_rate || 0) * 100;
+                row.insertCell(6).textContent = `${vatPercent}%`;
             });
             
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number}`, data.bank_account_name);
