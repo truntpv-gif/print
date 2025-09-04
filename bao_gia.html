@@ -118,40 +118,89 @@
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
         
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-        
-        // THAY ĐỔI 1: Hàm đọc số được viết lại hoàn toàn, chính xác hơn
-        function docso(s) {
-            let mangso = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-            function dochangchuc(so, daydu) {
-                let chuoi = ""; let chuc = Math.floor(so / 10); let donvi = so % 10;
-                if (chuc > 1) { chuoi = " " + mangso[chuc] + " mươi"; if (donvi == 1) { chuoi += " mốt"; }
-                } else if (chuc == 1) { chuoi = " mười"; if (donvi == 1) { chuoi += " một"; }
-                } else if (daydu && donvi > 0) { chuoi = " lẻ"; }
-                if (donvi == 5 && chuc > 1) { chuoi += " lăm"; } else if (donvi > 1 || (donvi == 1 && chuc == 0)) { chuoi += " " + mangso[donvi]; }
-                return chuoi;
+
+        // THAY ĐỔI: HÀM ĐỌC SỐ ĐÃ ĐƯỢC VIẾT LẠI HOÀN TOÀN
+        function docso(number) {
+            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
+            const chuHangDonVi = ('1 một' + defaultNumbers).split(' ');
+            const chuHangChuc = ('lẻ mười' + defaultNumbers).split(' ');
+            const chuHangTram = ('không một' + defaultNumbers).split(' ');
+
+            function convert_block_three(number) {
+                number = number.replace(/^0+/, '');
+                if (number == '') return '';
+                let a = number.split('');
+                switch (a.length) {
+                    case 0: return '';
+                    case 1: return chuHangDonVi[a[0]];
+                    case 2: return convert_block_two(a[0], a[1]);
+                    case 3:
+                        let chuc_dv = '';
+                        if (a[1] != 0 || a[2] != 0) {
+                            chuc_dv = ' ' + convert_block_two(a[1], a[2]);
+                        }
+                        let tram = chuHangTram[a[0]] + ' trăm';
+                        return tram + chuc_dv;
+                }
             }
-            function docblock(so, daydu) {
-                let chuoi = ""; let tram = Math.floor(so / 100); so = so % 100;
-                if (daydu || tram > 0) { chuoi = " " + mangso[tram] + " trăm"; chuoi += dochangchuc(so, true); } else { chuoi = dochangchuc(so, false); }
-                return chuoi;
+
+            function convert_block_two(b, c) {
+                let chuc = chuHangChuc[b];
+                let donvi = chuHangDonVi[c];
+                if (b == 1) {
+                    if (c == 0) return chuc;
+                    if (c == 5) return chuc + " lăm";
+                    return chuc + " " + donvi;
+                }
+                if (b > 1) {
+                    if (c == 1) return chuc + " mốt";
+                    if (c == 5) return chuc + " lăm";
+                    if (c == 0) return chuc;
+                    return chuc + " " + donvi;
+                }
+                if (b == 0) {
+                    if (c == 0) return "";
+                    return "lẻ " + donvi;
+                }
             }
-            if (s == 0) return mangso[0]; let chuoi = "", hauto = "";
-            do {
-                let ty = s % 1000000000; s = Math.floor(s / 1000000000);
-                if (s > 0) { chuoi = docblock(ty, true) + hauto + chuoi; } else { chuoi = docblock(ty, false) + hauto + chuoi; }
-                hauto = " tỷ";
-            } while (s > 0);
-            chuoi = chuoi.trim();
-            if (chuoi.length === 0) return "";
-            return chuoi.charAt(0).toUpperCase() + chuoi.slice(1);
+
+            let str = parseInt(number) + '';
+            if (str == 0) return "Không";
+            let i = 0, j = str.length;
+            let result = "";
+            let arr = [];
+            while (i < j) {
+                arr.push(str.substring(i, i + 3));
+                i += 3;
+            }
+            let newArr = arr.reverse();
+            let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+            for (let i = newArr.length - 1; i >= 0; i--) {
+                let k = newArr[i];
+                if (k != '000') {
+                    result += convert_block_three(k) + hang[i];
+                }
+            }
+            result = result.replace(/ +/g, " ").trim();
+            return result.charAt(0).toUpperCase() + result.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
             const dataParam = getQueryParam('data'); let data = {};
-            const demoData = { /* ... demo data ... */ };
-            if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); data = demoData; } } else { data = demoData; }
+            let isDemo = true;
+            const demoData = {
+                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_branch_code: "CNHN",
+                quote_number: "BG-DEMO-001", quote_date: "01/01/2025", project_name: "Dự án Demo",
+                customer_name: "CÔNG TY KHÁCH HÀNG DEMO", customer_address: "123 Đường Demo, Phường Demo, Quận Demo, TP. Demo", customer_contact_person: "Người Liên Hệ Demo", customer_phone: "0987654321", customer_email: "demo@email.com",
+                products: [{ ten_sanpham: 'Sản phẩm Demo 1', dvt: 'Cái', so_luong: 100.50, don_gia: 50000, thanh_tien: 5025000, thue_vat_rate: 0.1, ghi_chu: 'Ghi chú demo' }, { ten_sanpham: 'Sản phẩm Demo 2', dvt: 'Hộp', so_luong: 20.00, don_gia: 150000, thanh_tien: 3000000, thue_vat_rate: 0.08, ghi_chu: '' }],
+                subtotal: 8025000, vat_amount: 742500, grand_total: 8767500,
+                notes_and_terms: "- Đây là ghi chú và điều kiện thương mại demo.\\n- Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.",
+                bank_account_name: "Tên tài khoản Demo", bank_account_number: "123456789", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG-DEMO-001"
+            };
+            if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); isDemo = false; } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); isDemo = true; } }
+            if (isDemo) { document.getElementById('watermark').style.display = 'block'; data = demoData; }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
