@@ -16,7 +16,7 @@
         /* THÔNG TIN CÔNG TY & KHÁCH HÀNG */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .company-info { width: 60%; line-height: 1.3; font-size: 10pt; }
-        .company-info strong { font-size: 11pt; }
+        .company-info strong { font-size: 12pt; }
         #company_address { font-size: 9pt; }
         .logo { width: 350px; height: auto; }
         .title-section { text-align: center; margin: 20px 0; }
@@ -72,9 +72,9 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
+        <div id="watermark">BẢN NHÁP</div>
         <div class="header">
             <div class="company-info"><strong id="company_name"></strong><br><span id="company_address"></span>ĐT: <span id="company_phone"></span><br>Zalo OA: <span id="company_zalo_display"></span> (<a href="#" id="company_zalo_link"></a>)<br>Email: <span id="company_email"></span></div>
-            <!-- THAY ĐỔI 1: Gắn cứng URL logo vào đây -->
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
         <div class="title-section"><h1>BÁO GIÁ VẬT TƯ</h1><p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p><p>Dự án: <span id="project_name"></span></p></div>
@@ -118,8 +118,8 @@
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
         
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-
-        // THAY ĐỔI 2: Sửa lỗi hàm đọc số
+        
+        // THAY ĐỔI 1: Hàm đọc số được viết lại hoàn toàn, chính xác hơn
         function docso(s) {
             let mangso = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
             function dochangchuc(so, daydu) {
