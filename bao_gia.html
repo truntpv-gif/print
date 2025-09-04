@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -115,21 +114,54 @@
 
     <script>
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
-        const BANK_BINS = { /* ... bin list ... */ };
+        
+        // --- BỔ SUNG ĐOẠN CODE CÒN THIẾU 1 ---
+        const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
         
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-        function docso(s) { /* ... function đọc số không đổi ... */ }
-        function generateVietQR(bankName, accountNumber, amount, description, accountName) { /* ... function QR không đổi ... */ }
+
+        // --- BỔ SUNG ĐOẠN CODE CÒN THIẾU 2 ---
+        function docso(s) {
+            let S = String(s); if (!S || isNaN(S)) return ""; S = S.replace(/,/g, ""); S = S.split("").reverse().join(""); let mangso = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]; let result = ""; let dem = 0;
+            for (let i = 0; i < S.length; i++) {
+                dem++; let so = S[i]; let prev_so = (i < S.length - 1) ? S[i + 1] : "x"; let next_so = (i > 0) ? S[i - 1] : "y";
+                if (dem == 1) { if (so == 1 && prev_so != 1 && prev_so != 0) result = "mốt " + result; else if (so == 5 && prev_so != 0) result = "lăm " + result; else if (so != 0) result = mangso[so] + " " + result;
+                } else if (dem == 2) { if (so == 1) result = "mười " + result; else if (so == 0 && next_so != 0) result = "lẻ " + result; else if (so != 0) result = mangso[so] + " mươi " + result;
+                } else if (dem == 3) { if (so != 0 || prev_so != 0 || S[i + 2] != 0) result = mangso[so] + " trăm " + result; dem = 0; }
+                if (i == 2) result = "nghìn " + result; if (i == 5) result = "triệu " + result; if (i == 8) result = "tỷ " + result;
+            }
+            result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
+        }
+        
+        // --- BỔ SUNG ĐOẠN CODE CÒN THIẾU 3 ---
+        function generateVietQR(bankName, accountNumber, amount, description, accountName) {
+            const qrImgElement = document.getElementById('vietqr_code_small');
+            if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; }
+            const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName];
+            if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; }
+            const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || '');
+            const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`;
+            qrImgElement.src = qrUrl;
+        }
         
         function populateData() {
             const dataParam = getQueryParam('data'); let data = {};
-            const demoData = { /* ... demo data ... */ };
+            // --- BỔ SUNG ĐOẠN CODE CÒN THIẾU 4 ---
+            const demoData = {
+                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_zalo_display: "Siêu Thị Vật Tư", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "sales@sieuthivattul.com", company_logo_url: "https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439", company_branch_code: "CNHN",
+                quote_number: "002-BTBD-DEMO", quote_date: "04/09/2025", project_name: "Dự án ABC",
+                customer_name: "CÔNG TY TNHH MTV XÂY DỰNG BÀN THẠCH BÌNH DƯƠNG", customer_address: "C63-C64 Khu dân cư Việt Sing, Phường An Phú, Thành phố Thuận An, Tỉnh Bình Dương, Việt Nam", customer_contact_person: "Chị Tiểu Nghiêm", customer_phone: "0912345678", customer_email: "contact@customer.com",
+                products: [{ ten_sanpham: 'Vải địa kỹ thuật ART25 (4x100m)', dvt: 'm2', so_luong: 1000.50, don_gia: 16500, thanh_tien: 16508250, thue_vat_rate: 0.08, ghi_chu: '' }, { ten_sanpham: 'Vận chuyển', dvt: 'Chuyến', so_luong: 1.00, don_gia: 1300000, thanh_tien: 1300000, thue_vat_rate: 0.08, ghi_chu: '' }],
+                subtotal: 17808250, vat_amount: 1424660, grand_total: 19232910,
+                notes_and_terms: "- Đã bao gồm phí vận chuyển đến KCN Thành Thành Công.\\n- Đặt cọc trước 30% giá trị đơn hàng, thanh toán phần còn lại của đơn hàng khi giao hàng đến công trình.",
+                bank_account_name: "Chi nhánh Công ty TNHH xây dựng Tín Thịnh", bank_account_number: "19036483626016", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG 002-BTBD-DEMO"
+            };
+            
             if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); data = demoData; } } else { data = demoData; }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
 
-            // THAY ĐỔI: Cập nhật các hàm định dạng số
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
             const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
@@ -161,7 +193,6 @@
                 row.insertCell(3).textContent = formatDecimal(item.so_luong);
                 row.insertCell(4).textContent = formatInteger(item.don_gia);
                 row.insertCell(5).textContent = formatInteger(item.thanh_tien);
-                // THAY ĐỔI: Sửa logic hiển thị VAT
                 const vatPercent = (item.thue_vat_rate || 0) * 100;
                 row.insertCell(6).textContent = `${vatPercent}%`;
             });
