@@ -13,7 +13,7 @@
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 1000; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* ----- MỚI: WATERMARK ----- */
+        /* WATERMARK */
         #watermark {
             position: absolute;
             top: 50%;
@@ -36,8 +36,6 @@
         .title-section { text-align: center; margin: 20px 0; position: relative; z-index: 1; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .title-section p { margin: 4px 0; font-size: 11pt; }
-        /* ----- MỚI: CSS cho mục dự án ----- */
-        #project_section { display: none; } /* Ẩn theo mặc định */
         .customer-info { margin-bottom: 15px; line-height: 1.5; position: relative; z-index: 1; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
@@ -78,24 +76,21 @@
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #quote_number, #quote_date, #project_name, #customer_name, #customer_address, #contact_line, .products tbody td,
+        #quote_number, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td,
         #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature,
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
             color: #002B5B;
         }
         #bank_account_name, #bank_account_number, #bank_name { font-weight: bold; }
-        /* ----- MỚI: In đậm nội dung thanh toán ----- */
         #payment_reference_text { font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
-        <!-- ----- MỚI: Thêm Watermark ----- -->
         <div id="watermark">DEMO</div>
 
         <div class="header">
-            <!-- ----- SỬA: Cập nhật cấu trúc thông tin công ty ----- -->
             <div class="company-info">
                 <strong id="company_name"></strong><br>
                 <span id="company_address"></span><br>
@@ -104,13 +99,10 @@
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
+        <!-- ----- SỬA: Đã xóa hoàn toàn mục Dự án ----- -->
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
             <p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p>
-            <!-- ----- SỬA: Bọc mục dự án để điều khiển hiển thị ----- -->
-            <div id="project_section">
-                <p>Dự án: <span id="project_name"></span></p>
-            </div>
         </div>
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
@@ -141,7 +133,6 @@
                     <p>Tên tk: <span id="bank_account_name"></span></p>
                     <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
                     <p>Nội dung: <span id="payment_reference_text"></span></p>
-                    <!-- ----- SỬA: Cập nhật câu ghi chú ----- -->
                     <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
                 </div>
             </div>
@@ -164,9 +155,8 @@
         function populateData() {
             const dataParam = getQueryParam('data');
             let data = {};
-            let isDemo = true; // Mặc định là demo
+            let isDemo = true;
 
-            // ----- MỚI: Dữ liệu Demo để hiển thị khi form trống -----
             const demoData = {
                 company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
                 company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
@@ -178,7 +168,7 @@
 
                 quote_number: "BG-DEMO-001",
                 quote_date: "01/01/2025",
-                project_name: "Dự án Demo Center",
+                // ----- SỬA: Đã xóa project_name khỏi demo data -----
 
                 customer_name: "CÔNG TY KHÁCH HÀNG DEMO",
                 customer_address: "123 Đường Demo, Phường Demo, Quận Demo, TP. Demo",
@@ -205,49 +195,41 @@
             if (dataParam) {
                 try {
                     data = JSON.parse(decodeURIComponent(dataParam));
-                    isDemo = false; // Có dữ liệu hợp lệ, không phải demo
+                    isDemo = false;
                 } catch (e) {
                     console.error("Lỗi JSON, sử dụng dữ liệu demo:", e);
-                    isDemo = true; // Lỗi -> quay về demo
+                    isDemo = true;
                 }
             }
             
             if (isDemo) {
                 data = demoData;
-                document.getElementById('watermark').style.display = 'block'; // Hiển thị watermark
+                document.getElementById('watermark').style.display = 'block';
             }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
             const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
-            // Điền thông tin công ty
             fill('company_name', data.company_name);
             fill('company_address', data.company_address, true);
             fill('company_phone', data.company_phone);
             fill('company_email', data.company_email);
-            fill('company_tax_code', data.company_tax_code); // Thêm MST
+            fill('company_tax_code', data.company_tax_code);
             const zaloLinkEl = document.getElementById('company_zalo_link');
             if (zaloLinkEl && data.company_zalo_link) {
                 zaloLinkEl.href = data.company_zalo_link;
                 zaloLinkEl.textContent = data.company_zalo_link.replace(/https?:\/\//, '');
             }
 
-            // Điền thông tin báo giá và khách hàng
             fill('quote_number', data.quote_number);
             fill('quote_date', data.quote_date);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             fill('customer_name', data.customer_name);
             fill('customer_address', data.customer_address, true);
 
-            // ----- SỬA: Logic hiển thị mục dự án -----
-            const projectSection = document.getElementById('project_section');
-            if (projectSection && data.project_name) {
-                fill('project_name', data.project_name);
-                projectSection.style.display = 'block'; // Chỉ hiển thị khi có dữ liệu
-            }
+            // ----- SỬA: Đã xóa logic xử lý project_name -----
             
-            // Điền thông tin tài chính
             fill('subtotal', formatInteger(data.subtotal));
             fill('vat_amount', formatInteger(data.vat_amount));
             fill('grand_total', formatInteger(data.grand_total));
@@ -266,7 +248,6 @@
                 stampImg.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
             }
             
-            // Điền thông tin thanh toán
             fill('bank_account_name', data.bank_account_name); 
             fill('bank_account_number', data.bank_account_number); 
             const originalShortBankName = data.bank_name || '';
@@ -280,7 +261,6 @@
             }
             fill('payment_reference_text', paymentText);
             
-            // Điền bảng sản phẩm
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             (data.products || []).forEach((item, index) => {
                 const row = tableBody.insertRow();
