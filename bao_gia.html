@@ -99,7 +99,6 @@
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
-        <!-- ----- SỬA: Đã xóa hoàn toàn mục Dự án ----- -->
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
             <p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p>
@@ -153,59 +152,37 @@
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
-            const dataParam = getQueryParam('data');
-            let data = {};
-            let isDemo = true;
-
             const demoData = {
-                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
-                company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
-                company_phone: "0933 676 123",
-                company_email: "sales@sieuthivattu.com",
-                company_tax_code: "0123456789",
-                company_zalo_link: "https://zalo.me/sieuthivattu",
-                company_branch_code: "CNHCM",
-
-                quote_number: "BG-DEMO-001",
-                quote_date: "01/01/2025",
-                // ----- SỬA: Đã xóa project_name khỏi demo data -----
-
-                customer_name: "CÔNG TY KHÁCH HÀNG DEMO",
-                customer_address: "123 Đường Demo, Phường Demo, Quận Demo, TP. Demo",
-                customer_contact_person: "Người Liên Hệ Demo",
-                customer_phone: "0987654321",
-                customer_email: "demo@email.com",
-
-                products: [
-                    { ten_sanpham: 'Sản phẩm Demo 1', dvt: 'Cái', so_luong: 100.50, don_gia: 50000, thanh_tien: 5025000, thue_vat_rate: 0.1 },
-                    { ten_sanpham: 'Sản phẩm Demo 2', dvt: 'Hộp', so_luong: 20.00, don_gia: 150000, thanh_tien: 3000000, thue_vat_rate: 0.08 }
-                ],
-                subtotal: 8025000,
-                vat_amount: 742500,
-                grand_total: 8767500,
-
+                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM", company_phone: "0933 676 123", company_email: "sales@sieuthivattu.com", company_tax_code: "0123456789", company_zalo_link: "https://zalo.me/sieuthivattu", company_branch_code: "CNHCM",
+                quote_number: "BG-DEMO-001", quote_date: "01/01/2025",
+                customer_name: "CÔNG TY KHÁCH HÀNG DEMO", customer_address: "123 Đường Demo, Phường Demo, Quận Demo, TP. Demo", customer_contact_person: "Người Liên Hệ Demo", customer_phone: "0987654321", customer_email: "demo@email.com",
+                products: [{ ten_sanpham: 'Sản phẩm Demo 1', dvt: 'Cái', so_luong: 100.50, don_gia: 50000, thanh_tien: 5025000, thue_vat_rate: 0.1 }, { ten_sanpham: 'Sản phẩm Demo 2', dvt: 'Hộp', so_luong: 20.00, don_gia: 150000, thanh_tien: 3000000, thue_vat_rate: 0.08 }],
+                subtotal: 8025000, vat_amount: 742500, grand_total: 8767500,
                 notes_and_terms: "- Đây là ghi chú và điều kiện thương mại demo.\\n- Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.",
-                
-                bank_account_name: "Tên tài khoản Demo",
-                bank_account_number: "123456789",
-                bank_name: "Techcombank",
-                payment_reference_text: "Thanh toán BG-DEMO-001"
+                bank_account_name: "Tên tài khoản Demo", bank_account_number: "123456789", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG-DEMO-001"
             };
+
+            // ----- BẮT ĐẦU PHẦN SỬA LỖI LOGIC -----
+            const dataParam = getQueryParam('data');
+            let data = demoData; // 1. Mặc định sử dụng dữ liệu demo
+            let isDemo = true;
 
             if (dataParam) {
                 try {
+                    // 2. Chỉ ghi đè data khi có param hợp lệ
                     data = JSON.parse(decodeURIComponent(dataParam));
-                    isDemo = false;
+                    isDemo = false; // Đánh dấu đây là dữ liệu thật
                 } catch (e) {
-                    console.error("Lỗi JSON, sử dụng dữ liệu demo:", e);
+                    console.error("Lỗi phân tích JSON, sử dụng dữ liệu demo:", e);
+                    // Nếu lỗi, 'data' vẫn là 'demoData' đã gán ở trên
                     isDemo = true;
                 }
             }
             
             if (isDemo) {
-                data = demoData;
                 document.getElementById('watermark').style.display = 'block';
             }
+            // ----- KẾT THÚC PHẦN SỬA LỖI LOGIC -----
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
@@ -227,8 +204,6 @@
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             fill('customer_name', data.customer_name);
             fill('customer_address', data.customer_address, true);
-
-            // ----- SỬA: Đã xóa logic xử lý project_name -----
             
             fill('subtotal', formatInteger(data.subtotal));
             fill('vat_amount', formatInteger(data.vat_amount));
