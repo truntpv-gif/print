@@ -26,7 +26,10 @@
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
-        .intro-line { margin-bottom: 10px; }
+       .intro-line {
+    margin-top: 0; /* Loại bỏ khoảng trắng phía trên */
+    margin-bottom: 10px; /* Giữ khoảng trắng hợp lý trước bảng */
+}
 
         /* BẢNG SẢN PHẨM & TỔNG CỘNG */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
@@ -89,7 +92,7 @@
             <p id="project_line" style="display: none;">Dự án: <span id="project_name"></span></p>
         </div>
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
-        <p>Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
+        <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
         <table class="products">
             <thead><tr><th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th><th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th></tr></thead>
