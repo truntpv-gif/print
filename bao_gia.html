@@ -119,8 +119,28 @@
 
     <script>
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
-        const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seABank': '970440', 'ocb': '970448' };
+        const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
+        const BANK_FULL_NAMES = {
+            'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)',
+            'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
+            'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
+            'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
+            'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)',
+            'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)',
+            'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)',
+            'acb': 'Ngân hàng TMCP Á Châu (ACB)',
+            'mbbank': 'Ngân hàng TMCP Quân đội (MB)',
+            'mb': 'Ngân hàng TMCP Quân đội (MB)',
+            'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)',
+            'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)',
+            'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)',
+            'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)',
+            'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)',
+            'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)',
+            'ocb': 'Ngân hàng TMCP Phương Đông (OCB)'
+        };
+
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
         function docso(number) {
@@ -155,7 +175,7 @@
             result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
         }
 
-        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = bankName.toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
+        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
             const dataParam = getQueryParam('data'); let data = {}; let isDemo = true;
@@ -166,7 +186,7 @@
                 products: [{ ten_sanpham: 'Sản phẩm Demo 1', dvt: 'Cái', so_luong: 100.50, don_gia: 50000, thanh_tien: 5025000, thue_vat_rate: 0.1, ghi_chu: 'Ghi chú demo' }, { ten_sanpham: 'Sản phẩm Demo 2', dvt: 'Hộp', so_luong: 20.00, don_gia: 150000, thanh_tien: 3000000, thue_vat_rate: 0.08, ghi_chu: '' }],
                 subtotal: 8025000, vat_amount: 742500, grand_total: 8767500,
                 notes_and_terms: "- Đây là ghi chú và điều kiện thương mại demo.\\n- Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.",
-                bank_account_name: "Tên tài khoản Demo", bank_account_number: "123456789", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG-DEMO-001"
+                bank_account_name: "Tên tài khoản Demo", bank_account_number: "123456789", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG-DEMO-001 cho Techcombank"
             };
             if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); isDemo = false; } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); isDemo = true; } }
             if (isDemo) { data = demoData; }
@@ -191,7 +211,27 @@
             fill('company_name_signature', data.company_name); 
             const stampImg = document.getElementById('company_stamp'); if (data.company_branch_code && stampImg) { const signatureUrl = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true"; stampImg.src = signatureUrl; }
             
-            fill('bank_account_name', data.bank_account_name); fill('bank_account_number', data.bank_account_number); fill('bank_name', data.bank_name); fill('payment_reference_text', data.payment_reference_text);
+            // ----- BẮT ĐẦU PHẦN SỬA LỖI -----
+            fill('bank_account_name', data.bank_account_name); 
+            fill('bank_account_number', data.bank_account_number); 
+
+            // Lấy tên ngân hàng gốc và tên đầy đủ tương ứng
+            const originalShortBankName = data.bank_name || '';
+            const shortBankNameKey = originalShortBankName.toLowerCase().replace(/\s/g, '');
+            const fullBankName = BANK_FULL_NAMES[shortBankNameKey] || originalShortBankName;
+
+            // 1. Cập nhật tên ngân hàng đầy đủ ở dòng số tài khoản
+            fill('bank_name', fullBankName);
+
+            // 2. Tìm và thay thế tên ngân hàng trong chuỗi nội dung thanh toán
+            let paymentText = data.payment_reference_text || '';
+            if (originalShortBankName) {
+                // Tạo biểu thức chính quy để thay thế không phân biệt hoa thường (flag 'gi')
+                const regex = new RegExp(originalShortBankName, 'gi');
+                paymentText = paymentText.replace(regex, fullBankName);
+            }
+            fill('payment_reference_text', paymentText); // Hiển thị nội dung đã được xử lý
+            // ----- KẾT THÚC PHẦN SỬA LỖI -----
             
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             (data.products || []).forEach((item, index) => {
