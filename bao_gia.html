@@ -7,29 +7,45 @@
     <style>
         /* CSS CHUNG & BỐ CỤC */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
-        .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
+        .page { position: relative; width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         @page { size: A4; margin: 0; }
-        @media print { html, body { width: 21cm; height: 29.7cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
-        .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
+        @media print { html, body { width: 21cm; height: 29.7cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container, #watermark { display: none; } }
+        .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 1000; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
+        /* ----- MỚI: WATERMARK ----- */
+        #watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120pt;
+            color: rgba(0, 0, 0, 0.08);
+            pointer-events: none;
+            z-index: 0;
+            font-weight: bold;
+            display: none; /* Ẩn theo mặc định, JS sẽ bật lên */
+        }
+
         /* THÔNG TIN CÔNG TY & KHÁCH HÀNG */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; position: relative; z-index: 1; }
         .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
         .company-info strong { font-size: 11pt; }
         #company_address { font-size: 9pt; }
         .logo { width: 300px; height: auto; }
-        .title-section { text-align: center; margin: 20px 0; }
+        .title-section { text-align: center; margin: 20px 0; position: relative; z-index: 1; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .title-section p { margin: 4px 0; font-size: 11pt; }
-        .customer-info { margin-bottom: 15px; line-height: 1.5; }
+        /* ----- MỚI: CSS cho mục dự án ----- */
+        #project_section { display: none; } /* Ẩn theo mặc định */
+        .customer-info { margin-bottom: 15px; line-height: 1.5; position: relative; z-index: 1; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
-        .intro-line { margin-bottom: 10px; }
+        .intro-line { margin-bottom: 10px; position: relative; z-index: 1; }
 
         /* BẢNG SẢN PHẨM & TỔNG CỘNG */
-        table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
+        table.products { width: 100%; border-collapse: collapse; font-size: 11pt; position: relative; z-index: 1; }
         table.products thead th, table.products tbody td, table.products tfoot td { border: 1px solid #000; padding: 6px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
         table.products tbody td:nth-child(1), table.products tbody td:nth-child(3) { text-align: center; }
@@ -42,6 +58,7 @@
         #grand_total_in_words { font-size: 10pt; font-style: italic; font-weight: bold; }
         
         /* GHI CHÚ, CHỮ KÝ, THANH TOÁN */
+        .notes-block, .signatures-section, .payment-section { position: relative; z-index: 1; }
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
         .signatures-section { display: flex; justify-content: space-between; margin-top: 20px; text-align: center; }
@@ -63,32 +80,37 @@
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
         #quote_number, #quote_date, #project_name, #customer_name, #customer_address, #contact_line, .products tbody td,
         #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature,
-        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text, #company_tax_code {
+        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
             color: #002B5B;
         }
-        /* THAY ĐỔI: Thêm #payment_reference_text vào để in đậm */
-        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text { font-weight: bold; }
+        #bank_account_name, #bank_account_number, #bank_name { font-weight: bold; }
+        /* ----- MỚI: In đậm nội dung thanh toán ----- */
+        #payment_reference_text { font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
+        <!-- ----- MỚI: Thêm Watermark ----- -->
+        <div id="watermark">DEMO</div>
+
         <div class="header">
+            <!-- ----- SỬA: Cập nhật cấu trúc thông tin công ty ----- -->
             <div class="company-info">
                 <strong id="company_name"></strong><br>
                 <span id="company_address"></span><br>
-                <!-- THAY ĐỔI: Thêm MST -->
-                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span> &nbsp;|&nbsp; MST: <span id="company_tax_code"></span><br>
-                <!-- THAY ĐỔI: Đơn giản hóa Zalo thành link -->
-                Zalo: <a href="#" id="company_zalo_link"></a>
+                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
+                MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
             <p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p>
-            <!-- THAY ĐỔI: Thêm ID để ẩn/hiện mục dự án -->
-            <p id="project_line">Dự án: <span id="project_name"></span></p>
+            <!-- ----- SỬA: Bọc mục dự án để điều khiển hiển thị ----- -->
+            <div id="project_section">
+                <p>Dự án: <span id="project_name"></span></p>
+            </div>
         </div>
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
@@ -119,7 +141,7 @@
                     <p>Tên tk: <span id="bank_account_name"></span></p>
                     <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
                     <p>Nội dung: <span id="payment_reference_text"></span></p>
-                    <!-- THAY ĐỔI: Cập nhật câu hướng dẫn -->
+                    <!-- ----- SỬA: Cập nhật câu ghi chú ----- -->
                     <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
                 </div>
             </div>
@@ -129,145 +151,109 @@
     <script>
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
+        const BANK_FULL_NAMES = { 'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)' };
         
-        const BANK_FULL_NAMES = {
-            'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)',
-            'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
-            'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
-            'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
-            'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)',
-            'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)',
-            'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)',
-            'acb': 'Ngân hàng TMCP Á Châu (ACB)',
-            'mbbank': 'Ngân hàng TMCP Quân đội (MB)',
-            'mb': 'Ngân hàng TMCP Quân đội (MB)',
-            'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)',
-            'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)',
-            'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)',
-            'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)',
-            'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)',
-            'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)',
-            'ocb': 'Ngân hàng TMCP Phương Đông (OCB)'
-        };
-
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
         function docso(number) {
-            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
-            const chuHangDonVi = ('1 một' + defaultNumbers).split(' ');
-            const chuHangChuc = ('lẻ mười' + defaultNumbers).split(' ');
-            const chuHangTram = ('không một' + defaultNumbers).split(' ');
-            function convert_block_three(number) {
-                number = number.replace(/^0+/, ''); if (number == '') return ''; let a = number.split('');
-                switch (a.length) {
-                    case 0: return ''; case 1: return chuHangDonVi[a[0]]; case 2: return convert_block_two(a[0], a[1]);
-                    case 3: let chuc_dv = ''; if (a[1] != 0 || a[2] != 0) { chuc_dv = ' ' + convert_block_two(a[1], a[2]); } let tram = chuHangTram[a[0]] + ' trăm'; return tram + chuc_dv;
-                }
-            }
-            function convert_block_two(b, c) {
-                let chuc = chuHangChuc[b]; let donvi = chuHangDonVi[c];
-                if (b == 1) { if (c == 0) return chuc; if (c == 5) return chuc + " lăm"; return chuc + " " + donvi; }
-                if (b > 1) { if (c == 1) return chuc + " mốt"; if (c == 5) return chuc + " lăm"; if (c == 0) return chuc; return chuc + " " + donvi; }
-                if (b == 0) { if (c == 0) return ""; return "lẻ " + donvi; }
-            }
-            let str = parseInt(number) + ''; if (str == 0) return "Không"; let i = 0, j = str.length; let result = ""; let arr = [];
-            while (i < j) { arr.push(str.substring(i, i + 3)); i += 3; }
-            let newArr = arr.reverse(); let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
-            for (let i = newArr.length - 1; i >= 0; i--) {
-                let k = newArr[i];
-                if (k != '000') {
-                    let blockText = convert_block_three(k);
-                    if (result.length > 0) { result += ' '; }
-                    result += blockText + hang[i];
-                }
-            }
-            result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
+            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín'; const chuHangDonVi = ('1 một' + defaultNumbers).split(' '); const chuHangChuc = ('lẻ mười' + defaultNumbers).split(' '); const chuHangTram = ('không một' + defaultNumbers).split(' '); function convert_block_three(number) { number = number.replace(/^0+/, ''); if (number == '') return ''; let a = number.split(''); switch (a.length) { case 0: return ''; case 1: return chuHangDonVi[a[0]]; case 2: return convert_block_two(a[0], a[1]); case 3: let chuc_dv = ''; if (a[1] != 0 || a[2] != 0) { chuc_dv = ' ' + convert_block_two(a[1], a[2]); } let tram = chuHangTram[a[0]] + ' trăm'; return tram + chuc_dv; } } function convert_block_two(b, c) { let chuc = chuHangChuc[b]; let donvi = chuHangDonVi[c]; if (b == 1) { if (c == 0) return chuc; if (c == 5) return chuc + " lăm"; return chuc + " " + donvi; } if (b > 1) { if (c == 1) return chuc + " mốt"; if (c == 5) return chuc + " lăm"; if (c == 0) return chuc; return chuc + " " + donvi; } if (b == 0) { if (c == 0) return ""; return "lẻ " + donvi; } } let str = parseInt(number) + ''; if (str == 0) return "Không"; let i = 0, j = str.length; let result = ""; let arr = []; while (i < j) { arr.push(str.substring(i, i + 3)); i += 3; } let newArr = arr.reverse(); let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"]; for (let i = newArr.length - 1; i >= 0; i--) { let k = newArr[i]; if (k != '000') { let blockText = convert_block_three(k); if (result.length > 0) { result += ' '; } result += blockText + hang[i]; } } result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
-            const dataParam = getQueryParam('data'); 
+            const dataParam = getQueryParam('data');
             let data = {};
-            let useDefaultData = true;
+            let isDemo = true; // Mặc định là demo
 
-            const defaultData = {
-                company_name: "CN CÔNG TY TNHH XD TÍN THỊNH",
-                company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
-                company_phone: "0933676123",
+            // ----- MỚI: Dữ liệu Demo để hiển thị khi form trống -----
+            const demoData = {
+                company_name: "CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
+                company_address: "Địa chỉ: Khối 3, phường Điện Bàn, TP Đà Nẵng\\nVP HCM: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
+                company_phone: "0933 676 123",
                 company_email: "sales@sieuthivattu.com",
-                company_tax_code: "0313247923-001", // Thêm MST mặc định
+                company_tax_code: "0123456789",
                 company_zalo_link: "https://zalo.me/sieuthivattu",
-                company_branch_code: "CNHCM", 
-                quote_number: "",
-                quote_date: new Date().toLocaleDateString('vi-VN'),
-                project_name: "",
-                customer_name: "",
-                customer_address: "",
-                customer_contact_person: "",
-                customer_phone: "",
-                customer_email: "",
-                products: [],
-                subtotal: 0,
-                vat_amount: 0,
-                grand_total: 0,
-                notes_and_terms: "",
-                bank_account_name: "CN CÔNG TY TNHH XÂY DỰNG TÍN THỊNH",
-                bank_account_number: "19036483626016",
+                company_branch_code: "CNHCM",
+
+                quote_number: "BG-DEMO-001",
+                quote_date: "01/01/2025",
+                project_name: "Dự án Demo Center",
+
+                customer_name: "CÔNG TY KHÁCH HÀNG DEMO",
+                customer_address: "123 Đường Demo, Phường Demo, Quận Demo, TP. Demo",
+                customer_contact_person: "Người Liên Hệ Demo",
+                customer_phone: "0987654321",
+                customer_email: "demo@email.com",
+
+                products: [
+                    { ten_sanpham: 'Sản phẩm Demo 1', dvt: 'Cái', so_luong: 100.50, don_gia: 50000, thanh_tien: 5025000, thue_vat_rate: 0.1 },
+                    { ten_sanpham: 'Sản phẩm Demo 2', dvt: 'Hộp', so_luong: 20.00, don_gia: 150000, thanh_tien: 3000000, thue_vat_rate: 0.08 }
+                ],
+                subtotal: 8025000,
+                vat_amount: 742500,
+                grand_total: 8767500,
+
+                notes_and_terms: "- Đây là ghi chú và điều kiện thương mại demo.\\n- Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.",
+                
+                bank_account_name: "Tên tài khoản Demo",
+                bank_account_number: "123456789",
                 bank_name: "Techcombank",
-                payment_reference_text: "Thanh toán cho đơn hàng số 002-BTBD hoặc số hóa đơn đã gởi"
+                payment_reference_text: "Thanh toán BG-DEMO-001"
             };
 
             if (dataParam) {
                 try {
                     data = JSON.parse(decodeURIComponent(dataParam));
-                    useDefaultData = false;
+                    isDemo = false; // Có dữ liệu hợp lệ, không phải demo
                 } catch (e) {
-                    console.error("Lỗi JSON, sử dụng dữ liệu mặc định:", e);
-                    useDefaultData = true;
+                    console.error("Lỗi JSON, sử dụng dữ liệu demo:", e);
+                    isDemo = true; // Lỗi -> quay về demo
                 }
             }
             
-            if (useDefaultData) { data = defaultData; }
+            if (isDemo) {
+                data = demoData;
+                document.getElementById('watermark').style.display = 'block'; // Hiển thị watermark
+            }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
-            const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
             const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
-            fill('company_name', data.company_name); 
-            fill('company_address', data.company_address, true); 
-            fill('company_phone', data.company_phone); 
+            // Điền thông tin công ty
+            fill('company_name', data.company_name);
+            fill('company_address', data.company_address, true);
+            fill('company_phone', data.company_phone);
             fill('company_email', data.company_email);
-            // ----- THAY ĐỔI: Thêm fill cho MST và cập nhật Zalo -----
-            fill('company_tax_code', data.company_tax_code);
-            fillAttr('company_zalo_link', 'href', data.company_zalo_link); 
-            document.getElementById('company_zalo_link').textContent = (data.company_zalo_link || '').replace(/https?:\/\//, '');
-            // ----- KẾT THÚC -----
-            
-            fill('quote_number', data.quote_number); 
-            fill('quote_date', data.quote_date); 
-            
-            // ----- THAY ĐỔI: Logic ẩn/hiện mục dự án -----
-            const projectLine = document.getElementById('project_line');
-            if (data.project_name && data.project_name.trim() !== '') {
-                fill('project_name', data.project_name);
-                projectLine.style.display = 'block';
-            } else {
-                projectLine.style.display = 'none';
+            fill('company_tax_code', data.company_tax_code); // Thêm MST
+            const zaloLinkEl = document.getElementById('company_zalo_link');
+            if (zaloLinkEl && data.company_zalo_link) {
+                zaloLinkEl.href = data.company_zalo_link;
+                zaloLinkEl.textContent = data.company_zalo_link.replace(/https?:\/\//, '');
             }
-            // ----- KẾT THÚC -----
 
-            fill('customer_name', data.customer_name); 
-            fill('customer_address', data.customer_address, true);
+            // Điền thông tin báo giá và khách hàng
+            fill('quote_number', data.quote_number);
+            fill('quote_date', data.quote_date);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
+            fill('customer_name', data.customer_name);
+            fill('customer_address', data.customer_address, true);
+
+            // ----- SỬA: Logic hiển thị mục dự án -----
+            const projectSection = document.getElementById('project_section');
+            if (projectSection && data.project_name) {
+                fill('project_name', data.project_name);
+                projectSection.style.display = 'block'; // Chỉ hiển thị khi có dữ liệu
+            }
             
-            fill('subtotal', formatInteger(data.subtotal)); 
-            fill('vat_amount', formatInteger(data.vat_amount)); 
+            // Điền thông tin tài chính
+            fill('subtotal', formatInteger(data.subtotal));
+            fill('vat_amount', formatInteger(data.vat_amount));
             fill('grand_total', formatInteger(data.grand_total));
             const amountInNumber = String(data.grand_total || '0').replace(/[.,]/g, '');
+            const amountInWords = (amountInNumber !== '0') ? docso(amountInNumber) : "Không";
             if (amountInNumber !== '0') {
-                const amountInWords = docso(amountInNumber);
                 fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
             } else {
                  fill('grand_total_in_words', '');
@@ -275,16 +261,18 @@
             
             fill('notes_and_terms', data.notes_and_terms, true);
             fill('company_name_signature', data.company_name); 
-            const stampImg = document.getElementById('company_stamp'); if (data.company_branch_code && stampImg) { const signatureUrl = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true"; stampImg.src = signatureUrl; }
+            const stampImg = document.getElementById('company_stamp');
+            if (data.company_branch_code && stampImg) {
+                stampImg.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
+            }
             
+            // Điền thông tin thanh toán
             fill('bank_account_name', data.bank_account_name); 
             fill('bank_account_number', data.bank_account_number); 
-
             const originalShortBankName = data.bank_name || '';
             const shortBankNameKey = originalShortBankName.toLowerCase().replace(/\s/g, '');
             const fullBankName = BANK_FULL_NAMES[shortBankNameKey] || originalShortBankName;
             fill('bank_name', fullBankName);
-
             let paymentText = data.payment_reference_text || '';
             if (originalShortBankName) {
                 const regex = new RegExp(originalShortBankName, 'gi');
@@ -292,6 +280,7 @@
             }
             fill('payment_reference_text', paymentText);
             
+            // Điền bảng sản phẩm
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             (data.products || []).forEach((item, index) => {
                 const row = tableBody.insertRow();
@@ -301,8 +290,7 @@
                 row.insertCell(3).textContent = formatDecimal(item.so_luong);
                 row.insertCell(4).textContent = formatInteger(item.don_gia);
                 row.insertCell(5).textContent = formatInteger(item.thanh_tien);
-                const vatPercent = (item.thue_vat_rate || 0) * 100;
-                row.insertCell(6).textContent = `${vatPercent}%`;
+                row.insertCell(6).textContent = `${(item.thue_vat_rate || 0) * 100}%`;
             });
             
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number}`, data.bank_account_name);
