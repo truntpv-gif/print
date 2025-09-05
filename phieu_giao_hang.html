@@ -139,7 +139,7 @@
             text-align: center;
         }
 
-        /* --- SỬA LỖI & CẬP NHẬT: Canh lề cho các cột --- */
+        /* Canh lề cho các cột */
         #itemTableBody td:nth-child(1) {
             text-align: center; /* Canh giữa cột 1 (STT) */
         }
@@ -149,7 +149,6 @@
         #itemTableBody td:nth-child(4) {
             text-align: right; /* Canh phải cột 4 (Số lượng) */
         }
-        /* --- KẾT THÚC SỬA LỖI --- */
 
         .order-notes {
             font-size: 12px;
@@ -177,6 +176,8 @@
         }
         .signature-block .signer-name {
             font-style: italic;
+            /* Đặt chiều cao tối thiểu để giữ bố cục ổn định */
+            min-height: 1.2em;
         }
 
         .print-button-container {
@@ -290,9 +291,10 @@
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
                     ngay_lap: "01/01/2025",
                     dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
-                    nguoi_nhan_hang: "Nguyễn Văn A",
+                    // Dữ liệu demo không có tên người nhận để kiểm tra
+                    nguoi_nhan_hang: "", 
                     ghi_chu_dh: "Giao hàng trong giờ hành chính.",
-                    // Dữ liệu demo có email để kiểm tra chức năng loại bỏ
+                    // Dữ liệu demo có tên người lập để kiểm tra
                     nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", 
                     products: [
                         { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' },
@@ -320,18 +322,18 @@
             document.getElementById('dia_chi_giao').innerHTML = deliveryAddressText.replace(/\\n/g, '<br>');
             document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
             
-            // Điền tên người ký
-            document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '(Ký và ghi rõ họ tên)';
+            // --- THAY ĐỔI: Bỏ '(Ký và ghi rõ họ tên)' ---
+            // Điền tên người ký, nếu không có thì để trống
+            document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '';
 
-            // --- SỬA LỖI & CẬP NHẬT: Xử lý chuỗi để bỏ email người lập phiếu ---
+            // Xử lý chuỗi để bỏ email người lập phiếu
             let creatorText = data.nguoi_lap_ky;
             if (creatorText && typeof creatorText === 'string') {
-                // Tách chuỗi tại ký tự '(', lấy phần tử đầu tiên và loại bỏ khoảng trắng thừa
                 creatorText = creatorText.split('(')[0].trim();
             }
-            // Nếu sau khi xử lý, chuỗi rỗng thì dùng giá trị mặc định
-            document.getElementById('signature_creator').textContent = creatorText || '(Ký và ghi rõ họ tên)';
-            // --- KẾT THÚC SỬA LỖI ---
+            // Điền tên người lập, nếu không có thì để trống
+            document.getElementById('signature_creator').textContent = creatorText || '';
+            // --- KẾT THÚC THAY ĐỔI ---
 
             // Điền thông tin chi tiết sản phẩm vào bảng
             const itemTableBody = document.getElementById('itemTableBody');
