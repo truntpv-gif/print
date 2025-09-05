@@ -5,197 +5,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* CSS để hiển thị trên màn hình giống trang A4 */
-        body {
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            font-family: 'Times New Roman', Times, serif;
-        }
+        /* CSS CHUNG & BỐ CỤC */
+        body { background-color: #f0f0f0; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; }
+        .page { width: 21cm; min-height: 29.7cm; padding: 1cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; position: relative; }
+        @page { size: A4; margin: 0; }
+        @media print { html, body { width: 21cm; height: 29.7cm; } body { margin: 0; padding: 0; } .page { margin: 0; border: initial; width: initial; min-height: initial; box-shadow: initial; background: initial; page-break-after: always; } .print-button-container { display: none; } }
+        .print-button-container { text-align: center; position: fixed; top: 10px; right: 10px; z-index: 100; }
+        .print-button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        .page {
-            width: 21cm;
-            min-height: 29.7cm;
-            padding: 1cm;
-            margin: 1cm auto;
-            border: 1px #D3D3D3 solid;
-            background: white;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        /* CSS cho việc in ấn */
-        @page {
-            size: A4;
-            margin: 0;
-        }
-
-        @media print {
-            html, body {
-                width: 21cm;
-                height: 29.7cm;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-            }
-            .page {
-                margin: 0;
-                border: initial;
-                border-radius: initial;
-                width: initial;
-                min-height: initial;
-                box-shadow: initial;
-                background: initial;
-                page-break-after: always;
-            }
-            .print-button-container {
-                display: none;
-            }
-        }
-
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 80px;
-            color: rgba(0, 0, 0, 0.1);
-            z-index: 1;
-            white-space: nowrap;
-            pointer-events: none;
-            display: none;
-        }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(0, 0, 0, 0.1); z-index: 1; white-space: nowrap; pointer-events: none; display: none; }
         
-        /* --- Các style còn lại --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
+        /* HEADER & TIÊU ĐỀ */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .company-info { font-size: 11px; line-height: 1.4; width: 60%; }
+        .company-info strong { font-size: 13px; }
+        .logo { width: 350px; height: auto; }
 
-        .company-info {
-            font-size: 11px;
-            line-height: 1.4;
-            width: 60%;
-        }
-
-        .company-info strong {
-            font-size: 13px;
-        }
-
-        .logo {
-            width: 350px;
-            height: auto;
-        }
-
-        .delivery-note-title {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 30px;
-            margin-bottom: 5px;
-        }
+        /* SỬA ĐỔI: Container cho logo và thông tin giao hàng bên phải (giống Báo giá) */
+        .delivery-details-container { display: flex; flex-direction: column; align-items: flex-end; }
+        .delivery-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 12px; }
+        .delivery-info-box p { margin: 0; }
         
-        .order-info {
-            text-align: center;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
+        .delivery-note-title { text-align: center; font-size: 20px; font-weight: bold; margin-top: 20px; margin-bottom: 20px; }
+        /* Xóa bỏ .order-info vì đã di chuyển lên header */
 
-        .customer-info {
-            font-size: 12px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
+        /* THÔNG TIN KHÁCH HÀNG & BẢNG */
+        .customer-info { font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
+        .customer-info div { display: flex; }
+        .customer-info div span:first-child { width: 150px; flex-shrink: 0; font-weight: bold; }
 
-        .customer-info div {
-            display: flex;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+        table th, table td { border: 1px solid #000; padding: 8px; text-align: left; }
+        table th { background-color: #f2f2f2; text-align: center; }
+        #itemTableBody td:nth-child(1), #itemTableBody td:nth-child(3) { text-align: center; }
+        #itemTableBody td:nth-child(4) { text-align: right; }
 
-        .customer-info div span:first-child {
-            width: 150px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
-
-        table th, table td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
-
-        table th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-
-        /* Canh lề cho các cột */
-        #itemTableBody td:nth-child(1) {
-            text-align: center; /* Canh giữa cột 1 (STT) */
-        }
-        #itemTableBody td:nth-child(3) {
-            text-align: center; /* Canh giữa cột 3 (Đơn vị) */
-        }
-        #itemTableBody td:nth-child(4) {
-            text-align: right; /* Canh phải cột 4 (Số lượng) */
-        }
-
-        .order-notes {
-            font-size: 12px;
-            margin-bottom: 30px;
-        }
-        .order-notes span:first-child {
-            font-weight: bold;
-        }
-
-        .signatures {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            font-size: 12px;
-            margin-top: 40px;
-        }
-
-        .signature-block {
-            width: 40%;
-        }
-
-        .signature-block .role {
-            font-weight: bold;
-            margin-bottom: 60px;
-        }
-        .signature-block .signer-name {
-            font-style: italic;
-            /* Đặt chiều cao tối thiểu để giữ bố cục ổn định */
-            min-height: 1.2em;
-        }
-
-        .print-button-container {
-            text-align: center;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 100;
-        }
-        .print-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
+        /* GHI CHÚ & CHỮ KÝ */
+        .order-notes { font-size: 12px; margin-bottom: 30px; }
+        .order-notes span:first-child { font-weight: bold; }
+        .signatures { display: flex; justify-content: space-around; text-align: center; font-size: 12px; margin-top: 40px; }
+        .signature-block { width: 40%; }
+        .signature-block .role { font-weight: bold; margin-bottom: 60px; }
+        .signature-block .signer-name { font-style: italic; min-height: 1.2em; }
     </style>
 </head>
 <body>
@@ -206,6 +57,7 @@
     <div class="page">
         <div class="watermark" id="watermark">PHIẾU DEMO</div>
 
+        <!-- SỬA ĐỔI: Cấu trúc Header mới -->
         <div class="header">
             <div class="company-info">
                 <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
@@ -214,14 +66,18 @@
                 <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
                 <span id="company_email">Email: vattutinthinh@gmail.com</span>
             </div>
-            <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
+            <div class="delivery-details-container">
+                <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
+                <div class="delivery-info-box">
+                    <p>Số đơn hàng: <strong id="so_dh"></strong></p>
+                    <p>Ngày: <span id="ngay_lap"></span></p>
+                </div>
+            </div>
         </div>
 
         <p class="delivery-note-title">PHIẾU GIAO HÀNG</p>
-        <div class="order-info">
-            Số đơn hàng: <strong id="so_dh"></strong> | Ngày: <span id="ngay_lap"></span><br>
-            
-        </div>
+        
+        <!-- Xóa bỏ .order-info ở đây -->
 
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
@@ -258,6 +114,7 @@
     </div>
 
     <script>
+        // Không cần thay đổi JavaScript vì các ID vẫn được giữ nguyên
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -291,10 +148,8 @@
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
                     ngay_lap: "01/01/2025",
                     dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
-                    // Dữ liệu demo không có tên người nhận để kiểm tra
                     nguoi_nhan_hang: "", 
                     ghi_chu_dh: "Giao hàng trong giờ hành chính.",
-                    // Dữ liệu demo có tên người lập để kiểm tra
                     nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", 
                     products: [
                         { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' },
@@ -304,7 +159,6 @@
                 };
             }
 
-            // Điền thông tin CÔNG TY
             document.getElementById('company_name').textContent = data.company_name || 'TÊN CÔNG TY CỦA BẠN';
             const companyAddressText = data.company_address || 'Địa chỉ công ty';
             document.getElementById('company_address').innerHTML = 'Địa chỉ: ' + companyAddressText.replace(/\\n/g, '<br>');
@@ -314,7 +168,6 @@
             document.getElementById('company_zalo').innerHTML = `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace('https://', '').replace('http://', '')}</a>)`;
             document.getElementById('company_email').textContent = 'Email: ' + (data.company_email || 'Email công ty');
 
-            // Điền thông tin đơn hàng chung
             document.getElementById('so_dh').textContent = data.so_dh || '';
             document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
             document.getElementById('ten_kh').textContent = data.ten_kh || '';
@@ -322,20 +175,13 @@
             document.getElementById('dia_chi_giao').innerHTML = deliveryAddressText.replace(/\\n/g, '<br>');
             document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
             
-            // --- THAY ĐỔI: Bỏ '(Ký và ghi rõ họ tên)' ---
-            // Điền tên người ký, nếu không có thì để trống
             document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '';
-
-            // Xử lý chuỗi để bỏ email người lập phiếu
             let creatorText = data.nguoi_lap_ky;
             if (creatorText && typeof creatorText === 'string') {
                 creatorText = creatorText.split('(')[0].trim();
             }
-            // Điền tên người lập, nếu không có thì để trống
             document.getElementById('signature_creator').textContent = creatorText || '';
-            // --- KẾT THÚC THAY ĐỔI ---
 
-            // Điền thông tin chi tiết sản phẩm vào bảng
             const itemTableBody = document.getElementById('itemTableBody');
             itemTableBody.innerHTML = '';
             const items = data.products || [];
