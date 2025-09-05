@@ -19,17 +19,23 @@
         .company-info strong { font-size: 11pt; }
         #company_address { font-size: 9pt; }
         .logo { width: 300px; height: auto; }
+        
+        /* SỬA ĐỔI: Container cho logo và thông tin báo giá bên phải */
+        .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
+        .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
+        .quote-info-box p { margin: 0; }
+
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
-        .title-section p { margin: 4px 0; font-size: 11pt; }
+        .title-section p { margin: 5px 0; font-size: 11pt; }
         .customer-info { margin-bottom: 10; line-height: 1.5; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
-       .intro-line {
-    margin-top: 0; /* Loại bỏ khoảng trắng phía trên */
-    margin-bottom: 10px; /* Giữ khoảng trắng hợp lý trước bảng */
-}
+        .intro-line {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
 
         /* BẢNG SẢN PHẨM & TỔNG CỘNG */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
@@ -65,7 +71,7 @@
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
         #quote_number, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td,
-        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code {
+        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #customer_project {
             color: #002B5B;
         }
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
@@ -77,6 +83,7 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
+        <!-- SỬA ĐỔI: Cấu trúc Header -->
         <div class="header">
             <div class="company-info">
                 <strong id="company_name"></strong><br>
@@ -84,13 +91,23 @@
                 ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
                 MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
             </div>
-            <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
+            <div class="quote-details-container">
+                <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
+                <div class="quote-info-box">
+                    <p>Số: <strong id="quote_number"></strong></p>
+                    <p>Ngày: <span id="quote_date"></span></p>
+                </div>
+            </div>
         </div>
+        
+        <!-- SỬA ĐỔI: Cấu trúc Title Section -->
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
-            <p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p>
-            <p id="project_line" style="display: none;">Dự án: <span id="project_name"></span></p>
+            <p id="customer_project_line" style="display: none;">
+                <b><i><span id="customer_project"></span></i></b>
+            </p>
         </div>
+
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
@@ -127,6 +144,7 @@
     </div>
 
     <script>
+        // Không có thay đổi nào trong JavaScript, giữ nguyên như cũ
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
@@ -174,13 +192,11 @@
 
             if (dataParam) {
                 try {
-                    // *** FIX: Thay thế các ký tự \n không hợp lệ bằng \\n hợp lệ ***
                     const decodedParam = decodeURIComponent(dataParam);
                     const sanitizedJsonString = decodedParam.replace(/(?<!\\)\n/g, '\\n');
                     data = JSON.parse(sanitizedJsonString);
                 } catch (e) {
                     console.error("Lỗi JSON, không thể đọc dữ liệu từ URL:", e);
-                    // Giữ data là đối tượng rỗng, form sẽ trống.
                 }
             }
             
@@ -206,12 +222,12 @@
             fill('quote_number', data.quote_number); 
             fill('quote_date', data.quote_date); 
             
-            const projectLine = document.getElementById('project_line');
-            if (data.project_name && data.project_name.trim() !== '') {
-                fill('project_name', data.project_name);
-                projectLine.style.display = 'block';
+            const customerProjectLine = document.getElementById('customer_project_line');
+            if (data.customer_project && data.customer_project.trim() !== '') {
+                fill('customer_project', "Dự án: " + data.customer_project);
+                customerProjectLine.style.display = 'block';
             } else {
-                projectLine.style.display = 'none';
+                customerProjectLine.style.display = 'none';
             }
 
             fill('customer_name', data.customer_name); 
