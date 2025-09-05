@@ -61,15 +61,13 @@
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #quote_number, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td,
-        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature {
+        #quote_number, #quote_date, #project_name, #customer_name, #customer_address, #contact_line, .products tbody td,
+        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature,
+        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text, #company_tax_code {
             color: #002B5B;
         }
-        /* BOLD NỘI DUNG THANH TOÁN */
-        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
-            font-weight: bold;
-            color: #002B5B;
-        }
+        /* THAY ĐỔI: Thêm #payment_reference_text vào để in đậm */
+        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text { font-weight: bold; }
     </style>
 </head>
 <body>
@@ -79,14 +77,19 @@
             <div class="company-info">
                 <strong id="company_name"></strong><br>
                 <span id="company_address"></span><br>
-                <!-- Dòng MST và Zalo mới -->
-                MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a><br>
-                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span>
+                <!-- THAY ĐỔI: Thêm MST -->
+                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span> &nbsp;|&nbsp; MST: <span id="company_tax_code"></span><br>
+                <!-- THAY ĐỔI: Đơn giản hóa Zalo thành link -->
+                Zalo: <a href="#" id="company_zalo_link"></a>
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
-        <!-- Loại bỏ dòng Dự án -->
-        <div class="title-section"><h1>BÁO GIÁ VẬT TƯ</h1><p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p></div>
+        <div class="title-section">
+            <h1>BÁO GIÁ VẬT TƯ</h1>
+            <p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p>
+            <!-- THAY ĐỔI: Thêm ID để ẩn/hiện mục dự án -->
+            <p id="project_line">Dự án: <span id="project_name"></span></p>
+        </div>
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
@@ -116,7 +119,7 @@
                     <p>Tên tk: <span id="bank_account_name"></span></p>
                     <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
                     <p>Nội dung: <span id="payment_reference_text"></span></p>
-                    <!-- Cập nhật câu hướng dẫn -->
+                    <!-- THAY ĐỔI: Cập nhật câu hướng dẫn -->
                     <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
                 </div>
             </div>
@@ -128,7 +131,23 @@
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
         const BANK_FULL_NAMES = {
-            'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)'
+            'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)',
+            'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)',
+            'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
+            'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
+            'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)',
+            'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)',
+            'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)',
+            'acb': 'Ngân hàng TMCP Á Châu (ACB)',
+            'mbbank': 'Ngân hàng TMCP Quân đội (MB)',
+            'mb': 'Ngân hàng TMCP Quân đội (MB)',
+            'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)',
+            'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)',
+            'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)',
+            'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)',
+            'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)',
+            'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)',
+            'ocb': 'Ngân hàng TMCP Phương Đông (OCB)'
         };
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
@@ -168,56 +187,90 @@
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
-            // ----- BẮT ĐẦU LOGIC MỚI - ĐÃ SỬA LỖI -----
-            const dataParam = getQueryParam('data');
+            const dataParam = getQueryParam('data'); 
             let data = {};
+            let useDefaultData = true;
+
+            const defaultData = {
+                company_name: "CN CÔNG TY TNHH XD TÍN THỊNH",
+                company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
+                company_phone: "0933676123",
+                company_email: "sales@sieuthivattu.com",
+                company_tax_code: "0313247923-001", // Thêm MST mặc định
+                company_zalo_link: "https://zalo.me/sieuthivattu",
+                company_branch_code: "CNHCM", 
+                quote_number: "",
+                quote_date: new Date().toLocaleDateString('vi-VN'),
+                project_name: "",
+                customer_name: "",
+                customer_address: "",
+                customer_contact_person: "",
+                customer_phone: "",
+                customer_email: "",
+                products: [],
+                subtotal: 0,
+                vat_amount: 0,
+                grand_total: 0,
+                notes_and_terms: "",
+                bank_account_name: "CN CÔNG TY TNHH XÂY DỰNG TÍN THỊNH",
+                bank_account_number: "19036483626016",
+                bank_name: "Techcombank",
+                payment_reference_text: "Thanh toán cho đơn hàng số 002-BTBD hoặc số hóa đơn đã gởi"
+            };
 
             if (dataParam) {
                 try {
-                    // TRƯỜNG HỢP 1: Có data hợp lệ từ URL
                     data = JSON.parse(decodeURIComponent(dataParam));
+                    useDefaultData = false;
                 } catch (e) {
-                    // TRƯỜNG HỢP 3: Data lỗi, dùng Demo (không có watermark theo yêu cầu mới)
-                    console.error("Lỗi JSON, sử dụng dữ liệu demo:", e);
-                    // Có thể thêm dữ liệu demo ở đây nếu muốn
+                    console.error("Lỗi JSON, sử dụng dữ liệu mặc định:", e);
+                    useDefaultData = true;
                 }
-            } else {
-                // TRƯỜNG HỢP 2: Không có data, dùng Mặc định
-                // Để trống hoặc điền thông tin mặc định nếu cần
             }
+            
+            if (useDefaultData) { data = defaultData; }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
-            const formatInteger = (num) => { return num ? new Intl.NumberFormat('de-DE').format(Math.round(num)) : ''; };
-            const formatDecimal = (num) => { return num ? new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) : ''; };
+            const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
+            const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
-            fill('company_name', data.company_name);
-            fill('company_address', data.company_address, true);
-            fill('company_tax_code', data.company_tax_code);
-            fill('company_phone', data.company_phone);
+            fill('company_name', data.company_name); 
+            fill('company_address', data.company_address, true); 
+            fill('company_phone', data.company_phone); 
             fill('company_email', data.company_email);
-            
-            // Cập nhật Zalo link
-            let zaloLink = data.company_zalo_link || '';
-            if (zaloLink && !zaloLink.startsWith('http')) {
-                zaloLink = 'https://' + zaloLink;
-            }
-            fillAttr('company_zalo_link', 'href', zaloLink);
+            // ----- THAY ĐỔI: Thêm fill cho MST và cập nhật Zalo -----
+            fill('company_tax_code', data.company_tax_code);
+            fillAttr('company_zalo_link', 'href', data.company_zalo_link); 
             document.getElementById('company_zalo_link').textContent = (data.company_zalo_link || '').replace(/https?:\/\//, '');
+            // ----- KẾT THÚC -----
+            
+            fill('quote_number', data.quote_number); 
+            fill('quote_date', data.quote_date); 
+            
+            // ----- THAY ĐỔI: Logic ẩn/hiện mục dự án -----
+            const projectLine = document.getElementById('project_line');
+            if (data.project_name && data.project_name.trim() !== '') {
+                fill('project_name', data.project_name);
+                projectLine.style.display = 'block';
+            } else {
+                projectLine.style.display = 'none';
+            }
+            // ----- KẾT THÚC -----
 
-            fill('quote_number', data.quote_number);
-            fill('quote_date', data.quote_date);
-            fill('customer_name', data.customer_name);
+            fill('customer_name', data.customer_name); 
             fill('customer_address', data.customer_address, true);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             
-            fill('subtotal', formatInteger(data.subtotal));
-            fill('vat_amount', formatInteger(data.vat_amount));
+            fill('subtotal', formatInteger(data.subtotal)); 
+            fill('vat_amount', formatInteger(data.vat_amount)); 
             fill('grand_total', formatInteger(data.grand_total));
             const amountInNumber = String(data.grand_total || '0').replace(/[.,]/g, '');
-            const amountInWords = docso(amountInNumber);
-            if(data.grand_total > 0){
+            if (amountInNumber !== '0') {
+                const amountInWords = docso(amountInNumber);
                 fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
+            } else {
+                 fill('grand_total_in_words', '');
             }
             
             fill('notes_and_terms', data.notes_and_terms, true);
@@ -233,11 +286,11 @@
             fill('bank_name', fullBankName);
 
             let paymentText = data.payment_reference_text || '';
-            if (originalShortBankName && fullBankName) {
+            if (originalShortBankName) {
                 const regex = new RegExp(originalShortBankName, 'gi');
                 paymentText = paymentText.replace(regex, fullBankName);
             }
-            fill('payment_reference_text', paymentText, true); // Dùng isHtml=true để render bold tag nếu có
+            fill('payment_reference_text', paymentText);
             
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             (data.products || []).forEach((item, index) => {
@@ -248,11 +301,11 @@
                 row.insertCell(3).textContent = formatDecimal(item.so_luong);
                 row.insertCell(4).textContent = formatInteger(item.don_gia);
                 row.insertCell(5).textContent = formatInteger(item.thanh_tien);
-                const vatPercent = (item.thue_vat_rate * 100) || 0;
+                const vatPercent = (item.thue_vat_rate || 0) * 100;
                 row.insertCell(6).textContent = `${vatPercent}%`;
             });
             
-            generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number || ''}`, data.bank_account_name);
+            generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number}`, data.bank_account_name);
         }
         document.addEventListener('DOMContentLoaded', populateData);
     </script>
