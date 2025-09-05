@@ -16,18 +16,17 @@
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(0, 0, 0, 0.1); z-index: 1; white-space: nowrap; pointer-events: none; display: none; }
         
         /* HEADER & TIÊU ĐỀ */
+        /* SỬA ĐỔI: Đảm bảo align-items là flex-start */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .company-info { font-size: 11px; line-height: 1.4; width: 60%; }
         .company-info strong { font-size: 13px; }
         .logo { width: 350px; height: auto; }
 
-        /* SỬA ĐỔI: Container cho logo và thông tin giao hàng bên phải (giống Báo giá) */
         .delivery-details-container { display: flex; flex-direction: column; align-items: flex-end; }
         .delivery-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 12px; }
         .delivery-info-box p { margin: 0; }
         
         .delivery-note-title { text-align: center; font-size: 20px; font-weight: bold; margin-top: 20px; margin-bottom: 20px; }
-        /* Xóa bỏ .order-info vì đã di chuyển lên header */
 
         /* THÔNG TIN KHÁCH HÀNG & BẢNG */
         .customer-info { font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
@@ -57,7 +56,6 @@
     <div class="page">
         <div class="watermark" id="watermark">PHIẾU DEMO</div>
 
-        <!-- SỬA ĐỔI: Cấu trúc Header mới -->
         <div class="header">
             <div class="company-info">
                 <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
@@ -77,10 +75,10 @@
 
         <p class="delivery-note-title">PHIẾU GIAO HÀNG</p>
         
-        <!-- Xóa bỏ .order-info ở đây -->
-
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
+            <!-- SỬA ĐỔI: Thêm dòng Dự án -->
+            <div id="project_line" style="display: none;"><span>Dự án</span>: <span id="ten_du_an"></span></div>
             <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
         </div>
 
@@ -114,7 +112,6 @@
     </div>
 
     <script>
-        // Không cần thay đổi JavaScript vì các ID vẫn được giữ nguyên
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -146,6 +143,7 @@
                     company_email: "vattutinthinh@gmail.com (DEMO)",
                     so_dh: "DH-DEMO-001",
                     ten_kh: "CÔNG TY CỔ PHẦN ABC",
+                    ten_du_an: "Dự án Vinhome Grand Park (DEMO)", // Dữ liệu demo cho dự án
                     ngay_lap: "01/01/2025",
                     dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
                     nguoi_nhan_hang: "", 
@@ -159,43 +157,48 @@
                 };
             }
 
-            document.getElementById('company_name').textContent = data.company_name || 'TÊN CÔNG TY CỦA BẠN';
-            const companyAddressText = data.company_address || 'Địa chỉ công ty';
-            document.getElementById('company_address').innerHTML = 'Địa chỉ: ' + companyAddressText.replace(/\\n/g, '<br>');
-            document.getElementById('company_phone').textContent = 'ĐT: ' + (data.company_phone || 'Số điện thoại công ty');
-            const zaloText = data.company_zalo_display || 'Zalo OA của bạn';
-            const zaloLink = data.company_zalo_link || '#';
-            document.getElementById('company_zalo').innerHTML = `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace('https://', '').replace('http://', '')}</a>)`;
-            document.getElementById('company_email').textContent = 'Email: ' + (data.company_email || 'Email công ty');
-
-            document.getElementById('so_dh').textContent = data.so_dh || '';
-            document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
-            document.getElementById('ten_kh').textContent = data.ten_kh || '';
-            const deliveryAddressText = data.dia_chi_giao || '';
-            document.getElementById('dia_chi_giao').innerHTML = deliveryAddressText.replace(/\\n/g, '<br>');
-            document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
+            const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = value || ''; else el.textContent = value || ''; } };
             
-            document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '';
+            fill('company_name', data.company_name);
+            fill('company_address', 'Địa chỉ: ' + (data.company_address || '').replace(/\\n/g, '<br>'), true);
+            fill('company_phone', 'ĐT: ' + data.company_phone);
+            const zaloText = data.company_zalo_display || '';
+            const zaloLink = data.company_zalo_link || '#';
+            fill('company_zalo', `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace(/https?:\/\//, '')}</a>)`, true);
+            fill('company_email', 'Email: ' + data.company_email);
+
+            fill('so_dh', data.so_dh);
+            fill('ngay_lap', data.ngay_lap);
+            fill('ten_kh', data.ten_kh);
+            fill('dia_chi_giao', (data.dia_chi_giao || '').replace(/\\n/g, '<br>'), true);
+            fill('ghi_chu_dh', data.ghi_chu_dh);
+            
+            // SỬA ĐỔI: Thêm logic hiển thị Tên dự án
+            const projectLine = document.getElementById('project_line');
+            if (data.ten_du_an && data.ten_du_an.trim() !== '') {
+                fill('ten_du_an', data.ten_du_an);
+                projectLine.style.display = 'flex'; // Hiển thị dòng dự án
+            } else {
+                projectLine.style.display = 'none'; // Ẩn nếu không có dữ liệu
+            }
+
+            fill('signature_recipient', data.nguoi_nhan_hang);
             let creatorText = data.nguoi_lap_ky;
             if (creatorText && typeof creatorText === 'string') {
                 creatorText = creatorText.split('(')[0].trim();
             }
-            document.getElementById('signature_creator').textContent = creatorText || '';
+            fill('signature_creator', creatorText);
 
             const itemTableBody = document.getElementById('itemTableBody');
             itemTableBody.innerHTML = '';
-            const items = data.products || [];
-
-            if (Array.isArray(items)) {
-                items.forEach((item, index) => {
-                    const row = itemTableBody.insertRow();
-                    row.insertCell(0).textContent = index + 1;
-                    row.insertCell(1).textContent = item.ten_sanpham || '';
-                    row.insertCell(2).textContent = item.dvt || '';
-                    row.insertCell(3).textContent = (item.so_luong != null) ? item.so_luong.toLocaleString('de-DE') : 0;
-                    row.insertCell(4).textContent = item.ghi_chu || '';
-                });
-            }
+            (data.products || []).forEach((item, index) => {
+                const row = itemTableBody.insertRow();
+                row.insertCell(0).textContent = index + 1;
+                row.insertCell(1).textContent = item.ten_sanpham || '';
+                row.insertCell(2).textContent = item.dvt || '';
+                row.insertCell(3).textContent = (item.so_luong != null) ? item.so_luong.toLocaleString('de-DE') : 0;
+                row.insertCell(4).textContent = item.ghi_chu || '';
+            });
         }
 
         document.addEventListener('DOMContentLoaded', populateData);
