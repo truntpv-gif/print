@@ -66,7 +66,6 @@
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
             color: #002B5B;
         }
-        /* THAY ĐỔI: In đậm cả nội dung thanh toán */
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text { 
             font-weight: bold; 
         }
@@ -80,12 +79,10 @@
                 <strong id="company_name"></strong><br>
                 <span id="company_address"></span><br>
                 ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
-                <!-- THAY ĐỔI: Thêm MST và sửa Zalo -->
                 Mã số thuế: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
             </div>
             <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
         </div>
-        <!-- THAY ĐỔI: Loại bỏ mục Dự Án -->
         <div class="title-section"><h1>BÁO GIÁ VẬT TƯ</h1><p>Số báo giá: <strong id="quote_number"></strong> &nbsp;|&nbsp; Ngày: <span id="quote_date"></span></p></div>
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
@@ -116,7 +113,6 @@
                     <p>Tên tk: <span id="bank_account_name"></span></p>
                     <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
                     <p>Nội dung: <span id="payment_reference_text"></span></p>
-                    <!-- THAY ĐỔI: Sửa lại câu hướng dẫn -->
                     <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
                 </div>
             </div>
@@ -185,50 +181,49 @@
         
         function populateData() {
             const dataParam = getQueryParam('data'); 
-            let data = {};
-            let useDefaultData = true;
+            let data;
 
+            // Dữ liệu sẽ hiển thị khi mở link trực tiếp không có tham số 'data'
             const defaultData = {
                 company_name: "CN CÔNG TY TNHH XD TÍN THỊNH",
                 company_address: "Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM",
                 company_phone: "0933676123",
                 company_email: "sales@sieuthivattu.com",
-                company_tax_code: "0314221147-001", // Thêm mã số thuế
+                company_tax_code: "0314221147-001",
                 company_zalo_link: "https://zalo.me/sieuthivattu",
                 company_branch_code: "CNHCM",
-                
-                quote_number: "",
                 quote_date: new Date().toLocaleDateString('vi-VN'),
-                
-                customer_name: "", customer_address: "", customer_contact_person: "", customer_phone: "", customer_email: "",
-                products: [],
-                subtotal: 0, vat_amount: 0, grand_total: 0, notes_and_terms: "",
-
                 bank_account_name: "CN CÔNG TY TNHH XÂY DỰNG TÍN THỊNH",
                 bank_account_number: "19036483626016",
                 bank_name: "Techcombank",
                 payment_reference_text: "Thanh toán cho đơn hàng số 002-BTBD hoặc số hóa đơn đã gởi"
             };
 
-            if (dataParam) {
+            // ----- BẮT ĐẦU PHẦN SỬA LỖI LOGIC -----
+            // Trường hợp 1: Tham số 'data' KHÔNG tồn tại trên URL. Dùng dữ liệu mặc định.
+            if (dataParam === null) {
+                data = defaultData;
+            } else {
+            // Trường hợp 2: Tham số 'data' CÓ tồn tại. Cố gắng phân tích nó.
                 try {
+                    // Nếu dataParam rỗng (""), JSON.parse sẽ gây lỗi và đi vào catch.
                     data = JSON.parse(decodeURIComponent(dataParam));
-                    useDefaultData = false;
                 } catch (e) {
-                    console.error("Lỗi JSON, sử dụng dữ liệu mặc định:", e);
-                    useDefaultData = true;
+                    console.error("Lỗi phân tích JSON từ AppSheet. Hiển thị form trống.", e);
+                    // Nếu lỗi, gán data là một đối tượng rỗng để form hiển thị trống,
+                    // thay vì hiển thị thông tin mặc định.
+                    data = {};
                 }
             }
-            
-            if (useDefaultData) { data = defaultData; }
-            
+            // ----- KẾT THÚC PHẦN SỬA LỖI LOGIC -----
+
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
             const formatInteger = (num) => { return new Intl.NumberFormat('de-DE').format(Math.round(num || 0)); };
             const formatDecimal = (num) => { return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0); };
             
             fill('company_name', data.company_name); fill('company_address', data.company_address, true); fill('company_phone', data.company_phone); fill('company_email', data.company_email);
-            fill('company_tax_code', data.company_tax_code); // Hiển thị MST
+            fill('company_tax_code', data.company_tax_code);
             fillAttr('company_zalo_link', 'href', data.company_zalo_link); document.getElementById('company_zalo_link').textContent = (data.company_zalo_link || '').replace(/https?:\/\//, '');
             
             fill('quote_number', data.quote_number); fill('quote_date', data.quote_date); 
