@@ -16,7 +16,6 @@
         .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(0, 0, 0, 0.1); z-index: 1; white-space: nowrap; pointer-events: none; display: none; }
         
         /* HEADER & TIÊU ĐỀ */
-        /* SỬA ĐỔI: Đảm bảo align-items là flex-start */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .company-info { font-size: 11px; line-height: 1.4; width: 60%; }
         .company-info strong { font-size: 13px; }
@@ -58,11 +57,11 @@
 
         <div class="header">
             <div class="company-info">
-                <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
-                <span id="company_address">Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM</span><br>
-                <span id="company_phone">ĐT: 0933 676 123</span><br>
-                <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
-                <span id="company_email">Email: vattutinthinh@gmail.com</span>
+                <strong id="company_name"></strong><br>
+                <span id="company_address"></span><br>
+                <span id="company_phone"></span><br>
+                <span id="company_zalo"></span><br>
+                <span id="company_email"></span>
             </div>
             <div class="delivery-details-container">
                 <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
@@ -77,7 +76,6 @@
         
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
-            <!-- SỬA ĐỔI: Thêm dòng Dự án -->
             <div id="project_line" style="display: none;"><span>Dự án</span>: <span id="ten_du_an"></span></div>
             <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
         </div>
@@ -124,7 +122,10 @@
 
             if (dataParam) {
                 try {
-                    data = JSON.parse(decodeURIComponent(dataParam));
+                    const decodedParam = decodeURIComponent(dataParam);
+                    // *** SỬA LỖI: Thay thế ký tự xuống dòng thật (\n) bằng chuỗi ký tự (\\n) TRƯỚC KHI PARSE JSON ***
+                    const sanitizedJsonString = decodedParam.replace(/\n/g, '\\n');
+                    data = JSON.parse(sanitizedJsonString);
                     isDemo = false;
                 } catch (e) {
                     console.error("Lỗi phân tích JSON từ URL:", e);
@@ -134,26 +135,9 @@
             
             if (isDemo) {
                 document.getElementById('watermark').style.display = 'block';
+                // Giữ lại dữ liệu demo để phòng trường hợp không có data
                 data = {
-                    company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)",
-                    company_address: "VP Miền Nam: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)\\nVP Miền Trung: 123 Đường ABC, Đà Nẵng",
-                    company_phone: "0933 676 123 (DEMO)",
-                    company_zalo_display: "Siêu Thị Vật Tư (DEMO)",
-                    company_zalo_link: "https://zalo.me/sieuthivattu",
-                    company_email: "vattutinthinh@gmail.com (DEMO)",
-                    so_dh: "DH-DEMO-001",
-                    ten_kh: "CÔNG TY CỔ PHẦN ABC",
-                    ten_du_an: "Dự án Vinhome Grand Park (DEMO)", // Dữ liệu demo cho dự án
-                    ngay_lap: "01/01/2025",
-                    dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
-                    nguoi_nhan_hang: "", 
-                    ghi_chu_dh: "Giao hàng trong giờ hành chính.",
-                    nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", 
-                    products: [
-                        { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' },
-                        { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' },
-                        { ten_sanpham: 'Miễn phí vận chuyển', dvt: 'Chuyến', so_luong: 1, ghi_chu: '' }
-                    ]
+                    company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "VP Miền Nam: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)\\nVP Miền Trung: 123 Đường ABC, Đà Nẵng", company_phone: "0933 676 123 (DEMO)", company_zalo_display: "Siêu Thị Vật Tư (DEMO)", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "vattutinthinh@gmail.com (DEMO)", so_dh: "DH-DEMO-001", ten_kh: "CÔNG TY CỔ PHẦN ABC", ten_du_an: "Dự án Vinhome Grand Park (DEMO)", ngay_lap: "01/01/2025", dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco", nguoi_nhan_hang: "", ghi_chu_dh: "Giao hàng trong giờ hành chính.", nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", products: [{ ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' }, { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' }, { ten_sanpham: 'Miễn phí vận chuyển', dvt: 'Chuyến', so_luong: 1, ghi_chu: '' }]
                 };
             }
 
@@ -173,13 +157,12 @@
             fill('dia_chi_giao', (data.dia_chi_giao || '').replace(/\\n/g, '<br>'), true);
             fill('ghi_chu_dh', data.ghi_chu_dh);
             
-            // SỬA ĐỔI: Thêm logic hiển thị Tên dự án
             const projectLine = document.getElementById('project_line');
             if (data.ten_du_an && data.ten_du_an.trim() !== '') {
                 fill('ten_du_an', data.ten_du_an);
-                projectLine.style.display = 'flex'; // Hiển thị dòng dự án
+                projectLine.style.display = 'flex';
             } else {
-                projectLine.style.display = 'none'; // Ẩn nếu không có dữ liệu
+                projectLine.style.display = 'none';
             }
 
             fill('signature_recipient', data.nguoi_nhan_hang);
