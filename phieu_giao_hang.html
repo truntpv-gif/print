@@ -7,7 +7,7 @@
     <style>
         /* CSS để hiển thị trên màn hình giống trang A4 */
         body {
-            background-color: #f0f0f0; /* Màu nền xám để làm nổi bật trang giấy */
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
             font-family: 'Times New Roman', Times, serif;
@@ -51,7 +51,7 @@
                 page-break-after: always;
             }
             .print-button-container {
-                display: none; /* Ẩn nút in khi in */
+                display: none;
             }
         }
 
@@ -65,7 +65,7 @@
             z-index: 1;
             white-space: nowrap;
             pointer-events: none;
-            display: none; /* Ẩn mặc định, chỉ hiện khi dùng data demo */
+            display: none;
         }
         
         /* --- Các style còn lại --- */
@@ -125,7 +125,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
-            margin-bottom: 20px; /* Giảm khoảng cách dưới bảng */
+            margin-bottom: 20px;
         }
 
         table th, table td {
@@ -139,20 +139,21 @@
             text-align: center;
         }
 
-        /* --- THAY ĐỔI: Canh lề cho cột Đơn vị và Số lượng --- */
+        /* --- SỬA LỖI & CẬP NHẬT: Canh lề cho các cột --- */
+        #itemTableBody td:nth-child(1) {
+            text-align: center; /* Canh giữa cột 1 (STT) */
+        }
         #itemTableBody td:nth-child(3) {
-            text-align: center; /* Căn giữa cột thứ 3 (Đơn vị) */
+            text-align: center; /* Canh giữa cột 3 (Đơn vị) */
         }
         #itemTableBody td:nth-child(4) {
-            text-align: right; /* Căn phải cột thứ 4 (Số lượng) */
+            text-align: right; /* Canh phải cột 4 (Số lượng) */
         }
-        /* --- KẾT THÚC THAY ĐỔI --- */
+        /* --- KẾT THÚC SỬA LỖI --- */
 
-
-        /* Style cho phần ghi chú mới */
         .order-notes {
             font-size: 12px;
-            margin-bottom: 30px; /* Khoảng cách đến phần chữ ký */
+            margin-bottom: 30px;
         }
         .order-notes span:first-child {
             font-weight: bold;
@@ -172,7 +173,7 @@
 
         .signature-block .role {
             font-weight: bold;
-            margin-bottom: 60px; /* Khoảng trống để ký */
+            margin-bottom: 60px;
         }
         .signature-block .signer-name {
             font-style: italic;
@@ -207,7 +208,6 @@
         <div class="header">
             <div class="company-info">
                 <strong id="company_name">CN CÔNG TY TNHH XD TÍN THỊNH</strong><br>
-                <!-- Thẻ span này sẽ được điền nội dung có thể chứa <br> -->
                 <span id="company_address">Địa chỉ: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM</span><br>
                 <span id="company_phone">ĐT: 0933 676 123</span><br>
                 <span id="company_zalo">Zalo OA: Siêu Thị Vật Tư (<a href="https://zalo.me/sieuthivattu" id="zalo_link">zalo.me/sieuthivattu</a>)</span><br>
@@ -224,7 +224,6 @@
 
         <div class="customer-info">
             <div><span>Khách hàng</span>: <span id="ten_kh"></span></div>
-            <!-- Thẻ span này sẽ được điền nội dung có thể chứa <br> -->
             <div><span>Địa chỉ nhận hàng</span>: <span id="dia_chi_giao"></span></div>
         </div>
 
@@ -293,7 +292,8 @@
                     dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco",
                     nguoi_nhan_hang: "Nguyễn Văn A",
                     ghi_chu_dh: "Giao hàng trong giờ hành chính.",
-                    nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", // Dữ liệu demo có email để kiểm tra
+                    // Dữ liệu demo có email để kiểm tra chức năng loại bỏ
+                    nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", 
                     products: [
                         { ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' },
                         { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' },
@@ -304,41 +304,34 @@
 
             // Điền thông tin CÔNG TY
             document.getElementById('company_name').textContent = data.company_name || 'TÊN CÔNG TY CỦA BẠN';
-            
             const companyAddressText = data.company_address || 'Địa chỉ công ty';
             document.getElementById('company_address').innerHTML = 'Địa chỉ: ' + companyAddressText.replace(/\\n/g, '<br>');
-            
             document.getElementById('company_phone').textContent = 'ĐT: ' + (data.company_phone || 'Số điện thoại công ty');
-            
             const zaloText = data.company_zalo_display || 'Zalo OA của bạn';
             const zaloLink = data.company_zalo_link || '#';
             document.getElementById('company_zalo').innerHTML = `Zalo OA: ${zaloText} (<a href="${zaloLink}" id="zalo_link">${zaloLink.replace('https://', '').replace('http://', '')}</a>)`;
-            
             document.getElementById('company_email').textContent = 'Email: ' + (data.company_email || 'Email công ty');
 
             // Điền thông tin đơn hàng chung
             document.getElementById('so_dh').textContent = data.so_dh || '';
             document.getElementById('ngay_lap').textContent = data.ngay_lap || '';
             document.getElementById('ten_kh').textContent = data.ten_kh || '';
-
             const deliveryAddressText = data.dia_chi_giao || '';
             document.getElementById('dia_chi_giao').innerHTML = deliveryAddressText.replace(/\\n/g, '<br>');
-
             document.getElementById('ghi_chu_dh').textContent = data.ghi_chu_dh || '';
             
             // Điền tên người ký
             document.getElementById('signature_recipient').textContent = data.nguoi_nhan_hang || '(Ký và ghi rõ họ tên)';
 
-            // --- THAY ĐỔI: Xử lý chuỗi để bỏ email người lập phiếu ---
+            // --- SỬA LỖI & CẬP NHẬT: Xử lý chuỗi để bỏ email người lập phiếu ---
             let creatorText = data.nguoi_lap_ky;
-            if (creatorText) {
-                // Lấy phần văn bản trước dấu ngoặc đơn đầu tiên (nếu có)
-                // và xóa khoảng trắng thừa ở đầu/cuối
+            if (creatorText && typeof creatorText === 'string') {
+                // Tách chuỗi tại ký tự '(', lấy phần tử đầu tiên và loại bỏ khoảng trắng thừa
                 creatorText = creatorText.split('(')[0].trim();
             }
             // Nếu sau khi xử lý, chuỗi rỗng thì dùng giá trị mặc định
             document.getElementById('signature_creator').textContent = creatorText || '(Ký và ghi rõ họ tên)';
-            // --- KẾT THÚC THAY ĐỔI ---
+            // --- KẾT THÚC SỬA LỖI ---
 
             // Điền thông tin chi tiết sản phẩm vào bảng
             const itemTableBody = document.getElementById('itemTableBody');
@@ -348,18 +341,11 @@
             if (Array.isArray(items)) {
                 items.forEach((item, index) => {
                     const row = itemTableBody.insertRow();
-                    const cellSTT = row.insertCell(0);
-                    const cellTenVT = row.insertCell(1);
-                    const cellDonVi = row.insertCell(2);
-                    const cellSoLuong = row.insertCell(3);
-                    const cellGhiChu = row.insertCell(4);
-
-                    cellSTT.textContent = index + 1;
-                    cellTenVT.textContent = item.ten_sanpham || '';
-                    cellDonVi.textContent = item.dvt || '';
-                    // Chuyển đổi số lượng sang dạng có phân cách hàng nghìn nếu cần (tùy chọn)
-                    cellSoLuong.textContent = (item.so_luong || 0).toLocaleString('de-DE');
-                    cellGhiChu.textContent = item.ghi_chu || '';
+                    row.insertCell(0).textContent = index + 1;
+                    row.insertCell(1).textContent = item.ten_sanpham || '';
+                    row.insertCell(2).textContent = item.dvt || '';
+                    row.insertCell(3).textContent = (item.so_luong != null) ? item.so_luong.toLocaleString('de-DE') : 0;
+                    row.insertCell(4).textContent = item.ghi_chu || '';
                 });
             }
         }
