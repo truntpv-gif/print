@@ -73,10 +73,9 @@
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
         <div class="header">
-            <!-- THAY ĐỔI: Gộp SĐT và Email vào một dòng -->
             <div class="company-info">
                 <strong id="company_name"></strong><br>
-                <span id="company_address"></span>
+                <span id="company_address"></span><br>
                 ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
                 Zalo OA: <span id="company_zalo_display"></span> (<a href="#" id="company_zalo_link"></a>)
             </div>
@@ -145,7 +144,14 @@
             let str = parseInt(number) + ''; if (str == 0) return "Không"; let i = 0, j = str.length; let result = ""; let arr = [];
             while (i < j) { arr.push(str.substring(i, i + 3)); i += 3; }
             let newArr = arr.reverse(); let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
-            for (let i = newArr.length - 1; i >= 0; i--) { let k = newArr[i]; if (k != '000') { result += convert_block_three(k) + hang[i]; } }
+            for (let i = newArr.length - 1; i >= 0; i--) {
+                let k = newArr[i];
+                if (k != '000') {
+                    let blockText = convert_block_three(k);
+                    if (result.length > 0) { result += ' '; }
+                    result += blockText + hang[i];
+                }
+            }
             result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
         }
 
@@ -163,7 +169,7 @@
                 bank_account_name: "Tên tài khoản Demo", bank_account_number: "123456789", bank_name: "Techcombank", payment_reference_text: "Thanh toán BG-DEMO-001"
             };
             if (dataParam) { try { data = JSON.parse(decodeURIComponent(dataParam)); isDemo = false; } catch (e) { console.error("Lỗi JSON, sử dụng dữ liệu demo:", e); isDemo = true; } }
-            if (isDemo) { document.getElementById('watermark').style.display = 'block'; data = demoData; }
+            if (isDemo) { data = demoData; }
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
