@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,7 +21,6 @@
         #company_address { font-size: 9pt; }
         .logo { width: 300px; height: auto; }
         
-        /* SỬA ĐỔI: Container cho logo và thông tin báo giá bên phải */
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
         .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
         .quote-info-box p { margin: 0; }
@@ -83,7 +83,6 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
-        <!-- SỬA ĐỔI: Cấu trúc Header -->
         <div class="header">
             <div class="company-info">
                 <strong id="company_name"></strong><br>
@@ -100,7 +99,6 @@
             </div>
         </div>
         
-        <!-- SỬA ĐỔI: Cấu trúc Title Section -->
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
             <p id="customer_project_line" style="display: none;">
@@ -144,7 +142,6 @@
     </div>
 
     <script>
-        // Không có thay đổi nào trong JavaScript, giữ nguyên như cũ
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
@@ -152,36 +149,76 @@
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
+        // SỬA ĐỔI: Thay thế hoàn toàn hàm docso
         function docso(number) {
-            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
-            const chuHangDonVi = ('1 một' + defaultNumbers).split(' ');
-            const chuHangChuc = ('lẻ mười' + defaultNumbers).split(' ');
-            const chuHangTram = ('không một' + defaultNumbers).split(' ');
-            function convert_block_three(number) {
-                number = number.replace(/^0+/, ''); if (number == '') return ''; let a = number.split('');
-                switch (a.length) {
-                    case 0: return ''; case 1: return chuHangDonVi[a[0]]; case 2: return convert_block_two(a[0], a[1]);
-                    case 3: let chuc_dv = ''; if (a[1] != 0 || a[2] != 0) { chuc_dv = ' ' + convert_block_two(a[1], a[2]); } let tram = chuHangTram[a[0]] + ' trăm'; return tram + chuc_dv;
+            const units = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+            const suffixes = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+
+            function readThreeDigitBlock(block) {
+                let tram = parseInt(block[0]);
+                let chuc = parseInt(block[1]);
+                let donvi = parseInt(block[2]);
+                let result = "";
+
+                if (tram === 0 && chuc === 0 && donvi === 0) return "";
+
+                if (tram > 0) {
+                    result += units[tram] + " trăm ";
+                } else if (result === "" && (chuc > 0 || donvi > 0)) {
+                    // Để xử lý trường hợp như 010 -> "không trăm mười"
+                    // Điều này cần thiết cho các khối ở giữa, ví dụ: 43.010.000
+                    result += "không trăm ";
+                }
+
+
+                if (chuc > 1) { // 20-99
+                    result += units[chuc] + " mươi ";
+                    if (donvi === 1) result += "mốt";
+                    else if (donvi === 5) result += "lăm";
+                    else if (donvi > 0) result += units[donvi];
+                } else if (chuc === 1) { // 10-19
+                    result += "mười ";
+                    if (donvi === 5) result += "lăm";
+                    else if (donvi > 0) result += units[donvi];
+                } else if (donvi > 0) { // 01-09
+                    if (result !== "") result += "linh "; // Có hàng trăm -> "linh"
+                    result += units[donvi];
+                }
+
+                return result.trim();
+            }
+
+            let numStr = String(number).replace(/[.,]/g, '');
+            if (numStr === '0' || !numStr) return "Không";
+
+            let numLen = numStr.length;
+            let numBlocks = Math.ceil(numLen / 3);
+            let paddedNum = numStr.padStart(numBlocks * 3, '0');
+
+            let chunks = [];
+            for (let i = 0; i < paddedNum.length; i += 3) {
+                chunks.push(paddedNum.substring(i, i + 3));
+            }
+
+            let wordResult = [];
+            let isFirstBlock = true;
+            for (let i = 0; i < chunks.length; i++) {
+                let blockText = readThreeDigitBlock(chunks[i]);
+                
+                // Xử lý "không trăm" cho khối đầu tiên (ví dụ 043.000.000)
+                if (isFirstBlock && blockText.startsWith("không trăm ")) {
+                     blockText = blockText.substring(11); // Bỏ "không trăm "
+                }
+                
+                isFirstBlock = false;
+
+                if (blockText) {
+                    wordResult.push(blockText + suffixes[chunks.length - 1 - i]);
                 }
             }
-            function convert_block_two(b, c) {
-                let chuc = chuHangChuc[b]; let donvi = chuHangDonVi[c];
-                if (b == 1) { if (c == 0) return chuc; if (c == 5) return chuc + " lăm"; return chuc + " " + donvi; }
-                if (b > 1) { if (c == 1) return chuc + " mốt"; if (c == 5) return chuc + " lăm"; if (c == 0) return chuc; return chuc + " " + donvi; }
-                if (b == 0) { if (c == 0) return ""; return "lẻ " + donvi; }
-            }
-            let str = parseInt(number) + ''; if (str == 0) return "Không"; let i = 0, j = str.length; let result = ""; let arr = [];
-            while (i < j) { arr.push(str.substring(i, i + 3)); i += 3; }
-            let newArr = arr.reverse(); let hang = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
-            for (let i = newArr.length - 1; i >= 0; i--) {
-                let k = newArr[i];
-                if (k != '000') {
-                    let blockText = convert_block_three(k);
-                    if (result.length > 0) { result += ' '; }
-                    result += blockText + hang[i];
-                }
-            }
-            result = result.replace(/ +/g, " ").trim(); return result.charAt(0).toUpperCase() + result.slice(1);
+            
+            let finalResult = wordResult.join(" ").trim().replace(/\s+/g, ' ');
+            return finalResult.charAt(0).toUpperCase() + finalResult.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
