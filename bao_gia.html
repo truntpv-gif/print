@@ -9,14 +9,12 @@
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         
-        /* SỬA LỖI 3: Thiết lập lề trang in là 10mm để hiển thị header/footer của trình duyệt */
         @page { 
             size: A4; 
             margin: 10mm; 
         }
         
         @media print { 
-            /* SỬA LỖI 3: Bỏ `height` cố định để trình duyệt tự ngắt trang tốt hơn */
             html, body { 
                 width: 21cm; 
             } 
@@ -68,11 +66,13 @@
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
 
-        /* SỬA LỖI 2: Tạo container cho cụm cuối trang và chống ngắt trang */
+        /* === THAY ĐỔI CHÍNH Ở ĐÂY === */
         .final-section-group {
             page-break-inside: avoid;
-            margin-top: auto; /* Đẩy toàn bộ cụm xuống cuối trang */
-            padding-top: 20px;
+            /* Thay đổi: Bỏ margin-top: auto và padding-top để khối này nằm ngay sau Ghi chú */
+            margin-top: 30px; 
+            /* margin-top: auto; đã bị xóa */
+            /* padding-top: 20px; đã bị xóa */
         }
 
         .signatures-section { display: flex; justify-content: space-between; text-align: center; }
@@ -84,7 +84,6 @@
         .stamp-container { position: relative; height: 100px; margin-top: 5px; }
         .stamp-container img { max-width: 100%; max-height: 100px; }
         
-        /* SỬA LỖI 2: Xóa margin và padding ở đây vì đã chuyển lên container cha */
         .payment-section { margin-top: 20px; font-size: 10pt; } 
         .payment-section h3 { margin: 0 0 5px 0; font-size: 11pt; }
         .bank-info-container { display: flex; align-items: flex-start; }
@@ -145,7 +144,6 @@
 
         <div class="notes-block"><strong>Lưu ý:</strong><p id="notes_and_terms"></p></div>
         
-        <!-- SỬA LỖI 2: Bọc các phần tử cuối trang vào một div chung để chống ngắt trang -->
         <div class="final-section-group">
             <div class="signatures-section">
                 <div class="signature-block"><p class="role">XÁC NHẬN ĐẶT HÀNG</p><p class="instruction">(ký tên, đóng dấu)</p></div>
@@ -168,6 +166,7 @@
     </div>
 
     <script>
+        // ... (Phần Javascript không thay đổi) ...
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
@@ -175,7 +174,6 @@
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
-        // SỬA LỖI 1: Thay thế hoàn toàn hàm `docso` bằng phiên bản chính xác hơn.
         function docso(sotien) {
             const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
             const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
@@ -231,9 +229,7 @@
 
                 let chuoiNhom = docNhomBaChuSo(nhom);
 
-                // Sửa lỗi hiển thị "linh" cho nhóm đầu tiên nếu nhóm < 10 và không phải nhóm cuối cùng
                 if (i < cacNhom.length - 1 && nhom < 10 && ketquaFinal.length > 0) {
-                     // Nếu nhóm trước đó đã có số, và nhóm hiện tại < 10 (ví dụ 10.005.000)
                      if(chuoiNhom.includes("linh")){
                         const index = chuoiNhom.indexOf("linh");
                         chuoiNhom.splice(index, 1);
@@ -245,7 +241,6 @@
             }
             
             let ketquaStr = ketquaFinal.join(" ").trim();
-             // Xóa đơn vị hàng cuối cùng nếu nó rỗng (ví dụ: "đồng" cho nhóm đơn vị)
             if (ketquaStr.endsWith(hang[0])) {
                 ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim();
             }
