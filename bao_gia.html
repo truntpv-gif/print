@@ -177,69 +177,80 @@
 
         // SỬA LỖI 1: Thay thế hoàn toàn hàm `docso` bằng phiên bản chính xác hơn.
         function docso(sotien) {
-            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
-            const chuSo = (' không' + defaultNumbers).split(' ');
-            const hang = ('' + ' nghìn' + ' triệu' + ' tỷ' + ' nghìn tỷ' + ' triệu tỷ').split(' ');
+            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+            const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
 
-            function convert(so, daydu) {
-                let text = '';
-                let soStr = so.toString();
-                let i = soStr.length;
-                if (so == 0) return chuSo[0];
-                while (i > 0) {
-                    let donvi = parseInt(soStr.substring(i - 1, i));
-                    i--;
-                    let chuc = (i > 0) ? parseInt(soStr.substring(i - 1, i)) : -1;
-                    i--;
-                    let tram = (i > 0) ? parseInt(soStr.substring(i - 1, i)) : -1;
-                    i--;
-                    if (tram != -1 && (donvi > 0 || chuc > 0 || tram > 0 || daydu)) {
-                        text = chuSo[tram] + ' trăm' + text;
-                    }
-                    if (chuc != -1 && (donvi > 0 || chuc > 0 || daydu)) {
-                        if (chuc == 0 && donvi > 0) {
-                            text = ' linh' + text;
-                        } else if (chuc == 1) {
-                            text = ' mười' + text;
-                        } else {
-                            text = ' ' + chuSo[chuc] + ' mươi' + text;
-                        }
-                    }
-                    if (donvi != -1) {
-                        if (donvi == 1 && chuc > 1) {
-                            text = ' mốt' + text;
-                        } else if (donvi == 5 && chuc > 0) {
-                            text = ' lăm' + text;
-                        } else if (donvi > 0) {
-                            text = ' ' + chuSo[donvi] + text;
-                        }
-                    }
+            function docNhomBaChuSo(nhom) {
+                let tram = Math.floor(nhom / 100);
+                let chuc = Math.floor((nhom % 100) / 10);
+                let donvi = nhom % 10;
+                let ketqua = [];
+
+                if (tram > 0) {
+                    ketqua.push(chuSo[tram], "trăm");
                 }
-                return text;
+
+                if (chuc > 1) {
+                    ketqua.push(chuSo[chuc], "mươi");
+                    if (donvi === 1) {
+                        ketqua.push("mốt");
+                    } else if (donvi > 1) {
+                        ketqua.push(chuSo[donvi]);
+                    }
+                } else if (chuc === 1) {
+                    ketqua.push("mười");
+                    if (donvi === 5) {
+                        ketqua.push("lăm");
+                    } else if (donvi > 0) {
+                        ketqua.push(chuSo[donvi]);
+                    }
+                } else if (donvi > 0) {
+                    ketqua.push("linh", chuSo[donvi]);
+                }
+                
+                return ketqua;
             }
 
-            if (typeof sotien === 'undefined' || sotien === null || sotien === '') return "";
-            if (sotien === 0 || sotien === '0') return "Không";
-
-            let soStr = sotien.toString().replace(/[.,]/g, '');
+            if (sotien == null || sotien === '' || isNaN(sotien)) return "";
+            if (Number(sotien) === 0) return "Không";
+            
+            let soStr = String(Math.floor(Math.abs(Number(sotien))));
             if (soStr.length > 18) return "Số quá lớn";
 
-            let ketqua = '';
-            let i = soStr.length;
-            let count = 0;
-            while (i > 0) {
-                let sl = (i >= 3) ? 3 : i;
-                let bo3so = parseInt(soStr.substring(i - sl, i));
-                i -= sl;
-                let daydu = (soStr.length - i - sl > 0);
-                if (bo3so > 0) {
-                    ketqua = convert(bo3so, daydu) + hang[count] + ketqua;
+            let cacNhom = [];
+            while (soStr.length > 0) {
+                cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0)));
+                soStr = soStr.slice(0, Math.max(soStr.length - 3, 0));
+            }
+            if (cacNhom.length === 0) return "";
+
+            let ketquaFinal = [];
+            for (let i = cacNhom.length - 1; i >= 0; i--) {
+                let nhom = parseInt(cacNhom[i], 10);
+                if (nhom === 0) continue;
+
+                let chuoiNhom = docNhomBaChuSo(nhom);
+
+                // Sửa lỗi hiển thị "linh" cho nhóm đầu tiên nếu nhóm < 10 và không phải nhóm cuối cùng
+                if (i < cacNhom.length - 1 && nhom < 10 && ketquaFinal.length > 0) {
+                     // Nếu nhóm trước đó đã có số, và nhóm hiện tại < 10 (ví dụ 10.005.000)
+                     if(chuoiNhom.includes("linh")){
+                        const index = chuoiNhom.indexOf("linh");
+                        chuoiNhom.splice(index, 1);
+                     }
                 }
-                count++;
+                if (chuoiNhom.length > 0) {
+                     ketquaFinal.push(...chuoiNhom, hang[i]);
+                }
+            }
+            
+            let ketquaStr = ketquaFinal.join(" ").trim();
+             // Xóa đơn vị hàng cuối cùng nếu nó rỗng (ví dụ: "đồng" cho nhóm đơn vị)
+            if (ketquaStr.endsWith(hang[0])) {
+                ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim();
             }
 
-            ketqua = ketqua.trim().replace(/\s+/g, ' ');
-            return ketqua.charAt(0).toUpperCase() + ketqua.slice(1);
+            return ketquaStr.charAt(0).toUpperCase() + ketquaStr.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
