@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +8,26 @@
         /* CSS CHUNG & BỐ CỤC */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
-        @page { size: A4; margin: 0; }
-        @media print { html, body { width: 21cm; height: 29.7cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
+        
+        /* SỬA LỖI 3: Thiết lập lề trang in là 10mm để hiển thị header/footer của trình duyệt */
+        @page { 
+            size: A4; 
+            margin: 10mm; 
+        }
+        
+        @media print { 
+            /* SỬA LỖI 3: Bỏ `height` cố định để trình duyệt tự ngắt trang tốt hơn */
+            html, body { 
+                width: 21cm; 
+            } 
+            .page { 
+                margin: 0; 
+                border: initial; 
+                box-shadow: initial; 
+                background: initial; 
+            } 
+            .print-button-container { display: none; } 
+        }
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
@@ -32,10 +49,7 @@
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
-        .intro-line {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+        .intro-line { margin-top: 0; margin-bottom: 10px; }
 
         /* BẢNG SẢN PHẨM & TỔNG CỘNG */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
@@ -53,7 +67,15 @@
         /* GHI CHÚ, CHỮ KÝ, THANH TOÁN */
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
-        .signatures-section { display: flex; justify-content: space-between; margin-top: 20px; text-align: center; }
+
+        /* SỬA LỖI 2: Tạo container cho cụm cuối trang và chống ngắt trang */
+        .final-section-group {
+            page-break-inside: avoid;
+            margin-top: auto; /* Đẩy toàn bộ cụm xuống cuối trang */
+            padding-top: 20px;
+        }
+
+        .signatures-section { display: flex; justify-content: space-between; text-align: center; }
         .signature-block:first-child { flex-basis: 40%; }
         .signature-block:last-child { flex-basis: 58%; }
         .signature-block .role, .signature-block .instruction { margin: 0; padding: 0; line-height: 1.3; }
@@ -62,7 +84,8 @@
         .stamp-container { position: relative; height: 100px; margin-top: 5px; }
         .stamp-container img { max-width: 100%; max-height: 100px; }
         
-        .payment-section { margin-top: auto; padding-top: 20px; font-size: 10pt; }
+        /* SỬA LỖI 2: Xóa margin và padding ở đây vì đã chuyển lên container cha */
+        .payment-section { margin-top: 20px; font-size: 10pt; } 
         .payment-section h3 { margin: 0 0 5px 0; font-size: 11pt; }
         .bank-info-container { display: flex; align-items: flex-start; }
         .bank-info-text { flex-grow: 1; }
@@ -122,20 +145,23 @@
 
         <div class="notes-block"><strong>Lưu ý:</strong><p id="notes_and_terms"></p></div>
         
-        <div class="signatures-section">
-            <div class="signature-block"><p class="role">XÁC NHẬN ĐẶT HÀNG</p><p class="instruction">(ký tên, đóng dấu)</p></div>
-            <div class="signature-block"><p class="role" id="company_name_signature"></p><p class="instruction">Giám đốc</p><div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div></div>
-        </div>
-        
-        <div class="payment-section">
-            <h3>Thông tin chuyển khoản:</h3>
-            <div class="bank-info-container">
-                <img id="vietqr_code_small" src="" alt="VietQR Code">
-                <div class="bank-info-text">
-                    <p>Tên tk: <span id="bank_account_name"></span></p>
-                    <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
-                    <p>Nội dung: <span id="payment_reference_text"></span></p>
-                    <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
+        <!-- SỬA LỖI 2: Bọc các phần tử cuối trang vào một div chung để chống ngắt trang -->
+        <div class="final-section-group">
+            <div class="signatures-section">
+                <div class="signature-block"><p class="role">XÁC NHẬN ĐẶT HÀNG</p><p class="instruction">(ký tên, đóng dấu)</p></div>
+                <div class="signature-block"><p class="role" id="company_name_signature"></p><p class="instruction">Giám đốc</p><div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div></div>
+            </div>
+            
+            <div class="payment-section">
+                <h3>Thông tin chuyển khoản:</h3>
+                <div class="bank-info-container">
+                    <img id="vietqr_code_small" src="" alt="VietQR Code">
+                    <div class="bank-info-text">
+                        <p>Tên tk: <span id="bank_account_name"></span></p>
+                        <p>Số tk: <span id="bank_account_number"></span>, <span id="bank_name"></span></p>
+                        <p>Nội dung: <span id="payment_reference_text"></span></p>
+                        <p style="font-style: italic;">(Quý cty ghi đúng Số đơn hàng hoặc số báo giá)</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,76 +175,71 @@
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
 
-        // SỬA ĐỔI: Thay thế hoàn toàn hàm docso
-        function docso(number) {
-            const units = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-            const suffixes = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+        // SỬA LỖI 1: Thay thế hoàn toàn hàm `docso` bằng phiên bản chính xác hơn.
+        function docso(sotien) {
+            const defaultNumbers = ' hai ba bốn năm sáu bảy tám chín';
+            const chuSo = (' không' + defaultNumbers).split(' ');
+            const hang = ('' + ' nghìn' + ' triệu' + ' tỷ' + ' nghìn tỷ' + ' triệu tỷ').split(' ');
 
-            function readThreeDigitBlock(block) {
-                let tram = parseInt(block[0]);
-                let chuc = parseInt(block[1]);
-                let donvi = parseInt(block[2]);
-                let result = "";
-
-                if (tram === 0 && chuc === 0 && donvi === 0) return "";
-
-                if (tram > 0) {
-                    result += units[tram] + " trăm ";
-                } else if (result === "" && (chuc > 0 || donvi > 0)) {
-                    // Để xử lý trường hợp như 010 -> "không trăm mười"
-                    // Điều này cần thiết cho các khối ở giữa, ví dụ: 43.010.000
-                    result += "không trăm ";
+            function convert(so, daydu) {
+                let text = '';
+                let soStr = so.toString();
+                let i = soStr.length;
+                if (so == 0) return chuSo[0];
+                while (i > 0) {
+                    let donvi = parseInt(soStr.substring(i - 1, i));
+                    i--;
+                    let chuc = (i > 0) ? parseInt(soStr.substring(i - 1, i)) : -1;
+                    i--;
+                    let tram = (i > 0) ? parseInt(soStr.substring(i - 1, i)) : -1;
+                    i--;
+                    if (tram != -1 && (donvi > 0 || chuc > 0 || tram > 0 || daydu)) {
+                        text = chuSo[tram] + ' trăm' + text;
+                    }
+                    if (chuc != -1 && (donvi > 0 || chuc > 0 || daydu)) {
+                        if (chuc == 0 && donvi > 0) {
+                            text = ' linh' + text;
+                        } else if (chuc == 1) {
+                            text = ' mười' + text;
+                        } else {
+                            text = ' ' + chuSo[chuc] + ' mươi' + text;
+                        }
+                    }
+                    if (donvi != -1) {
+                        if (donvi == 1 && chuc > 1) {
+                            text = ' mốt' + text;
+                        } else if (donvi == 5 && chuc > 0) {
+                            text = ' lăm' + text;
+                        } else if (donvi > 0) {
+                            text = ' ' + chuSo[donvi] + text;
+                        }
+                    }
                 }
-
-
-                if (chuc > 1) { // 20-99
-                    result += units[chuc] + " mươi ";
-                    if (donvi === 1) result += "mốt";
-                    else if (donvi === 5) result += "lăm";
-                    else if (donvi > 0) result += units[donvi];
-                } else if (chuc === 1) { // 10-19
-                    result += "mười ";
-                    if (donvi === 5) result += "lăm";
-                    else if (donvi > 0) result += units[donvi];
-                } else if (donvi > 0) { // 01-09
-                    if (result !== "") result += "linh "; // Có hàng trăm -> "linh"
-                    result += units[donvi];
-                }
-
-                return result.trim();
+                return text;
             }
 
-            let numStr = String(number).replace(/[.,]/g, '');
-            if (numStr === '0' || !numStr) return "Không";
+            if (typeof sotien === 'undefined' || sotien === null || sotien === '') return "";
+            if (sotien === 0 || sotien === '0') return "Không";
 
-            let numLen = numStr.length;
-            let numBlocks = Math.ceil(numLen / 3);
-            let paddedNum = numStr.padStart(numBlocks * 3, '0');
+            let soStr = sotien.toString().replace(/[.,]/g, '');
+            if (soStr.length > 18) return "Số quá lớn";
 
-            let chunks = [];
-            for (let i = 0; i < paddedNum.length; i += 3) {
-                chunks.push(paddedNum.substring(i, i + 3));
+            let ketqua = '';
+            let i = soStr.length;
+            let count = 0;
+            while (i > 0) {
+                let sl = (i >= 3) ? 3 : i;
+                let bo3so = parseInt(soStr.substring(i - sl, i));
+                i -= sl;
+                let daydu = (soStr.length - i - sl > 0);
+                if (bo3so > 0) {
+                    ketqua = convert(bo3so, daydu) + hang[count] + ketqua;
+                }
+                count++;
             }
 
-            let wordResult = [];
-            let isFirstBlock = true;
-            for (let i = 0; i < chunks.length; i++) {
-                let blockText = readThreeDigitBlock(chunks[i]);
-                
-                // Xử lý "không trăm" cho khối đầu tiên (ví dụ 043.000.000)
-                if (isFirstBlock && blockText.startsWith("không trăm ")) {
-                     blockText = blockText.substring(11); // Bỏ "không trăm "
-                }
-                
-                isFirstBlock = false;
-
-                if (blockText) {
-                    wordResult.push(blockText + suffixes[chunks.length - 1 - i]);
-                }
-            }
-            
-            let finalResult = wordResult.join(" ").trim().replace(/\s+/g, ' ');
-            return finalResult.charAt(0).toUpperCase() + finalResult.slice(1);
+            ketqua = ketqua.trim().replace(/\s+/g, ' ');
+            return ketqua.charAt(0).toUpperCase() + ketqua.slice(1);
         }
 
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
