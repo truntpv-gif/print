@@ -178,7 +178,8 @@
             const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
             const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
 
-            function docNhomBaChuSo(nhom) {
+            // Sửa đổi hàm con: Thêm tham số 'isFirstGroup' để xử lý logic đặc biệt
+            function docNhomBaChuSo(nhom, isFirstGroup = false) {
                 let tram = Math.floor(nhom / 100);
                 let chuc = Math.floor((nhom % 100) / 10);
                 let donvi = nhom % 10;
@@ -203,7 +204,14 @@
                         ketqua.push(chuSo[donvi]);
                     }
                 } else if (donvi > 0) {
-                    ketqua.push("linh", chuSo[donvi]);
+                    // *** THAY ĐỔI CHÍNH Ở ĐÂY ***
+                    // Chỉ thêm "linh" nếu không phải là nhóm đầu tiên, HOẶC nếu nhóm đầu tiên có hàng trăm
+                    // Ví dụ: 9.000.000 -> isFirstGroup=true, tram=0 => không thêm "linh"
+                    // Ví dụ: 104.000.000 -> isFirstGroup=true, tram=1 => thêm "linh" (một trăm linh bốn)
+                    if (!isFirstGroup || tram > 0) {
+                        ketqua.push("linh");
+                    }
+                    ketqua.push(chuSo[donvi]);
                 }
                 
                 return ketqua;
@@ -226,15 +234,14 @@
             for (let i = cacNhom.length - 1; i >= 0; i--) {
                 let nhom = parseInt(cacNhom[i], 10);
                 if (nhom === 0) continue;
+                
+                // *** THAY ĐỔI CHÍNH Ở ĐÂY ***
+                // Xác định xem đây có phải là nhóm số đầu tiên được xử lý hay không
+                const isFirstGroup = ketquaFinal.length === 0;
+                let chuoiNhom = docNhomBaChuSo(nhom, isFirstGroup);
 
-                let chuoiNhom = docNhomBaChuSo(nhom);
+                // Bỏ đoạn mã if bị lỗi và không cần thiết ở đây
 
-                if (i < cacNhom.length - 1 && nhom < 10 && ketquaFinal.length > 0) {
-                     if(chuoiNhom.includes("linh")){
-                        const index = chuoiNhom.indexOf("linh");
-                        chuoiNhom.splice(index, 1);
-                     }
-                }
                 if (chuoiNhom.length > 0) {
                      ketquaFinal.push(...chuoiNhom, hang[i]);
                 }
@@ -245,6 +252,7 @@
                 ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim();
             }
 
+            // Viết hoa chữ cái đầu
             return ketquaStr.charAt(0).toUpperCase() + ketquaStr.slice(1);
         }
 
