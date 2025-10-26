@@ -92,7 +92,7 @@
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #so_dh, #ngay_lap, #ten_kh, #customer_address, #contact_line, .products tbody td,
+        #so_dh, #ngay_lap, #ten_kh, #code, #contact_line, .products tbody td,
         #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an {
             color: #002B5B;
         }
@@ -128,7 +128,7 @@
             </p>
         </div>
 
-        <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="ten_kh"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
+        <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="ten_kh"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="tax_code"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
         <table class="products">
@@ -294,7 +294,7 @@
             }
 
             fill('ten_kh', data.ten_kh); 
-            fill('customer_address', data.customer_address, true);
+            fill('tax_code', data.tax_code, true);
             const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             
             fill('subtotal', formatInteger(data.subtotal)); 
