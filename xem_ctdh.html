@@ -93,7 +93,7 @@
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
         #so_dh, #ngay_lap, #ten_kh, #customer_address, #contact_line, .products tbody td,
-        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #customer_project {
+        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an {
             color: #002B5B;
         }
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
@@ -123,8 +123,8 @@
         
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
-            <p id="customer_project_line" style="display: none;">
-                <b><i><span id="customer_project"></span></i></b>
+            <p id="ten_du_an_line" style="display: none;">
+                <b><i><span id="ten_du_an"></span></i></b>
             </p>
         </div>
 
@@ -294,9 +294,9 @@
             fill('so_dh', data.so_dh); 
             fill('ngay_lap', data.ngay_lap); 
             
-            const customerProjectLine = document.getElementById('customer_project_line');
-            if (data.customer_project && data.customer_project.trim() !== '') {
-                fill('customer_project', "Dự án: " + data.customer_project);
+            const customerProjectLine = document.getElementById('ten_du_an_line');
+            if (data.ten_du_an && data.ten_du_an.trim() !== '') {
+                fill('ten_du_an', "Dự án: " + data.ten_du_an);
                 customerProjectLine.style.display = 'block';
             } else {
                 customerProjectLine.style.display = 'none';
