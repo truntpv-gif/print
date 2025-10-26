@@ -29,21 +29,13 @@
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* THÔNG TIN CÔNG TY & KHÁCH HÀNG */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
-        .company-info strong { font-size: 11pt; }
-        #company_address { font-size: 9pt; }
-        .logo { width: 300px; height: auto; }
-        
-        .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
-        .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
-        .quote-info-box p { margin: 0; }
+        /* ===== CSS CHO PHẦN HEADER ĐÃ ĐƯỢC XÓA ===== */
 
-        .title-section { text-align: center; margin: 20px 0; }
+        /* THÔNG TIN KHÁCH HÀNG & TIÊU ĐỀ */
+        .title-section { text-align: center; margin: 20px 0; padding-top: 50px; /* Thêm khoảng đệm trên để thay thế header */ }
         .title-section h1 { font-size: 18pt; margin: 0; }
-        .title-section p { margin-top: 5px; font-size: 11pt; } /* Thêm style cho dòng mới */
-        .customer-info { margin-bottom: 10; line-height: 1.5; }
+        .title-section p { margin: 5px 0; font-size: 11pt; }
+        .customer-info { margin-bottom: 10px; line-height: 1.5; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
@@ -69,29 +61,9 @@
             margin-top: 30px; 
         }
 
-        .signatures-section { display: flex; justify-content: space-between; text-align: center; }
-        .signature-block:first-child { flex-basis: 40%; }
-        .signature-block:last-child { flex-basis: 58%; }
-        .signature-block .role, .signature-block .instruction { margin: 0; padding: 0; line-height: 1.3; }
-        .signature-block .role { font-weight: bold; }
-        .signature-block .instruction { font-style: italic; font-size: 10pt; }
-        .stamp-container { position: relative; height: 100px; margin-top: 5px; }
-        .stamp-container img { max-width: 100%; max-height: 100px; }
-        
-        .payment-section { margin-top: 20px; font-size: 10pt; } 
-        .payment-section h3 { margin: 0 0 5px 0; font-size: 11pt; }
-        .bank-info-container { display: flex; align-items: flex-start; }
-        .bank-info-text { flex-grow: 1; }
-        .bank-info-text p { margin: 2px 0; }
-        #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
-
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
         #so_dh, #ngay_lap, #ten_kh, #company_name,
         #subtotal, #vat_amount, #grand_total, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an, #tax_code, #tax_email {
-            color: #002B5B;
-        }
-        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
-            font-weight: bold;
             color: #002B5B;
         }
     </style>
@@ -99,26 +71,13 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
-        <div class="header">
-            <div class="company-info">
-                <!-- ===== DÒNG TÊN CÔNG TY ĐÃ ĐƯỢC DI CHUYỂN KHỎI ĐÂY ===== -->
-                <span id="company_address"></span><br>
-                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
-                MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
-            </div>
-            <div class="quote-details-container">
-                <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
-                <div class="quote-info-box">
-                    <p>Số: <strong id="so_dh"></strong></p>
-                    <p>Ngày: <span id="ngay_lap"></span></p>
-                </div>
-            </div>
-        </div>
+        <!-- ===== TOÀN BỘ <div class="header"> ĐÃ ĐƯỢC XÓA ===== -->
         
         <div class="title-section">
             <h1>THÔNG TIN XUẤT HÓA ĐƠN</h1>
-            <!-- ===== ĐÂY LÀ VỊ TRÍ MỚI CỦA TÊN CÔNG TY ===== -->
             <p>Đơn vị xuất HD: <strong id="company_name"></strong></p>
+            <!-- ===== SỐ VÀ NGÀY HÓA ĐƠN ĐÃ ĐƯỢC DỜI XUỐNG ĐÂY ===== -->
+            <p>Số: <strong id="so_dh"></strong> &nbsp;|&nbsp; Ngày: <span id="ngay_lap"></span></p>
         </div>
 
         <div class="customer-info"><table>
@@ -148,14 +107,8 @@
 
     <script>
         // ... (Javascript không thay đổi) ...
-        const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
-        const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
-        
-        const BANK_FULL_NAMES = { 'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)' };
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-        
-        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
             const dataParam = getQueryParam('data'); 
@@ -171,27 +124,12 @@
                 }
             }
             
-            const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
-            const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
+            const fill = (id, value) => { const el = document.getElementById(id); if (el) { el.textContent = value || ''; } };
             const formatInteger = (num) => { return num != null ? new Intl.NumberFormat('de-DE').format(Math.round(num)) : ''; };
             const formatDecimal = (num) => { return num != null ? new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) : ''; };
             
-            // Điền thông tin công ty
-            fill('company_name', data.company_name); // Dòng này giờ sẽ điền vào vị trí mới
-            fill('company_address', data.company_address, true); 
-            fill('company_phone', data.company_phone); 
-            fill('company_email', data.company_email);
-            fill('company_tax_code', data.company_tax_code);
-            
-            let zaloLink = data.company_zalo_link || '';
-            let displayZalo = zaloLink.replace(/https?:\/\//, '');
-            if (zaloLink && !zaloLink.startsWith('http')) {
-                zaloLink = 'https://' + zaloLink;
-            }
-            fillAttr('company_zalo_link', 'href', zaloLink);
-            document.getElementById('company_zalo_link').textContent = displayZalo;
-            
-            // Điền thông tin hóa đơn
+            // Điền thông tin vào các vị trí mới
+            fill('company_name', data.company_name); 
             fill('so_dh', data.so_dh); 
             fill('ngay_lap', data.ngay_lap); 
             
@@ -207,7 +145,8 @@
             fill('grand_total', formatInteger(data.grand_total));
             
             // Điền ghi chú
-            fill('notes_and_terms', data.notes_and_terms, true);
+            const notesEl = document.getElementById('notes_and_terms');
+            if(notesEl) notesEl.innerHTML = (data.notes_and_terms || '').replace(/\\n/g, '<br>');
             
             // Điền bảng sản phẩm
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
@@ -222,8 +161,6 @@
                 const vatPercent = ((item.thue_vat_rate || 0) * 100);
                 row.insertCell(6).textContent = `${vatPercent}%`;
             });
-            
-            generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.so_dh || ''}`, data.bank_account_name);
         }
         document.addEventListener('DOMContentLoaded', populateData);
     </script>
