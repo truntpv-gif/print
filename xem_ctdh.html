@@ -29,10 +29,8 @@
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* ===== CSS CHO PHẦN HEADER ĐÃ ĐƯỢC XÓA ===== */
-
         /* THÔNG TIN KHÁCH HÀNG & TIÊU ĐỀ */
-        .title-section { text-align: center; margin: 20px 0; padding-top: 50px; /* Thêm khoảng đệm trên để thay thế header */ }
+        .title-section { text-align: center; margin: 20px 0; padding-top: 50px; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .title-section p { margin: 5px 0; font-size: 11pt; }
         .customer-info { margin-bottom: 10px; line-height: 1.5; }
@@ -71,12 +69,10 @@
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
-        <!-- ===== TOÀN BỘ <div class="header"> ĐÃ ĐƯỢC XÓA ===== -->
         
         <div class="title-section">
             <h1>THÔNG TIN XUẤT HÓA ĐƠN</h1>
             <p>Đơn vị xuất HD: <strong id="company_name"></strong></p>
-            <!-- ===== SỐ VÀ NGÀY HÓA ĐƠN ĐÃ ĐƯỢC DỜI XUỐNG ĐÂY ===== -->
             <p>Số: <strong id="so_dh"></strong> &nbsp;|&nbsp; Ngày: <span id="ngay_lap"></span></p>
         </div>
 
@@ -106,8 +102,6 @@
     </div>
 
     <script>
-        // ... (Javascript không thay đổi) ...
-
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
         
         function populateData() {
@@ -139,7 +133,8 @@
             fill('tax_email', data.tax_email);
             fill('ten_du_an', data.ten_du_an); 
 
-            // Điền tổng tiền
+            // ===== CÁC DÒNG NÀY SẼ ĐIỀN DỮ LIỆU TỔNG TIỀN =====
+            // Chúng lấy giá trị từ data.subtotal, data.vat_amount, data.grand_total trong JSON
             fill('subtotal', formatInteger(data.subtotal)); 
             fill('vat_amount', formatInteger(data.vat_amount)); 
             fill('grand_total', formatInteger(data.grand_total));
