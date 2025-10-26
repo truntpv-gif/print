@@ -42,6 +42,7 @@
 
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
+        .title-section p { margin-top: 5px; font-size: 11pt; } /* Thêm style cho dòng mới */
         .customer-info { margin-bottom: 10; line-height: 1.5; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
@@ -85,7 +86,7 @@
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #so_dh, #ngay_lap, #ten_kh, #code, #contact_line, .products tbody td,
+        #so_dh, #ngay_lap, #ten_kh, #company_name,
         #subtotal, #vat_amount, #grand_total, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an, #tax_code, #tax_email {
             color: #002B5B;
         }
@@ -100,7 +101,7 @@
     <div class="page">
         <div class="header">
             <div class="company-info">
-                <strong id="company_name"></strong><br>
+                <!-- ===== DÒNG TÊN CÔNG TY ĐÃ ĐƯỢC DI CHUYỂN KHỎI ĐÂY ===== -->
                 <span id="company_address"></span><br>
                 ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
                 MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
@@ -116,7 +117,8 @@
         
         <div class="title-section">
             <h1>THÔNG TIN XUẤT HÓA ĐƠN</h1>
-            <!-- ===== DÒNG TÊN DỰ ÁN BÊN DƯỚI TIÊU ĐỀ ĐÃ ĐƯỢC XÓA ===== -->
+            <!-- ===== ĐÂY LÀ VỊ TRÍ MỚI CỦA TÊN CÔNG TY ===== -->
+            <p>Đơn vị xuất HD: <strong id="company_name"></strong></p>
         </div>
 
         <div class="customer-info"><table>
@@ -145,7 +147,7 @@
     </div>
 
     <script>
-        // ... (Phần Javascript không thay đổi) ...
+        // ... (Javascript không thay đổi) ...
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
@@ -175,7 +177,7 @@
             const formatDecimal = (num) => { return num != null ? new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) : ''; };
             
             // Điền thông tin công ty
-            fill('company_name', data.company_name); 
+            fill('company_name', data.company_name); // Dòng này giờ sẽ điền vào vị trí mới
             fill('company_address', data.company_address, true); 
             fill('company_phone', data.company_phone); 
             fill('company_email', data.company_email);
@@ -193,8 +195,7 @@
             fill('so_dh', data.so_dh); 
             fill('ngay_lap', data.ngay_lap); 
             
-            // ===== THAY ĐỔI CHÍNH Ở ĐÂY =====
-            // Điền thông tin khách hàng, bao gồm cả Dự án và Email đã sửa
+            // Điền thông tin khách hàng
             fill('ten_kh', data.ten_kh); 
             fill('tax_code', data.tax_code);
             fill('tax_email', data.tax_email);
@@ -205,7 +206,7 @@
             fill('vat_amount', formatInteger(data.vat_amount)); 
             fill('grand_total', formatInteger(data.grand_total));
             
-            // Điền ghi chú và thông tin khác
+            // Điền ghi chú
             fill('notes_and_terms', data.notes_and_terms, true);
             
             // Điền bảng sản phẩm
