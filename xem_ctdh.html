@@ -92,7 +92,7 @@
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #so_dh, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td,
+        #so_dh, #ngay_lap, #customer_name, #customer_address, #contact_line, .products tbody td,
         #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #customer_project {
             color: #002B5B;
         }
@@ -116,7 +116,7 @@
                 <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
                 <div class="quote-info-box">
                     <p>Số: <strong id="so_dh"></strong></p>
-                    <p>Ngày: <span id="quote_date"></span></p>
+                    <p>Ngày: <span id="ngay_lap"></span></p>
                 </div>
             </div>
         </div>
@@ -292,7 +292,7 @@
             document.getElementById('company_zalo_link').textContent = displayZalo;
             
             fill('so_dh', data.so_dh); 
-            fill('quote_date', data.quote_date); 
+            fill('ngay_lap', data.ngay_lap); 
             
             const customerProjectLine = document.getElementById('customer_project_line');
             if (data.customer_project && data.customer_project.trim() !== '') {
