@@ -42,7 +42,6 @@
 
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
-        .title-section p { margin: 5px 0; font-size: 11pt; }
         .customer-info { margin-bottom: 10; line-height: 1.5; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
@@ -59,8 +58,6 @@
         table.products tfoot td { border-top: none; font-weight: bold; padding: 6px 8px; }
         .totals-label-cell { text-align: right; }
         .totals-value-cell { text-align: right; }
-        .amount-in-words-cell { text-align: right; }
-        #grand_total_in_words { font-size: 10pt; font-style: italic; font-weight: bold; }
         
         /* GHI CHÚ, CHỮ KÝ, THANH TOÁN */
         .notes-block { margin-top: 10px; font-size: 10pt; }
@@ -89,7 +86,7 @@
 
         /* MÀU SẮC DỮ LIỆU ĐỘNG */
         #so_dh, #ngay_lap, #ten_kh, #code, #contact_line, .products tbody td,
-        #subtotal, #vat_amount, #grand_total, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an {
+        #subtotal, #vat_amount, #grand_total, #notes_and_terms, #company_name_signature, #company_tax_code, #ten_du_an, #tax_code, #tax_email {
             color: #002B5B;
         }
         #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
@@ -119,15 +116,15 @@
         
         <div class="title-section">
             <h1>THÔNG TIN XUẤT HÓA ĐƠN</h1>
-            <p id="ten_du_an_line" style="display: none;">
-                <b><i><span id="ten_du_an"></span></i></b>
-            </p>
+            <!-- ===== DÒNG TÊN DỰ ÁN BÊN DƯỚI TIÊU ĐỀ ĐÃ ĐƯỢC XÓA ===== -->
         </div>
 
-        <div class="customer-info"><table><tr><td>Khách hàng</td><td>: <strong id="ten_kh"></strong></td></tr><tr><td>
-            MST</td><td>: <span id="tax_code"></span></td></tr><tr><td>
-            Email nhận HĐ</td><td>: <span id="tax_email"></span></td></tr><tr><td>
-            Dự án </td><td>: <span id="ten_du_an"></span></td></tr></table></div>
+        <div class="customer-info"><table>
+            <tr><td>Khách hàng</td><td>: <strong id="ten_kh"></strong></td></tr>
+            <tr><td>MST</td><td>: <span id="tax_code"></span></td></tr>
+            <tr><td>Email nhận HĐ</td><td>: <span id="tax_email"></span></td></tr>
+            <tr><td>Dự án </td><td>: <span id="ten_du_an"></span></td></tr>
+        </table></div>
         <p class="intro-line">Chi tiết đơn hàng.</p>
         
         <table class="products">
@@ -137,17 +134,13 @@
                 <tr><td colspan="5" class="totals-label-cell">Tổng thành Tiền:</td><td class="totals-value-cell" colspan="2"><span id="subtotal"></span></td></tr>
                 <tr><td colspan="5" class="totals-label-cell">Thuế VAT:</td><td class="totals-value-cell" colspan="2"><span id="vat_amount"></span></td></tr>
                 <tr><td colspan="5" class="totals-label-cell">Tổng tiền đơn hàng:</td><td class="totals-value-cell" colspan="2"><span id="grand_total"></span></td></tr>
-                <!-- ===== DÒNG BẰNG CHỮ ĐÃ ĐƯỢC XÓA Ở ĐÂY ===== -->
             </tfoot>
         </table>
 
         <div class="notes-block"><strong></strong><p id="notes_and_terms"></p></div>
         
         <div class="final-section-group">
-                        
-            <div class="payment-section">
-                                
-            </div>
+            <div class="payment-section"></div>
         </div>
     </div>
 
@@ -159,79 +152,7 @@
         const BANK_FULL_NAMES = { 'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)' };
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-
-        function docso(sotien) {
-            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-            const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
-
-            function docNhomBaChuSo(nhom, isFirstGroup = false) {
-                let tram = Math.floor(nhom / 100);
-                let chuc = Math.floor((nhom % 100) / 10);
-                let donvi = nhom % 10;
-                let ketqua = [];
-
-                if (tram > 0) {
-                    ketqua.push(chuSo[tram], "trăm");
-                }
-
-                if (chuc > 1) {
-                    ketqua.push(chuSo[chuc], "mươi");
-                    if (donvi === 1) {
-                        ketqua.push("mốt");
-                    } else if (donvi > 1) {
-                        ketqua.push(chuSo[donvi]);
-                    }
-                } else if (chuc === 1) {
-                    ketqua.push("mười");
-                    if (donvi === 5) {
-                        ketqua.push("lăm");
-                    } else if (donvi > 0) {
-                        ketqua.push(chuSo[donvi]);
-                    }
-                } else if (donvi > 0) {
-                    if (!isFirstGroup || tram > 0) {
-                        ketqua.push("linh");
-                    }
-                    ketqua.push(chuSo[donvi]);
-                }
-                
-                return ketqua;
-            }
-
-            if (sotien == null || sotien === '' || isNaN(sotien)) return "";
-            if (Number(sotien) === 0) return "Không";
-            
-            let soStr = String(Math.floor(Math.abs(Number(sotien))));
-            if (soStr.length > 18) return "Số quá lớn";
-
-            let cacNhom = [];
-            while (soStr.length > 0) {
-                cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0)));
-                soStr = soStr.slice(0, Math.max(soStr.length - 3, 0));
-            }
-            if (cacNhom.length === 0) return "";
-
-            let ketquaFinal = [];
-            for (let i = cacNhom.length - 1; i >= 0; i--) {
-                let nhom = parseInt(cacNhom[i], 10);
-                if (nhom === 0) continue;
-                
-                const isFirstGroup = ketquaFinal.length === 0;
-                let chuoiNhom = docNhomBaChuSo(nhom, isFirstGroup);
-
-                if (chuoiNhom.length > 0) {
-                     ketquaFinal.push(...chuoiNhom, hang[i]);
-                }
-            }
-            
-            let ketquaStr = ketquaFinal.join(" ").trim();
-            if (ketquaStr.endsWith(hang[0])) {
-                ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim();
-            }
-
-            return ketquaStr.charAt(0).toUpperCase() + ketquaStr.slice(1);
-        }
-
+        
         function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
         
         function populateData() {
@@ -253,6 +174,7 @@
             const formatInteger = (num) => { return num != null ? new Intl.NumberFormat('de-DE').format(Math.round(num)) : ''; };
             const formatDecimal = (num) => { return num != null ? new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) : ''; };
             
+            // Điền thông tin công ty
             fill('company_name', data.company_name); 
             fill('company_address', data.company_address, true); 
             fill('company_phone', data.company_phone); 
@@ -267,46 +189,26 @@
             fillAttr('company_zalo_link', 'href', zaloLink);
             document.getElementById('company_zalo_link').textContent = displayZalo;
             
+            // Điền thông tin hóa đơn
             fill('so_dh', data.so_dh); 
             fill('ngay_lap', data.ngay_lap); 
             
-            const customerProjectLine = document.getElementById('ten_du_an_line');
-            if (data.ten_du_an && data.ten_du_an.trim() !== '') {
-                fill('ten_du_an', "Dự án: " + data.ten_du_an);
-                customerProjectLine.style.display = 'block';
-            } else {
-                customerProjectLine.style.display = 'none';
-            }
-
+            // ===== THAY ĐỔI CHÍNH Ở ĐÂY =====
+            // Điền thông tin khách hàng, bao gồm cả Dự án và Email đã sửa
             fill('ten_kh', data.ten_kh); 
-            fill('tax_code', data.tax_code, true);
-            const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
-            
+            fill('tax_code', data.tax_code);
+            fill('tax_email', data.tax_email);
+            fill('ten_du_an', data.ten_du_an); 
+
+            // Điền tổng tiền
             fill('subtotal', formatInteger(data.subtotal)); 
             fill('vat_amount', formatInteger(data.vat_amount)); 
             fill('grand_total', formatInteger(data.grand_total));
             
-            // ===== ĐOẠN MÃ XỬ LÝ "BẰNG CHỮ" ĐÃ ĐƯỢC XÓA Ở ĐÂY =====
-            
+            // Điền ghi chú và thông tin khác
             fill('notes_and_terms', data.notes_and_terms, true);
-            fill('company_name_signature', data.company_name); 
-            const stampImg = document.getElementById('company_stamp'); if (data.company_branch_code && stampImg) { const signatureUrl = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true"; stampImg.src = signatureUrl; }
             
-            fill('bank_account_name', data.bank_account_name); 
-            fill('bank_account_number', data.bank_account_number); 
-
-            const originalShortBankName = data.bank_name || '';
-            const shortBankNameKey = originalShortBankName.toLowerCase().replace(/\s/g, '');
-            const fullBankName = BANK_FULL_NAMES[shortBankNameKey] || originalShortBankName;
-            fill('bank_name', fullBankName);
-
-            let paymentText = data.payment_reference_text || '';
-            if (originalShortBankName) {
-                const regex = new RegExp(originalShortBankName, 'gi');
-                paymentText = paymentText.replace(regex, fullBankName);
-            }
-            fill('payment_reference_text', paymentText);
-            
+            // Điền bảng sản phẩm
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             (data.products || []).forEach((item, index) => {
                 const row = tableBody.insertRow();
