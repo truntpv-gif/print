@@ -66,13 +66,9 @@
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
 
-        /* === THAY ĐỔI CHÍNH Ở ĐÂY === */
         .final-section-group {
             page-break-inside: avoid;
-            /* Thay đổi: Bỏ margin-top: auto và padding-top để khối này nằm ngay sau Ghi chú */
             margin-top: 30px; 
-            /* margin-top: auto; đã bị xóa */
-            /* padding-top: 20px; đã bị xóa */
         }
 
         .signatures-section { display: flex; justify-content: space-between; text-align: center; }
@@ -166,7 +162,6 @@
     </div>
 
     <script>
-        // ... (Phần Javascript không thay đổi) ...
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
         
@@ -177,82 +172,32 @@
         function docso(sotien) {
             const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
             const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
-
-            // Sửa đổi hàm con: Thêm tham số 'isFirstGroup' để xử lý logic đặc biệt
             function docNhomBaChuSo(nhom, isFirstGroup = false) {
                 let tram = Math.floor(nhom / 100);
                 let chuc = Math.floor((nhom % 100) / 10);
                 let donvi = nhom % 10;
                 let ketqua = [];
-
-                if (tram > 0) {
-                    ketqua.push(chuSo[tram], "trăm");
-                }
-
-                if (chuc > 1) {
-                    ketqua.push(chuSo[chuc], "mươi");
-                    if (donvi === 1) {
-                        ketqua.push("mốt");
-                    } else if (donvi > 1) {
-                        ketqua.push(chuSo[donvi]);
-                    }
-                } else if (chuc === 1) {
-                    ketqua.push("mười");
-                    if (donvi === 5) {
-                        ketqua.push("lăm");
-                    } else if (donvi > 0) {
-                        ketqua.push(chuSo[donvi]);
-                    }
-                } else if (donvi > 0) {
-                    // *** THAY ĐỔI CHÍNH Ở ĐÂY ***
-                    // Chỉ thêm "linh" nếu không phải là nhóm đầu tiên, HOẶC nếu nhóm đầu tiên có hàng trăm
-                    // Ví dụ: 9.000.000 -> isFirstGroup=true, tram=0 => không thêm "linh"
-                    // Ví dụ: 104.000.000 -> isFirstGroup=true, tram=1 => thêm "linh" (một trăm linh bốn)
-                    if (!isFirstGroup || tram > 0) {
-                        ketqua.push("linh");
-                    }
-                    ketqua.push(chuSo[donvi]);
-                }
-                
+                if (tram > 0) { ketqua.push(chuSo[tram], "trăm"); }
+                if (chuc > 1) { ketqua.push(chuSo[chuc], "mươi"); if (donvi === 1) { ketqua.push("mốt"); } else if (donvi > 1) { ketqua.push(chuSo[donvi]); } } else if (chuc === 1) { ketqua.push("mười"); if (donvi === 5) { ketqua.push("lăm"); } else if (donvi > 0) { ketqua.push(chuSo[donvi]); } } else if (donvi > 0) { if (!isFirstGroup || tram > 0) { ketqua.push("linh"); } ketqua.push(chuSo[donvi]); }
                 return ketqua;
             }
-
             if (sotien == null || sotien === '' || isNaN(sotien)) return "";
             if (Number(sotien) === 0) return "Không";
-            
             let soStr = String(Math.floor(Math.abs(Number(sotien))));
             if (soStr.length > 18) return "Số quá lớn";
-
             let cacNhom = [];
-            while (soStr.length > 0) {
-                cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0)));
-                soStr = soStr.slice(0, Math.max(soStr.length - 3, 0));
-            }
+            while (soStr.length > 0) { cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0))); soStr = soStr.slice(0, Math.max(soStr.length - 3, 0)); }
             if (cacNhom.length === 0) return "";
-
             let ketquaFinal = [];
             for (let i = cacNhom.length - 1; i >= 0; i--) {
                 let nhom = parseInt(cacNhom[i], 10);
                 if (nhom === 0) continue;
-                
-                // *** THAY ĐỔI CHÍNH Ở ĐÂY ***
-                // Xác định xem đây có phải là nhóm số đầu tiên được xử lý hay không
                 const isFirstGroup = ketquaFinal.length === 0;
                 let chuoiNhom = docNhomBaChuSo(nhom, isFirstGroup);
-
-                // Bỏ đoạn mã if bị lỗi và không cần thiết ở đây
-
-                if (chuoiNhom.length > 0) {
-                     ketquaFinal.push(...chuoiNhom, hang[i]);
-                }
+                if (chuoiNhom.length > 0) { ketquaFinal.push(...chuoiNhom, hang[i]); }
             }
-            
             let ketquaStr = ketquaFinal.join(" ").trim();
-            if (ketquaStr.endsWith(hang[0])) {
-                ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim();
-            }
-
-            // Viết hoa chữ cái đầu
+            if (ketquaStr.endsWith(hang[0])) { ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim(); }
             return ketquaStr.charAt(0).toUpperCase() + ketquaStr.slice(1);
         }
 
@@ -336,10 +281,35 @@
             }
             fill('payment_reference_text', paymentText);
             
-            const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
-            (data.products || []).forEach((item, index) => {
+            // --- CODE ĐÃ CHỈNH SỬA: SẮP XẾP SẢN PHẨM ---
+            const tableBody = document.getElementById('product_table_body'); 
+            tableBody.innerHTML = '';
+            
+            // Lấy danh sách sản phẩm gốc
+            let productsList = data.products || [];
+
+            // Tách sản phẩm thường và sản phẩm vận chuyển
+            let normalItems = [];
+            let shippingItems = [];
+
+            productsList.forEach(item => {
+                // Chuyển tên về chữ thường để so sánh cho chính xác
+                let name = (item.ten_sanpham || '').toLowerCase();
+                // Kiểm tra xem tên có chứa từ "vận chuyển" không
+                if (name.includes('vận chuyển')) {
+                    shippingItems.push(item);
+                } else {
+                    normalItems.push(item);
+                }
+            });
+
+            // Gộp lại: Sản phẩm thường lên trước, vận chuyển xuống cuối
+            const finalSortedList = [...normalItems, ...shippingItems];
+
+            // Render lại bảng với danh sách đã sắp xếp
+            finalSortedList.forEach((item, index) => {
                 const row = tableBody.insertRow();
-                row.insertCell(0).textContent = index + 1;
+                row.insertCell(0).textContent = index + 1; // Số thứ tự sẽ tự động chạy lại đúng
                 row.insertCell(1).textContent = item.ten_sanpham;
                 row.insertCell(2).textContent = item.dvt;
                 row.insertCell(3).textContent = formatDecimal(item.so_luong);
@@ -348,6 +318,7 @@
                 const vatPercent = ((item.thue_vat_rate || 0) * 100);
                 row.insertCell(6).textContent = `${vatPercent}%`;
             });
+            // --- HẾT PHẦN CHỈNH SỬA ---
             
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number || ''}`, data.bank_account_name);
         }
