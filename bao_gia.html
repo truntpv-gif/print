@@ -25,9 +25,9 @@
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; color: #000; }
         
-        /* 1. Tên công ty: Giữ nguyên size TO (14pt) */
+        /* 1. Tên công ty: Size 12pt (Bằng tên khách hàng) */
         .company-name {
-            font-size: 14pt; 
+            font-size: 12pt; 
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 5px;
@@ -35,25 +35,20 @@
             line-height: 1.2;
         }
 
-        /* 2. Các dòng địa chỉ: GIẢM SIZE XUỐNG 10pt */
+        /* 2. Thông tin công ty: Size 10pt (Nhỏ hơn khách hàng 1 size) */
         .address-line {
-            font-size: 10pt; /* Đã chỉnh từ 11pt xuống 10pt */
+            font-size: 10pt; 
             margin-bottom: 2px;
             display: block;
             line-height: 1.3;
         }
-
-        /* 3. Khối liên hệ (ĐT, MST): GIẢM SIZE XUỐNG 10pt */
-        .contact-group {
-            margin-top: 8px; 
-        }
+        .contact-group { margin-top: 8px; }
         .contact-line {
-            font-size: 10pt; /* Đã chỉnh từ 11pt xuống 10pt */
+            font-size: 10pt; 
             margin: 2px 0;
             line-height: 1.3;
         }
 
-        /* Logo */
         .logo { width: 300px; height: auto; margin-bottom: 5px; }
         
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
@@ -65,11 +60,19 @@
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
-        /* THÔNG TIN KHÁCH HÀNG */
-        .customer-info { margin-bottom: 5px; line-height: 1.4; }
+        /* --- THÔNG TIN KHÁCH HÀNG --- */
+        /* Size chuẩn 11pt */
+        .customer-info { margin-bottom: 5px; line-height: 1.4; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
+        
+        /* Tên khách hàng: Size 12pt (Bằng tên công ty) */
+        #customer_name {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
         .intro-line { margin-top: 0px; margin-bottom: 10px; }
 
@@ -106,13 +109,13 @@
         <!-- Header -->
         <div class="header">
             <div class="company-info">
-                <!-- Tên công ty -->
+                <!-- Tên công ty: Size 12pt -->
                 <span class="company-name" id="company_name"></span>
                 
-                <!-- Địa chỉ (Các dòng địa chỉ sẽ được JS render vào đây) -->
+                <!-- Địa chỉ: Size 10pt -->
                 <div id="address_container"></div>
                 
-                <!-- Khối liên hệ (Có margin-top để tách biệt với địa chỉ) -->
+                <!-- Khối liên hệ: Size 10pt -->
                 <div class="contact-group">
                     <div class="contact-line">ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span></div>
                     <div class="contact-line">MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a></div>
@@ -133,7 +136,24 @@
             <p id="customer_project_line" style="display: none;"><b><i><span id="customer_project"></span></i></b></p>
         </div>
 
-        <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
+        <div class="customer-info">
+            <table>
+                <tr>
+                    <td>Kính gởi</td>
+                    <!-- Tên khách hàng: Size 12pt -->
+                    <td>: <strong id="customer_name"></strong></td>
+                </tr>
+                <tr>
+                    <td>Địa chỉ</td>
+                    <!-- Thông tin khách: Size 11pt -->
+                    <td>: <span id="customer_address"></span></td>
+                </tr>
+                <tr>
+                    <td>Liên hệ</td>
+                    <td>: <span id="contact_line"></span></td>
+                </tr>
+            </table>
+        </div>
         
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
@@ -256,7 +276,7 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // Xử lý địa chỉ: tách dòng
+            // Xử lý địa chỉ
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
