@@ -9,13 +9,19 @@
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         @page { size: A4; margin: 10mm; }
+        
         @media print { 
             html, body { width: 21cm; } 
             .page { margin: 0; border: initial; box-shadow: initial; background: initial; } 
             .print-button-container { display: none; } 
-            /* Ngăn ngắt trang giữa dòng tổng tiền nếu có thể */
-            tr.summary-row { page-break-inside: avoid; }
+            
+            /* QUAN TRỌNG: Ngăn dòng tổng tiền bị ngắt đôi giữa 2 trang */
+            tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
+            
+            /* Đảm bảo tiêu đề lặp lại (tùy chọn, thường mặc định là có) */
+            thead { display: table-header-group; }
         }
+
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
@@ -35,7 +41,7 @@
         .customer-info td:first-child { width: 100px; }
 
         /* BẢNG SẢN PHẨM */
-        table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
+        table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
         table.products thead th, table.products tbody td { border: 1px solid #000; padding: 6px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
         
@@ -51,14 +57,14 @@
             text-align: right; 
         }
 
-        /* CSS CHO PHẦN TỔNG TIỀN (Giả lập tfoot nhưng nằm trong tbody) */
+        /* CSS CHO PHẦN TỔNG TIỀN (Đây là các dòng tr bình thường, không phải tfoot) */
         .total-label { text-align: right; font-weight: bold; border-right: none !important; }
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
         .amount-words { text-align: center; font-style: italic; font-weight: bold; }
 
         /* FOOTER & CHỮ KÝ */
-        .notes-block { margin-top: 10px; font-size: 10pt; }
-        .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 30px; page-break-inside: avoid; }
+        .notes-block { margin-top: 0px; font-size: 10pt; }
+        .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 20px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; margin-right: 15px; }
 
@@ -98,11 +104,21 @@
         
         <!-- Bảng sản phẩm -->
         <table class="products">
-            <thead><tr><th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th><th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th></tr></thead>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">Stt</th>
+                    <th style="width: 35%;">Tên sản phẩm</th>
+                    <th style="width: 8%;">Đvt</th>
+                    <th style="width: 10%;">Số lượng</th>
+                    <th style="width: 14%;">Đơn giá<br>(chưa VAT)</th>
+                    <th style="width: 14%;">Thành tiền<br>(chưa VAT)</th>
+                    <th style="width: 10%;">Thuế VAT</th>
+                </tr>
+            </thead>
             <tbody id="product_table_body">
                 <!-- Dữ liệu sẽ được Javascript điền vào đây -->
             </tbody>
-            <!-- ĐÃ XÓA TFOOT ĐỂ TRÁNH LẶP LẠI -->
+            <!-- LƯU Ý: KHÔNG CÓ THẺ TFOOT Ở ĐÂY NỮA -->
         </table>
 
         <!-- Ghi chú & Chữ ký -->
@@ -138,6 +154,7 @@
             return new URLSearchParams(window.location.search).get('data');
         }
 
+        // Tự động sửa lỗi JSON (xóa dấu phẩy thừa)
         function cleanJson(str) {
             if (!str) return "{}";
             return str.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1").replace(/,,\s*/g, ",");
@@ -230,14 +247,14 @@
                 if(n.includes('vận chuyển')||n.includes('giao hàng')||n.includes('ship')) ship.push(obj); else norm.push(obj);
             });
             
-            // Vẽ các dòng sản phẩm
+            // 1. Vẽ các dòng sản phẩm
             [...norm, ...ship].forEach((it, i) => {
                 let row = tbody.insertRow();
                 row.innerHTML = `<td>${i+1}</td><td>${it.ten_sanpham}</td><td>${it.dvt}</td>
                 <td>${dec(it.so_luong)}</td><td>${fmt(it.don_gia)}</td><td>${fmt(it.thanh_tien)}</td><td>${(it.thue_vat_rate||0)*100}%</td>`;
             });
 
-            // --- THÊM PHẦN TỔNG TIỀN VÀO CUỐI TBODY (Để không lặp lại) ---
+            // 2. VẼ THÊM CÁC DÒNG TỔNG TIỀN VÀO CUỐI DANH SÁCH (THAY VÌ DÙNG TFOOT)
             const strAmt = String(data.grand_total||0).replace(/\D/g,'');
             const amtInWords = Number(strAmt)>0 ? `(Bằng chữ: ${docso(strAmt)} đồng).` : '';
             
