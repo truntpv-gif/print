@@ -25,7 +25,16 @@
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; line-height: 1.3; font-size: 10pt; }
         .company-info strong { font-size: 11pt; text-transform: uppercase; }
-        #company_address { display: block; margin-top: 2px; }
+        
+        /* --- CHỈNH SỬA KHOẢNG CÁCH ĐỊA CHỈ --- */
+        #company_address { 
+            display: block; 
+            margin-top: 2px; 
+            margin-bottom: 4px; /* Khoảng cách nhỏ xuống dòng ĐT */
+        }
+        .contact-line {
+            margin: 1px 0; /* Khoảng cách giữa các dòng liên hệ cực nhỏ */
+        }
         
         .logo { width: 250px; height: auto; margin-bottom: 5px; }
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
@@ -33,10 +42,10 @@
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.2; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
-        /* --- CHỈNH SỬA 1: TIÊU ĐỀ XUỐNG DÒNG --- */
+        /* TIÊU ĐỀ & DỰ ÁN */
         .title-section { 
             text-align: center; 
-            margin-top: 30px; /* Tăng từ 5px lên 30px để đẩy xuống */
+            margin-top: 30px; 
             margin-bottom: 10px; 
         } 
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
@@ -48,9 +57,9 @@
         .customer-info td { padding: 1px 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
 
-        /* --- CHỈNH SỬA 2: DÒNG KÍNH GỬI LÊN CAO --- */
+        /* DÒNG KÍNH GỬI */
         .intro-line {
-            margin-top: 0px;    /* Kéo sát lên trên */
+            margin-top: 0px;    
             margin-bottom: 10px;
         }
 
@@ -76,15 +85,14 @@
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
         
-        /* --- CHỈNH SỬA 3: CON DẤU TO HƠN 30% --- */
         .stamp-container { 
-            height: 135px; /* Tăng từ 100px lên 135px */
+            height: 135px; 
             margin-top: 5px; 
             display: flex;
             justify-content: center;
         }
         #company_stamp {
-            max-height: 135px; /* Tăng giới hạn chiều cao ảnh */
+            max-height: 135px; 
             width: auto;
         }
 
@@ -104,9 +112,14 @@
         <div class="header">
             <div class="company-info">
                 <strong id="company_name"></strong><br>
-                <span id="company_address"></span><br>
-                ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
-                MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
+                
+                <!-- Địa chỉ -->
+                <span id="company_address"></span>
+                <!-- Đã xóa thẻ BR thừa ở đây để rút ngắn khoảng cách -->
+                
+                <!-- Gom nhóm ĐT và MST vào thẻ P để chỉnh margin sát lại -->
+                <p class="contact-line">ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span></p>
+                <p class="contact-line">MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a></p>
             </div>
             <div class="quote-details-container">
                 <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
@@ -124,7 +137,6 @@
 
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         
-        <!-- Dòng intro đã được chỉnh class intro-line để sát lên trên -->
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
         <!-- Bảng sản phẩm -->
@@ -151,7 +163,6 @@
             <div style="width:58%">
                 <p style="font-weight:bold; margin:0;" id="company_name_signature"></p>
                 <p style="font-style:italic; margin:0;">Giám đốc</p>
-                <!-- Container chứa con dấu đã được chỉnh to lên -->
                 <div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div>
             </div>
         </div>
