@@ -11,37 +11,27 @@
         @media print { html, body { width: 21cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
-        
-        /* HEADER STYLE */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
         .company-info strong { font-size: 11pt; }
         .logo { width: 300px; height: auto; }
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
         .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
-        
-        /* TITLE & CUSTOMER */
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
-
-        /* TABLE PRODUCTS */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
         table.products thead th, table.products tbody td, table.products tfoot td { border: 1px solid #000; padding: 6px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
         table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
         table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
         table.products tfoot td { border-top: none; font-weight: bold; padding: 6px 8px; text-align: right; }
-        
-        /* FOOTER */
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 30px; page-break-inside: avoid; }
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 20px; font-size: 10pt; }
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; margin-right: 15px; }
-        
-        /* COLORS */
         #quote_number, #quote_date, #customer_name, #grand_total, #grand_total_in_words, #company_name_signature { color: #002B5B; }
         #bank_account_number, #bank_name { font-weight: bold; color: #002B5B; }
     </style>
@@ -116,11 +106,15 @@
             return new URLSearchParams(window.location.search).get('data');
         }
 
-        // --- HÀM QUAN TRỌNG: SỬA LỖI JSON ---
+        // --- HÀM SỬA LỖI JSON MỚI: Xử lý cả dấu phẩy kép ---
         function cleanJson(str) {
             if (!str) return "{}";
-            // Xóa dấu phẩy thừa cuối mảng và cuối object
-            return str.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1");
+            let s = str;
+            // 1. Thay thế 2 dấu phẩy liên tiếp ",," thành 1 dấu ","
+            s = s.replace(/,,\s*/g, ",");
+            // 2. Xóa dấu phẩy thừa trước dấu đóng ] hoặc }
+            s = s.replace(/,(\s*[\]}])/g, "$1");
+            return s;
         }
 
         function docso(sotien) {
@@ -173,11 +167,11 @@
             let raw = {};
             try {
                 const decoded = decodeURIComponent(hash).replace(/(?<!\\)\n/g, '\\n');
-                const clean = cleanJson(decoded); // Tự động xóa dấu phẩy thừa
+                const clean = cleanJson(decoded); // Tự động sửa lỗi dấu phẩy
                 raw = JSON.parse(clean);
             } catch (e) {
                 console.error(e);
-                document.body.innerHTML = `<h3 style='color:red; padding:20px;'>Lỗi dữ liệu: ${e.message}</h3><pre style='padding:20px; background:#eee;'>${decodeURIComponent(hash)}</pre>`;
+                document.body.innerHTML = `<h3 style='color:red; padding:20px;'>Lỗi dữ liệu: ${e.message}</h3>`;
                 return;
             }
 
