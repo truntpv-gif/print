@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* CSS KHÔNG ĐỔI */
+        /* CSS GIỮ NGUYÊN */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         @page { size: A4; margin: 10mm; }
@@ -119,14 +119,22 @@
         const BANK_FULL_NAMES = { 'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)' };
 
         function getDataString() {
-            // Ưu tiên lấy dữ liệu sau dấu # (Hash) để tránh lỗi Server Limit
             if (window.location.hash) {
-                let h = window.location.hash.substring(1); // Bỏ dấu #
+                let h = window.location.hash.substring(1); 
                 if(h.startsWith('data=')) return h.substring(5);
                 return h;
             }
-            // Fallback: lấy từ dấu ? (Query)
             return new URLSearchParams(window.location.search).get('data');
+        }
+
+        // HÀM MỚI: Sửa lỗi JSON từ AppSheet (Xóa dấu phẩy thừa)
+        function cleanJson(str) {
+            if (!str) return "{}";
+            // Thay thế ",]" thành "]" (Lỗi thừa dấu phẩy cuối mảng)
+            let cleaned = str.replace(/,\s*]/g, "]");
+            // Thay thế ",}" thành "}" (Lỗi thừa dấu phẩy cuối object)
+            cleaned = cleaned.replace(/,\s*}/g, "}");
+            return cleaned;
         }
 
         function docso(sotien) {
@@ -149,7 +157,6 @@
 
         function expandData(shortData) {
             const map = {
-                // Mapping key ngắn -> key đầy đủ
                 'c_n': 'company_name', 'c_t': 'company_tax_code', 'c_a': 'company_address', 'c_p': 'company_phone', 'c_z': 'company_zalo_link', 'c_e': 'company_email', 'c_b': 'company_branch_code',
                 'qn': 'quote_number', 'qd': 'quote_date',
                 'cn': 'customer_name', 'ca': 'customer_address', 'cp': 'customer_phone', 'ce': 'customer_email', 'cc': 'customer_contact_person', 'pj': 'customer_project',
@@ -167,14 +174,23 @@
         }
 
         function populateData() {
-            const dataParam = getDataString(); // Lấy từ Hash
+            const dataParam = getDataString();
             let rawData = {};
             if (dataParam) {
                 try {
                     const decodedParam = decodeURIComponent(dataParam);
                     const sanitizedJsonString = decodedParam.replace(/(?<!\\)\n/g, '\\n');
-                    rawData = JSON.parse(sanitizedJsonString);
-                } catch (e) { console.error("JSON Error:", e); alert("Lỗi dữ liệu báo giá"); return; }
+                    // GỌI HÀM SỬA LỖI JSON TRƯỚC KHI PARSE
+                    const finalJsonString = cleanJson(sanitizedJsonString);
+                    rawData = JSON.parse(finalJsonString);
+                } catch (e) { 
+                    console.error("JSON Error:", e); 
+                    // Nếu lỗi vẫn xảy ra, thử hiển thị một phần thông báo
+                    alert("Dữ liệu lỗi, vui lòng kiểm tra lại công thức AppSheet. Xem Console log để biết thêm.");
+                    return; 
+                }
+            } else {
+                return; // Không có data thì thôi
             }
 
             let data = expandData(rawData);
@@ -226,18 +242,17 @@
             if (originalShortBankName) { const regex = new RegExp(originalShortBankName, 'gi'); paymentText = paymentText.replace(regex, fullBankName); }
             fill('payment_reference_text', paymentText);
             
-            // --- XỬ LÝ SẢN PHẨM: Hỗ trợ cả dạng Mảng [] (siêu gọn) và Object {} ---
+            // --- XỬ LÝ SẢN PHẨM ---
             const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             let productsList = data.products || [];
             let normalItems = []; let shippingItems = [];
             
-            // Hàm chuẩn hóa item (Mảng -> Object)
             const normalizeItem = (it) => {
                 if (Array.isArray(it)) {
                     // Cấu trúc mảng: [Tên, ĐVT, SL, ĐơnGia, ThànhTiền, VAT]
                     return { ten_sanpham: it[0], dvt: it[1], so_luong: it[2], don_gia: it[3], thanh_tien: it[4], thue_vat_rate: it[5] };
                 }
-                return it; // Giữ nguyên nếu là object cũ
+                return it; 
             };
 
             productsList.forEach(rawItem => {
