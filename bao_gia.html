@@ -5,40 +5,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* CSS CẤU TRÚC TRANG */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         @page { size: A4; margin: 10mm; }
-        @media print { html, body { width: 21cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
+        @media print { 
+            html, body { width: 21cm; } 
+            .page { margin: 0; border: initial; box-shadow: initial; background: initial; } 
+            .print-button-container { display: none; } 
+            /* Ngăn ngắt trang giữa dòng tổng tiền nếu có thể */
+            tr.summary-row { page-break-inside: avoid; }
+        }
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+
+        /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
         .company-info strong { font-size: 11pt; }
         .logo { width: 300px; height: auto; }
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
         .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
+
+        /* TIÊU ĐỀ & KHÁCH HÀNG */
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
+
+        /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
-        table.products thead th, table.products tbody td, table.products tfoot td { border: 1px solid #000; padding: 6px; }
+        table.products thead th, table.products tbody td { border: 1px solid #000; padding: 6px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
-        table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
-        table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
-        table.products tfoot td { border-top: none; font-weight: bold; padding: 6px 8px; text-align: right; }
+        
+        /* Căn chỉnh cột */
+        table.products tbody td:nth-child(1), /* STT */
+        table.products tbody td:nth-child(3), /* ĐVT */
+        table.products tbody td:nth-child(7) { /* VAT */
+            text-align: center; 
+        }
+        table.products tbody td:nth-child(4), /* Số lượng */
+        table.products tbody td:nth-child(5), /* Đơn giá */
+        table.products tbody td:nth-child(6) { /* Thành tiền */
+            text-align: right; 
+        }
+
+        /* CSS CHO PHẦN TỔNG TIỀN (Giả lập tfoot nhưng nằm trong tbody) */
+        .total-label { text-align: right; font-weight: bold; border-right: none !important; }
+        .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
+        .amount-words { text-align: center; font-style: italic; font-weight: bold; }
+
+        /* FOOTER & CHỮ KÝ */
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 30px; page-break-inside: avoid; }
-        .bank-info-container { display: flex; align-items: flex-start; margin-top: 20px; font-size: 10pt; }
+        .bank-info-container { display: flex; align-items: flex-start; margin-top: 20px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; margin-right: 15px; }
-        #quote_number, #quote_date, #customer_name, #grand_total, #grand_total_in_words, #company_name_signature { color: #002B5B; }
+
+        /* MÀU SẮC */
+        #quote_number, #quote_date, #customer_name, #company_name_signature { color: #002B5B; }
+        .total-value, .amount-words { color: #002B5B; }
         #bank_account_number, #bank_name { font-weight: bold; color: #002B5B; }
     </style>
 </head>
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
+        <!-- Header -->
         <div class="header">
             <div class="company-info">
                 <strong id="company_name"></strong><br>
@@ -63,17 +96,16 @@
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p style="margin-top:10px; margin-bottom:10px;">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
+        <!-- Bảng sản phẩm -->
         <table class="products">
             <thead><tr><th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th><th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th></tr></thead>
-            <tbody id="product_table_body"></tbody>
-            <tfoot>
-                <tr><td colspan="5">Tổng thành Tiền:</td><td colspan="2"><span id="subtotal"></span></td></tr>
-                <tr><td colspan="5">Thuế VAT:</td><td colspan="2"><span id="vat_amount"></span></td></tr>
-                <tr><td colspan="5">Tổng tiền đơn hàng:</td><td colspan="2"><span id="grand_total"></span></td></tr>
-                <tr><td colspan="7" style="text-align: right;"><span id="grand_total_in_words" style="font-style: italic;"></span></td></tr>
-            </tfoot>
+            <tbody id="product_table_body">
+                <!-- Dữ liệu sẽ được Javascript điền vào đây -->
+            </tbody>
+            <!-- ĐÃ XÓA TFOOT ĐỂ TRÁNH LẶP LẠI -->
         </table>
 
+        <!-- Ghi chú & Chữ ký -->
         <div class="notes-block"><strong>Lưu ý:</strong> <span id="notes_and_terms" style="font-style: italic;"></span></div>
         
         <div class="signatures-section">
@@ -106,15 +138,9 @@
             return new URLSearchParams(window.location.search).get('data');
         }
 
-        // --- HÀM SỬA LỖI JSON MỚI: Xử lý cả dấu phẩy kép ---
         function cleanJson(str) {
             if (!str) return "{}";
-            let s = str;
-            // 1. Thay thế 2 dấu phẩy liên tiếp ",," thành 1 dấu ","
-            s = s.replace(/,,\s*/g, ",");
-            // 2. Xóa dấu phẩy thừa trước dấu đóng ] hoặc }
-            s = s.replace(/,(\s*[\]}])/g, "$1");
-            return s;
+            return str.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1").replace(/,,\s*/g, ",");
         }
 
         function docso(sotien) {
@@ -167,11 +193,11 @@
             let raw = {};
             try {
                 const decoded = decodeURIComponent(hash).replace(/(?<!\\)\n/g, '\\n');
-                const clean = cleanJson(decoded); // Tự động sửa lỗi dấu phẩy
+                const clean = cleanJson(decoded); 
                 raw = JSON.parse(clean);
             } catch (e) {
                 console.error(e);
-                document.body.innerHTML = `<h3 style='color:red; padding:20px;'>Lỗi dữ liệu: ${e.message}</h3>`;
+                alert("Lỗi dữ liệu JSON");
                 return;
             }
 
@@ -180,6 +206,7 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
+            // Điền thông tin chung
             fill('company_name', data.company_name); fill('company_address', data.company_address);
             fill('company_phone', data.company_phone); fill('company_email', data.company_email);
             fill('company_tax_code', data.company_tax_code); 
@@ -193,23 +220,44 @@
             const pjEl = document.getElementById('customer_project_line');
             if(data.customer_project) { fill('customer_project', "Dự án: "+data.customer_project); pjEl.style.display='block'; } else pjEl.style.display='none';
 
+            // XỬ LÝ BẢNG SẢN PHẨM + TỔNG TIỀN
             const tbody = document.getElementById('product_table_body'); tbody.innerHTML = '';
             let items = data.products || [], norm = [], ship = [];
+            
             items.forEach(it => {
                 let obj = Array.isArray(it) ? {ten_sanpham:it[0], dvt:it[1], so_luong:it[2], don_gia:it[3], thanh_tien:it[4], thue_vat_rate:it[5]} : it;
                 let n = (obj.ten_sanpham||'').toLowerCase();
                 if(n.includes('vận chuyển')||n.includes('giao hàng')||n.includes('ship')) ship.push(obj); else norm.push(obj);
             });
+            
+            // Vẽ các dòng sản phẩm
             [...norm, ...ship].forEach((it, i) => {
                 let row = tbody.insertRow();
                 row.innerHTML = `<td>${i+1}</td><td>${it.ten_sanpham}</td><td>${it.dvt}</td>
                 <td>${dec(it.so_luong)}</td><td>${fmt(it.don_gia)}</td><td>${fmt(it.thanh_tien)}</td><td>${(it.thue_vat_rate||0)*100}%</td>`;
             });
 
-            fill('subtotal', fmt(data.subtotal)); fill('vat_amount', fmt(data.vat_amount)); fill('grand_total', fmt(data.grand_total));
+            // --- THÊM PHẦN TỔNG TIỀN VÀO CUỐI TBODY (Để không lặp lại) ---
             const strAmt = String(data.grand_total||0).replace(/\D/g,'');
-            if(Number(strAmt)>0) fill('grand_total_in_words', `(Bằng chữ: ${docso(strAmt)} đồng).`);
-
+            const amtInWords = Number(strAmt)>0 ? `(Bằng chữ: ${docso(strAmt)} đồng).` : '';
+            
+            // Dòng Tổng thành tiền
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr class="summary-row"><td colspan="5" class="total-label">Tổng thành Tiền:</td><td colspan="2" class="total-value">${fmt(data.subtotal)}</td></tr>
+            `);
+            // Dòng Thuế VAT
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr class="summary-row"><td colspan="5" class="total-label">Thuế VAT:</td><td colspan="2" class="total-value">${fmt(data.vat_amount)}</td></tr>
+            `);
+            // Dòng Tổng tiền đơn hàng
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr class="summary-row"><td colspan="5" class="total-label">Tổng tiền đơn hàng:</td><td colspan="2" class="total-value">${fmt(data.grand_total)}</td></tr>
+            `);
+            // Dòng Bằng chữ
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
+            `);
+            
             fill('notes_and_terms', data.notes_and_terms);
             fill('company_name_signature', data.company_name);
             const stp = document.getElementById('company_stamp'); if(data.company_branch_code && stp) stp.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
