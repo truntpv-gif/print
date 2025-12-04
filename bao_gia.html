@@ -4,42 +4,22 @@
     <title>BÁO GIÁ VẬT TƯ</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS GIỮ NGUYÊN -->
     <style>
-        /* CSS CHUNG & BỐ CỤC */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
         .page { width: 21cm; min-height: 29.7cm; padding: 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
-        
-        @page { 
-            size: A4; 
-            margin: 10mm; 
-        }
-        
-        @media print { 
-            html, body { 
-                width: 21cm; 
-            } 
-            .page { 
-                margin: 0; 
-                border: initial; 
-                box-shadow: initial; 
-                background: initial; 
-            } 
-            .print-button-container { display: none; } 
-        }
+        @page { size: A4; margin: 10mm; }
+        @media print { html, body { width: 21cm; } .page { margin: 0; border: initial; box-shadow: initial; background: initial; } .print-button-container { display: none; } }
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
-
-        /* THÔNG TIN CÔNG TY & KHÁCH HÀNG */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .company-info { width: 60%; line-height: 1.4; font-size: 10pt; }
         .company-info strong { font-size: 11pt; }
         #company_address { font-size: 9pt; }
         .logo { width: 300px; height: auto; }
-        
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; }
         .quote-info-box { margin-top: 8px; text-align: right; line-height: 1.5; font-size: 11pt; }
         .quote-info-box p { margin: 0; }
-
         .title-section { text-align: center; margin: 20px 0; }
         .title-section h1 { font-size: 18pt; margin: 0; }
         .title-section p { margin: 5px 0; font-size: 11pt; }
@@ -48,41 +28,19 @@
         .customer-info td { padding: 1px 5px; vertical-align: top; }
         .customer-info td:first-child { width: 100px; }
         .intro-line { margin-top: 0; margin-bottom: 10px; }
-
-        /* BẢNG SẢN PHẨM & TỔNG CỘNG */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; }
         table.products thead th, table.products tbody td, table.products tfoot td { border: 1px solid #000; padding: 6px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
-        
-        /* Canh giữa STT (1), ĐVT (3), Thuế VAT (7) */
-        table.products tbody td:nth-child(1), 
-        table.products tbody td:nth-child(3),
-        table.products tbody td:nth-child(7) { 
-            text-align: center; 
-        }
-
-        /* Canh phải các cột số tiền */
-        table.products tbody td:nth-child(4), 
-        table.products tbody td:nth-child(5), 
-        table.products tbody td:nth-child(6) { 
-            text-align: right; 
-        }
-        
+        table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
+        table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
         table.products tfoot td { border-top: none; font-weight: bold; padding: 6px 8px; }
         .totals-label-cell { text-align: right; }
         .totals-value-cell { text-align: right; }
         .amount-in-words-cell { text-align: right; }
         #grand_total_in_words { font-size: 10pt; font-style: italic; font-weight: bold; }
-        
-        /* GHI CHÚ, CHỮ KÝ, THANH TOÁN */
         .notes-block { margin-top: 10px; font-size: 10pt; }
         .notes-block p { margin: 0; padding-left: 10px; font-style: italic; }
-
-        .final-section-group {
-            page-break-inside: avoid;
-            margin-top: 30px; 
-        }
-
+        .final-section-group { page-break-inside: avoid; margin-top: 30px; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; }
         .signature-block:first-child { flex-basis: 40%; }
         .signature-block:last-child { flex-basis: 58%; }
@@ -91,26 +49,18 @@
         .signature-block .instruction { font-style: italic; font-size: 10pt; }
         .stamp-container { position: relative; height: 100px; margin-top: 5px; }
         .stamp-container img { max-width: 100%; max-height: 100px; }
-        
         .payment-section { margin-top: 20px; font-size: 10pt; } 
         .payment-section h3 { margin: 0 0 5px 0; font-size: 11pt; }
         .bank-info-container { display: flex; align-items: flex-start; }
         .bank-info-text { flex-grow: 1; }
         .bank-info-text p { margin: 2px 0; }
         #vietqr_code_small { width: 100px; height: 100px; border: 1px solid #ccc; display: block; margin-right: 15px; }
-
-        /* MÀU SẮC DỮ LIỆU ĐỘNG */
-        #quote_number, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td,
-        #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #customer_project {
-            color: #002B5B;
-        }
-        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text {
-            font-weight: bold;
-            color: #002B5B;
-        }
+        #quote_number, #quote_date, #customer_name, #customer_address, #contact_line, .products tbody td, #subtotal, #vat_amount, #grand_total, #grand_total_in_words, #notes_and_terms, #company_name_signature, #company_tax_code, #customer_project { color: #002B5B; }
+        #bank_account_name, #bank_account_number, #bank_name, #payment_reference_text { font-weight: bold; color: #002B5B; }
     </style>
 </head>
 <body>
+    <!-- (PHẦN BODY GIỮ NGUYÊN NHƯ CŨ, CHỈ THAY ĐỔI SCRIPT) -->
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     <div class="page">
         <div class="header">
@@ -128,17 +78,12 @@
                 </div>
             </div>
         </div>
-        
         <div class="title-section">
             <h1>BÁO GIÁ VẬT TƯ</h1>
-            <p id="customer_project_line" style="display: none;">
-                <b><i><span id="customer_project"></span></i></b>
-            </p>
+            <p id="customer_project_line" style="display: none;"><b><i><span id="customer_project"></span></i></b></p>
         </div>
-
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
-        
         <table class="products">
             <thead><tr><th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th><th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th></tr></thead>
             <tbody id="product_table_body"></tbody>
@@ -149,15 +94,12 @@
                 <tr><td colspan="7" class="amount-in-words-cell"><span id="grand_total_in_words"></span></td></tr>
             </tfoot>
         </table>
-
         <div class="notes-block"><strong>Lưu ý:</strong><p id="notes_and_terms"></p></div>
-        
         <div class="final-section-group">
             <div class="signatures-section">
                 <div class="signature-block"><p class="role">XÁC NHẬN ĐẶT HÀNG</p><p class="instruction">(ký tên, đóng dấu)</p></div>
                 <div class="signature-block"><p class="role" id="company_name_signature"></p><p class="instruction">Giám đốc</p><div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div></div>
             </div>
-            
             <div class="payment-section">
                 <h3>Thông tin chuyển khoản:</h3>
                 <div class="bank-info-container">
@@ -172,62 +114,71 @@
             </div>
         </div>
     </div>
-
     <script>
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = { 'techcombank': '970407', 'vietcombank': '970436', 'vpb': '970432', 'vpbank': '970432', 'viettinbank': '970415', 'bidv': '970418', 'agribank': '970405', 'acb': '970416', 'mbbank': '970422', 'mb': '970422', 'sacombank': '970403', 'shb': '970443', 'hdbank': '970437', 'tpbank': '970423', 'vib': '970441', 'seabank': '970440', 'ocb': '970448' };
-        
         const BANK_FULL_NAMES = { 'techcombank': 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)', 'vietcombank': 'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)', 'vpb': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'vpbank': 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)', 'viettinbank': 'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)', 'bidv': 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', 'agribank': 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)', 'acb': 'Ngân hàng TMCP Á Châu (ACB)', 'mbbank': 'Ngân hàng TMCP Quân đội (MB)', 'mb': 'Ngân hàng TMCP Quân đội (MB)', 'sacombank': 'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)', 'shb': 'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)', 'hdbank': 'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)', 'tpbank': 'Ngân hàng TMCP Tiên Phong (TPBank)', 'vib': 'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)', 'seabank': 'Ngân hàng TMCP Đông Nam Á (SeABank)', 'ocb': 'Ngân hàng TMCP Phương Đông (OCB)' };
 
         function getQueryParam(param) { return new URLSearchParams(window.location.search).get(param); }
-
         function docso(sotien) {
-            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-            const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]; const hang = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
             function docNhomBaChuSo(nhom, isFirstGroup = false) {
-                let tram = Math.floor(nhom / 100);
-                let chuc = Math.floor((nhom % 100) / 10);
-                let donvi = nhom % 10;
-                let ketqua = [];
+                let tram = Math.floor(nhom / 100); let chuc = Math.floor((nhom % 100) / 10); let donvi = nhom % 10; let ketqua = [];
                 if (tram > 0) { ketqua.push(chuSo[tram], "trăm"); }
                 if (chuc > 1) { ketqua.push(chuSo[chuc], "mươi"); if (donvi === 1) { ketqua.push("mốt"); } else if (donvi > 1) { ketqua.push(chuSo[donvi]); } } else if (chuc === 1) { ketqua.push("mười"); if (donvi === 5) { ketqua.push("lăm"); } else if (donvi > 0) { ketqua.push(chuSo[donvi]); } } else if (donvi > 0) { if (!isFirstGroup || tram > 0) { ketqua.push("linh"); } ketqua.push(chuSo[donvi]); }
                 return ketqua;
             }
-            if (sotien == null || sotien === '' || isNaN(sotien)) return "";
-            if (Number(sotien) === 0) return "Không";
-            let soStr = String(Math.floor(Math.abs(Number(sotien))));
-            if (soStr.length > 18) return "Số quá lớn";
-            let cacNhom = [];
-            while (soStr.length > 0) { cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0))); soStr = soStr.slice(0, Math.max(soStr.length - 3, 0)); }
+            if (sotien == null || sotien === '' || isNaN(sotien)) return ""; if (Number(sotien) === 0) return "Không";
+            let soStr = String(Math.floor(Math.abs(Number(sotien)))); if (soStr.length > 18) return "Số quá lớn";
+            let cacNhom = []; while (soStr.length > 0) { cacNhom.push(soStr.slice(Math.max(soStr.length - 3, 0))); soStr = soStr.slice(0, Math.max(soStr.length - 3, 0)); }
             if (cacNhom.length === 0) return "";
-            let ketquaFinal = [];
-            for (let i = cacNhom.length - 1; i >= 0; i--) {
-                let nhom = parseInt(cacNhom[i], 10);
-                if (nhom === 0) continue;
-                const isFirstGroup = ketquaFinal.length === 0;
-                let chuoiNhom = docNhomBaChuSo(nhom, isFirstGroup);
-                if (chuoiNhom.length > 0) { ketquaFinal.push(...chuoiNhom, hang[i]); }
-            }
-            let ketquaStr = ketquaFinal.join(" ").trim();
-            if (ketquaStr.endsWith(hang[0])) { ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim(); }
+            let ketquaFinal = []; for (let i = cacNhom.length - 1; i >= 0; i--) { let nhom = parseInt(cacNhom[i], 10); if (nhom === 0) continue; const isFirstGroup = ketquaFinal.length === 0; let chuoiNhom = docNhomBaChuSo(nhom, isFirstGroup); if (chuoiNhom.length > 0) { ketquaFinal.push(...chuoiNhom, hang[i]); } }
+            let ketquaStr = ketquaFinal.join(" ").trim(); if (ketquaStr.endsWith(hang[0])) { ketquaStr = ketquaStr.slice(0, ketquaStr.length - hang[0].length).trim(); }
             return ketquaStr.charAt(0).toUpperCase() + ketquaStr.slice(1);
         }
+        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('No BIN:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
 
-        function generateVietQR(bankName, accountNumber, amount, description, accountName) { const qrImgElement = document.getElementById('vietqr_code_small'); if (!bankName || !accountNumber || !qrImgElement) { if(qrImgElement) qrImgElement.style.display = 'none'; return; } const cleanBankName = (bankName || '').toLowerCase().replace(/\s/g, ''); const bankBin = BANK_BINS[cleanBankName]; if (!bankBin) { console.error('Không tìm thấy mã BIN cho ngân hàng:', bankName); qrImgElement.style.display = 'none'; return; } const cleanAmount = String(amount || '0').replace(/[.,]/g, ''); const addInfo = encodeURIComponent(description || ''); const accName = encodeURIComponent(accountName || ''); const qrUrl = `https://api.vietqr.io/image/${bankBin}-${accountNumber}-G4l0bO1.jpg?amount=${cleanAmount}&addInfo=${addInfo}&accountName=${accName}`; qrImgElement.src = qrUrl; }
-        
+        function expandData(shortData) {
+            const map = {
+                // Công ty (New)
+                'c_n': 'company_name', 'c_t': 'company_tax_code', 'c_a': 'company_address',
+                'c_p': 'company_phone', 'c_z': 'company_zalo_link', 'c_e': 'company_email',
+                'c_b': 'company_branch_code',
+                // Báo giá & Khách hàng
+                'qn': 'quote_number', 'qd': 'quote_date',
+                'cn': 'customer_name', 'ca': 'customer_address', 'cp': 'customer_phone', 
+                'ce': 'customer_email', 'cc': 'customer_contact_person', 'pj': 'customer_project',
+                // Tiền & Ghi chú
+                'st': 'subtotal', 'va': 'vat_amount', 'gt': 'grand_total', 'nt': 'notes_and_terms',
+                'pr': 'products',
+                // Chi tiết sản phẩm
+                'n': 'ten_sanpham', 'u': 'dvt', 'q': 'so_luong', 'p': 'don_gia', 'a': 'thanh_tien', 'v': 'thue_vat_rate',
+                // Ngân hàng
+                'b_an': 'bank_account_name', 'b_n': 'bank_account_number', 'b_nm': 'bank_name', 'ref': 'payment_reference_text'
+            };
+            const renameKeys = (obj) => {
+                if (Array.isArray(obj)) return obj.map(renameKeys);
+                if (typeof obj === 'object' && obj !== null) {
+                    return Object.keys(obj).reduce((acc, key) => {
+                        const newKey = map[key] || key; acc[newKey] = renameKeys(obj[key]); return acc;
+                    }, {});
+                } return obj;
+            };
+            return renameKeys(shortData);
+        }
+
         function populateData() {
             const dataParam = getQueryParam('data'); 
-            let data = {};
-
+            let rawData = {};
             if (dataParam) {
                 try {
                     const decodedParam = decodeURIComponent(dataParam);
                     const sanitizedJsonString = decodedParam.replace(/(?<!\\)\n/g, '\\n');
-                    data = JSON.parse(sanitizedJsonString);
-                } catch (e) {
-                    console.error("Lỗi JSON, không thể đọc dữ liệu từ URL:", e);
-                }
+                    rawData = JSON.parse(sanitizedJsonString);
+                } catch (e) { console.error("JSON Error:", e); }
             }
+
+            let data = expandData(rawData);
             
             const fill = (id, value, isHtml = false) => { const el = document.getElementById(id); if (el) { if (isHtml) el.innerHTML = (value || '').replace(/\\n/g, '<br>'); else el.textContent = value || ''; } };
             const fillAttr = (id, attr, value) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, value || ''); };
@@ -242,9 +193,7 @@
             
             let zaloLink = data.company_zalo_link || '';
             let displayZalo = zaloLink.replace(/https?:\/\//, '');
-            if (zaloLink && !zaloLink.startsWith('http')) {
-                zaloLink = 'https://' + zaloLink;
-            }
+            if (zaloLink && !zaloLink.startsWith('http')) zaloLink = 'https://' + zaloLink;
             fillAttr('company_zalo_link', 'href', zaloLink);
             document.getElementById('company_zalo_link').textContent = displayZalo;
             
@@ -252,27 +201,17 @@
             fill('quote_date', data.quote_date); 
             
             const customerProjectLine = document.getElementById('customer_project_line');
-            if (data.customer_project && data.customer_project.trim() !== '') {
-                fill('customer_project', "Dự án: " + data.customer_project);
-                customerProjectLine.style.display = 'block';
-            } else {
-                customerProjectLine.style.display = 'none';
-            }
+            if (data.customer_project && data.customer_project.trim() !== '') { fill('customer_project', "Dự án: " + data.customer_project); customerProjectLine.style.display = 'block'; } else { customerProjectLine.style.display = 'none'; }
 
             fill('customer_name', data.customer_name); 
             fill('customer_address', data.customer_address, true);
-            const contactParts = []; if (data.customer_contact_person) { contactParts.push(`<strong>${data.customer_contact_person}</strong>`); } if (data.customer_phone) { contactParts.push(`SĐT: ${data.customer_phone}`); } if (data.customer_email) { contactParts.push(`Email: ${data.customer_email}`); } fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
+            const contactParts = []; if (data.customer_contact_person) contactParts.push(`<strong>${data.customer_contact_person}</strong>`); if (data.customer_phone) contactParts.push(`SĐT: ${data.customer_phone}`); if (data.customer_email) contactParts.push(`Email: ${data.customer_email}`); fill('contact_line', contactParts.join(' &nbsp;|&nbsp; '), true);
             
             fill('subtotal', formatInteger(data.subtotal)); 
             fill('vat_amount', formatInteger(data.vat_amount)); 
             fill('grand_total', formatInteger(data.grand_total));
             const amountInNumber = String(data.grand_total || '0').replace(/[.,]/g, '');
-            if (parseInt(amountInNumber) > 0) {
-                const amountInWords = docso(amountInNumber);
-                fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true);
-            } else {
-                 fill('grand_total_in_words', '');
-            }
+            if (parseInt(amountInNumber) > 0) { const amountInWords = docso(amountInNumber); fill('grand_total_in_words', `<i><b>(Bằng chữ: ${amountInWords} đồng).</b></i>`, true); } else { fill('grand_total_in_words', ''); }
             
             fill('notes_and_terms', data.notes_and_terms, true);
             fill('company_name_signature', data.company_name); 
@@ -280,38 +219,22 @@
             
             fill('bank_account_name', data.bank_account_name); 
             fill('bank_account_number', data.bank_account_number); 
-
             const originalShortBankName = data.bank_name || '';
             const shortBankNameKey = originalShortBankName.toLowerCase().replace(/\s/g, '');
             const fullBankName = BANK_FULL_NAMES[shortBankNameKey] || originalShortBankName;
             fill('bank_name', fullBankName);
-
             let paymentText = data.payment_reference_text || '';
-            if (originalShortBankName) {
-                const regex = new RegExp(originalShortBankName, 'gi');
-                paymentText = paymentText.replace(regex, fullBankName);
-            }
+            if (originalShortBankName) { const regex = new RegExp(originalShortBankName, 'gi'); paymentText = paymentText.replace(regex, fullBankName); }
             fill('payment_reference_text', paymentText);
             
-            // --- CODE SẮP XẾP SẢN PHẨM (ĐÃ CẬP NHẬT ĐỂ BAO GỒM CẢ MIỄN PHÍ) ---
-            const tableBody = document.getElementById('product_table_body'); 
-            tableBody.innerHTML = '';
+            const tableBody = document.getElementById('product_table_body'); tableBody.innerHTML = '';
             let productsList = data.products || [];
-            let normalItems = [];
-            let shippingItems = [];
-
+            let normalItems = []; let shippingItems = [];
             productsList.forEach(item => {
                 let name = (item.ten_sanpham || '').toLowerCase();
-                // Kiểm tra bao gồm các từ khóa: vận chuyển, giao hàng, ship
-                // Điều này đảm bảo "Vận chuyển miễn phí", "Phí vận chuyển", "Giao hàng" đều xuống dưới.
-                if (name.includes('vận chuyển') || name.includes('giao hàng') || name.includes('ship')) {
-                    shippingItems.push(item);
-                } else {
-                    normalItems.push(item);
-                }
+                if (name.includes('vận chuyển') || name.includes('giao hàng') || name.includes('ship')) { shippingItems.push(item); } else { normalItems.push(item); }
             });
             const finalSortedList = [...normalItems, ...shippingItems];
-
             finalSortedList.forEach((item, index) => {
                 const row = tableBody.insertRow();
                 row.insertCell(0).textContent = index + 1;
@@ -323,7 +246,6 @@
                 const vatPercent = ((item.thue_vat_rate || 0) * 100);
                 row.insertCell(6).textContent = `${vatPercent}%`;
             });
-            // --- HẾT PHẦN XỬ LÝ BẢNG ---
             
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number || ''}`, data.bank_account_name);
         }
