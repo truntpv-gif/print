@@ -21,19 +21,35 @@
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* HEADER */
+        /* --- HEADER (CHỈNH SỬA THEO HÌNH) --- */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-        .company-info { width: 65%; line-height: 1.3; font-size: 10pt; }
-        .company-info strong { font-size: 11pt; text-transform: uppercase; }
         
-        /* --- CHỈNH SỬA KHOẢNG CÁCH ĐỊA CHỈ --- */
+        /* Cấu hình Font và Size cho thông tin công ty */
+        .company-info { 
+            width: 65%; 
+            font-size: 11pt; /* Size chuẩn như hình */
+            line-height: 1.3; /* Giãn dòng tiêu chuẩn */
+            color: #000;
+        }
+        
+        /* Tên công ty: To, Đậm, In Hoa */
+        .company-info strong { 
+            font-size: 13pt; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            display: block;
+            margin-bottom: 3px; /* Khoảng cách nhỏ dưới tên công ty */
+        }
+        
+        /* Khối địa chỉ */
         #company_address { 
             display: block; 
-            margin-top: 2px; 
-            margin-bottom: 4px; /* Khoảng cách nhỏ xuống dòng ĐT */
+            margin-bottom: 8px; /* TẠO KHOẢNG CÁCH RÕ RỆT VỚI DÒNG ĐIỆN THOẠI (NHƯ HÌNH) */
         }
+        
+        /* Các dòng liên hệ (ĐT, MST) */
         .contact-line {
-            margin: 1px 0; /* Khoảng cách giữa các dòng liên hệ cực nhỏ */
+            margin: 2px 0; /* Khoảng cách giữa dòng ĐT và dòng MST */
         }
         
         .logo { width: 250px; height: auto; margin-bottom: 5px; }
@@ -57,11 +73,7 @@
         .customer-info td { padding: 1px 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
 
-        /* DÒNG KÍNH GỬI */
-        .intro-line {
-            margin-top: 0px;    
-            margin-bottom: 10px;
-        }
+        .intro-line { margin-top: 0px; margin-bottom: 10px; }
 
         /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
@@ -91,10 +103,7 @@
             display: flex;
             justify-content: center;
         }
-        #company_stamp {
-            max-height: 135px; 
-            width: auto;
-        }
+        #company_stamp { max-height: 135px; width: auto; }
 
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
@@ -113,13 +122,15 @@
             <div class="company-info">
                 <strong id="company_name"></strong><br>
                 
-                <!-- Địa chỉ -->
+                <!-- Địa chỉ (được xử lý JS để xuống dòng) -->
+                <!-- Có margin-bottom để tạo khoảng cách với dòng ĐT -->
                 <span id="company_address"></span>
-                <!-- Đã xóa thẻ BR thừa ở đây để rút ngắn khoảng cách -->
                 
-                <!-- Gom nhóm ĐT và MST vào thẻ P để chỉnh margin sát lại -->
-                <p class="contact-line">ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span></p>
-                <p class="contact-line">MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a></p>
+                <!-- Khối liên hệ -->
+                <div class="contact-info-block">
+                    <p class="contact-line">ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span></p>
+                    <p class="contact-line">MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a></p>
+                </div>
             </div>
             <div class="quote-details-container">
                 <img src="https://theme.hstatic.net/1000375557/1001056558/14/logo.png?v=439" alt="Logo" class="logo">
@@ -139,7 +150,6 @@
         
         <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
-        <!-- Bảng sản phẩm -->
         <table class="products">
             <thead>
                 <tr>
@@ -155,7 +165,6 @@
             <tbody id="product_table_body"></tbody>
         </table>
 
-        <!-- Ghi chú & Chữ ký -->
         <div class="notes-block"><strong>Lưu ý:</strong> <span id="notes_and_terms" style="font-style: italic;"></span></div>
         
         <div class="signatures-section">
