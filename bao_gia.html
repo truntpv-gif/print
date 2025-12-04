@@ -7,12 +7,12 @@
     <style>
         /* CSS CẤU TRÚC TRANG */
         body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
-        .page { width: 21cm; min-height: 29.7cm; padding: 1.0cm 1.2cm; /* Giảm padding trên dưới chút xíu */ margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
+        .page { width: 21cm; min-height: 29.7cm; padding: 1.0cm 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
         @page { size: A4; margin: 10mm; }
         
         @media print { 
             html, body { width: 21cm; } 
-            .page { margin: 0; border: initial; box-shadow: initial; background: initial; padding: 0; /* Khi in bỏ padding của div page để sát lề hơn nếu cần */ } 
+            .page { margin: 0; border: initial; box-shadow: initial; background: initial; padding: 0; } 
             .print-button-container { display: none; } 
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group; }
@@ -22,32 +22,41 @@
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
         /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; /* Giảm khoảng cách dưới header */ }
-        .company-info { width: 65%; line-height: 1.3; font-size: 10pt; } /* Tăng độ rộng và giãn dòng nhỏ lại */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .company-info { width: 65%; line-height: 1.3; font-size: 10pt; }
         .company-info strong { font-size: 11pt; text-transform: uppercase; }
-        #company_address { display: block; margin-top: 2px; } /* Đảm bảo địa chỉ xuống dòng đẹp */
+        #company_address { display: block; margin-top: 2px; }
         
-        .logo { width: 250px; height: auto; margin-bottom: 5px; } /* Thu nhỏ logo xíu để gọn */
+        .logo { width: 250px; height: auto; margin-bottom: 5px; }
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
         
-        /* CHỈNH SỬA KHOẢNG CÁCH SỐ & NGÀY */
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.2; font-size: 11pt; }
-        .quote-info-box p { margin: 2px 0; } /* Khoảng cách giữa dòng Số và Ngày cực nhỏ */
+        .quote-info-box p { margin: 2px 0; }
 
-        /* TIÊU ĐỀ & DỰ ÁN */
-        .title-section { text-align: center; margin-top: 5px; margin-bottom: 10px; } /* Kéo lên cao, sát với header */
-        .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; } /* Giảm margin dưới của H1 */
+        /* --- CHỈNH SỬA 1: TIÊU ĐỀ XUỐNG DÒNG --- */
+        .title-section { 
+            text-align: center; 
+            margin-top: 30px; /* Tăng từ 5px lên 30px để đẩy xuống */
+            margin-bottom: 10px; 
+        } 
+        .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
         /* THÔNG TIN KHÁCH HÀNG */
-        .customer-info { margin-bottom: 10px; line-height: 1.4; }
+        .customer-info { margin-bottom: 5px; line-height: 1.4; }
         .customer-info table { border-collapse: collapse; width: 100%; }
-        .customer-info td { padding: 1px 0; vertical-align: top; } /* Bỏ padding ngang để sát lề */
-        .customer-info td:first-child { width: 90px; } /* Thu hẹp cột nhãn */
+        .customer-info td { padding: 1px 0; vertical-align: top; }
+        .customer-info td:first-child { width: 90px; }
+
+        /* --- CHỈNH SỬA 2: DÒNG KÍNH GỬI LÊN CAO --- */
+        .intro-line {
+            margin-top: 0px;    /* Kéo sát lên trên */
+            margin-bottom: 10px;
+        }
 
         /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
-        table.products thead th, table.products tbody td { border: 1px solid #000; padding: 5px; } /* Giảm padding ô chút xíu cho gọn */
+        table.products thead th, table.products tbody td { border: 1px solid #000; padding: 5px; }
         table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
         
         table.products tbody td:nth-child(1), 
@@ -63,9 +72,22 @@
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
         .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 8px 5px !important; }
 
-        /* FOOTER */
+        /* FOOTER & CON DẤU */
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
+        
+        /* --- CHỈNH SỬA 3: CON DẤU TO HƠN 30% --- */
+        .stamp-container { 
+            height: 135px; /* Tăng từ 100px lên 135px */
+            margin-top: 5px; 
+            display: flex;
+            justify-content: center;
+        }
+        #company_stamp {
+            max-height: 135px; /* Tăng giới hạn chiều cao ảnh */
+            width: auto;
+        }
+
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
 
@@ -82,7 +104,6 @@
         <div class="header">
             <div class="company-info">
                 <strong id="company_name"></strong><br>
-                <!-- Địa chỉ sẽ được xử lý JS để xuống dòng -->
                 <span id="company_address"></span><br>
                 ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span><br>
                 MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a>
@@ -102,7 +123,9 @@
         </div>
 
         <div class="customer-info"><table><tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr><tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr><tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr></table></div>
-        <p style="margin-top:5px; margin-bottom:5px;">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
+        
+        <!-- Dòng intro đã được chỉnh class intro-line để sát lên trên -->
+        <p class="intro-line">Công ty chúng tôi kính gửi đến quý khách bảng báo giá các sản phẩm như sau.</p>
         
         <!-- Bảng sản phẩm -->
         <table class="products">
@@ -125,7 +148,12 @@
         
         <div class="signatures-section">
             <div style="width:40%"><p style="font-weight:bold; margin:0;">XÁC NHẬN ĐẶT HÀNG</p><p style="font-style:italic; margin:0;">(ký tên, đóng dấu)</p></div>
-            <div style="width:58%"><p style="font-weight:bold; margin:0;" id="company_name_signature"></p><p style="font-style:italic; margin:0;">Giám đốc</p><div style="height:100px; margin-top:5px;"><img id="company_stamp" src="" style="max-height:100px;"></div></div>
+            <div style="width:58%">
+                <p style="font-weight:bold; margin:0;" id="company_name_signature"></p>
+                <p style="font-style:italic; margin:0;">Giám đốc</p>
+                <!-- Container chứa con dấu đã được chỉnh to lên -->
+                <div class="stamp-container"><img id="company_stamp" src="" alt="Company Stamp"></div>
+            </div>
         </div>
         
         <div class="bank-info-container">
@@ -221,15 +249,12 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // 1. XỬ LÝ ĐỊA CHỈ: Thay dấu chấm phẩy ";" bằng dấu xuống dòng "<br>"
-            // Đồng thời thay cả \n nếu có
+            // Địa chỉ: Thay ; thành xuống dòng
             let addr = data.company_address || "";
-            // Ưu tiên thay ; thành xuống dòng để tách 3 văn phòng
             addr = addr.replace(/;/g, ";<br>").replace(/\\n/g, "<br>");
             document.getElementById('company_address').innerHTML = addr;
 
             fill('company_name', data.company_name); 
-            // fill('company_address', data.company_address); -> Đã xử lý riêng ở trên
             fill('company_phone', data.company_phone); fill('company_email', data.company_email);
             fill('company_tax_code', data.company_tax_code); 
             const zl = (data.company_zalo_link||'').replace(/https?:\/\//,'');
