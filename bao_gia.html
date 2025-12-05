@@ -5,104 +5,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- CẤU HÌNH KHỔ GIẤY A4 (ĐÃ SỬA ĐỂ CÓ KHOẢNG HỞ ĐỀU CÁC TRANG) --- */
-        @page {
-            size: A4;
-            /* QUAN TRỌNG: Đặt lề ở đây để áp dụng cho MỌI TRANG (cả trang 1, 2, 3...) */
-            margin-top: 20mm;    /* Khoảng hở đầu trang */
-            margin-bottom: 20mm; /* Khoảng hở chân trang (chừa chỗ cho số trang) */
-            margin-left: 0;
-            margin-right: 0;
-        }
-
-        body {
-            background-color: #525659;
-            margin: 0;
-            padding: 0;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-        }
-
-        .page {
-            width: 210mm;
-            /* Bỏ min-height cố định để nội dung tự chảy */
-            margin: 10mm auto;
-            background: white;
-            /* Chuyển padding sang chỉ căn lề trái phải, lề trên dưới do @page lo */
-            padding: 0 20mm; 
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+        /* CSS CẤU TRÚC TRANG */
+        body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
+        
+        /* CẤU HÌNH KHỔ GIẤY A4 */
+        .page { 
+            width: 21cm; 
+            min-height: 29.7cm; 
+            padding: 1.0cm 1.2cm; 
+            margin: 1cm auto; 
+            border: 1px #D3D3D3 solid; 
+            background: white; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
         }
         
-        /* CẤU HÌNH KHI IN */
+        @page { 
+            size: A4; 
+            margin: 0; /* Xóa lề mặc định để code tự căn chỉnh */
+        }
+        
         @media print { 
-            body { background: none; }
+            html, body { width: 21cm; } 
             .page { 
                 margin: 0; 
-                width: 100%; 
-                box-shadow: none; 
-                padding: 0 20mm; /* Giữ lề trái phải */
+                border: initial; 
+                box-shadow: initial; 
+                background: initial; 
+                padding: 1.0cm 1.2cm; /* Giữ nguyên lề văn bản khi in */
+                width: 100%;
+                page-break-after: always;
             } 
             .print-button-container { display: none; } 
             
-            /* Lặp lại tiêu đề bảng ở trang mới */
-            thead { display: table-header-group; }
-            tfoot { display: table-footer-group; }
-            
             /* Ngắt trang thông minh */
-            tr { page-break-inside: avoid; }
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
-            
-            /* Hiển thị số trang */
-            .page-footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 10mm; /* Chiều cao khu vực chân trang */
-                text-align: center;
-                font-size: 10pt;
-                font-style: italic;
-                color: #555;
-            }
-            /* CSS đếm số trang (Chỉ hiện trang hiện tại, không hiện tổng trang được bằng HTML thuần) */
-            .page-number:after {
-                content: "Trang " counter(page);
-            }
+            thead { display: table-header-group; }
         }
 
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* --- CÁC PHẦN CSS KHÁC GIỮ NGUYÊN --- */
+        /* --- HEADER --- */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; color: #000; }
         
-        .company-name { font-size: 12pt; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; display: block; line-height: 1.2; }
-        .info-line { font-size: 10pt; line-height: 1.15; margin-bottom: 1px; display: block; }
+        /* Tên công ty: Size 12pt, Đậm, Hoa */
+        .company-name {
+            font-size: 12pt; 
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+            display: block;
+            line-height: 1.2;
+        }
+
+        /* Cấu hình dòng thông tin công ty (Sát nhau đều tăm tắp) */
+        .info-line {
+            font-size: 10pt;      
+            line-height: 1.15;    
+            margin-bottom: 1px;   
+            display: block;
+        }
         .contact-group { margin-top: 0; }
+
         .logo { width: 300px; height: auto; margin-bottom: 5px; }
         
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
+        /* TIÊU ĐỀ & DỰ ÁN */
         .title-section { text-align: center; margin-top: 30px; margin-bottom: 10px; } 
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
+        /* --- THÔNG TIN KHÁCH HÀNG --- */
         .customer-info { margin-bottom: 5px; line-height: 1.15; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
-        #customer_name { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
+        
+        /* Tên khách hàng */
+        #customer_name {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
         .intro-line { margin-top: 0px; margin-bottom: 10px; }
 
-        /* Bảng sản phẩm */
+        /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
         table.products thead th { border: 1px solid #000; padding: 5px; background-color: #e0e0e0; font-weight: bold; text-align: center; }
         table.products tbody td { border: 1px solid #000; padding: 5px; }
@@ -110,10 +105,12 @@
         table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
         table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
 
+        /* TỔNG TIỀN */
         .total-label { text-align: right; font-weight: bold; border-right: none !important; }
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
         .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 8px 5px !important; }
 
+        /* FOOTER & CON DẤU */
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
         .stamp-container { height: 135px; margin-top: 5px; display: flex; justify-content: center; }
@@ -122,23 +119,15 @@
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
 
+        /* MÀU SẮC */
         #quote_number, #quote_date, #customer_name, #company_name_signature { color: #002B5B; }
         .total-value, .amount-words { color: #002B5B; }
         #bank_account_number, #bank_name { font-weight: bold; color: #002B5B; }
-        
-        /* Ẩn footer khi xem trên màn hình, chỉ hiện khi in */
-        .page-footer { display: none; }
-        @media print { .page-footer { display: block; } }
     </style>
 </head>
 <body>
     <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
     
-    <!-- THÊM PHẦN SỐ TRANG (Sẽ lặp lại ở mỗi trang khi in) -->
-    <div class="page-footer">
-        <span class="page-number"></span>
-    </div>
-
     <div class="page">
         <!-- Header -->
         <div class="header">
@@ -294,7 +283,7 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // Xử lý địa chỉ: tách dòng và gán class info-line để đồng bộ style
+            // Xử lý địa chỉ
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
@@ -336,6 +325,7 @@
             const strAmt = String(data.grand_total||0).replace(/\D/g,'');
             const amtInWords = Number(strAmt)>0 ? `(Bằng chữ: ${docso(strAmt)} đồng).` : '';
             
+            // XUẤT CÁC DÒNG TỔNG TIỀN VÀO CUỐI BẢNG (Thay vì dùng TFOOT)
             tbody.insertAdjacentHTML('beforeend', `
                 <tr class="summary-row"><td colspan="5" class="total-label">Tổng thành Tiền:</td><td colspan="2" class="total-value">${fmt(data.subtotal)}</td></tr>
                 <tr class="summary-row"><td colspan="5" class="total-label">Thuế VAT:</td><td colspan="2" class="total-value">${fmt(data.vat_amount)}</td></tr>
