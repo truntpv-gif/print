@@ -5,70 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- CẤU HÌNH KHỔ GIẤY A4 CHUẨN --- */
-        @page {
-            size: A4;
-            margin: 0; /* QUAN TRỌNG: Xóa lề mặc định của trình duyệt */
-        }
-
-        body {
-            background-color: #525659; /* Màu nền xám khi xem trên web */
-            margin: 0;
-            padding: 0;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-            -webkit-print-color-adjust: exact; /* In đúng màu sắc */
-        }
-
-        .page {
-            width: 210mm;        /* Chiều rộng chuẩn A4 */
-            min-height: 297mm;   /* Chiều cao chuẩn A4 */
-            padding: 15mm 20mm;  /* Lề văn bản: Trên/Dưới 1.5cm, Trái/Phải 2cm */
-            margin: 10mm auto;   /* Canh giữa màn hình khi xem web */
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            box-sizing: border-box; /* Tính padding vào độ rộng tổng */
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* CẤU HÌNH KHI BẤM LỆNH IN */
-        @media print {
-            body {
-                background: none;
-            }
-            .page {
-                margin: 0;
-                border: none;
-                border-radius: 0;
-                width: 100%; /* Full khổ giấy */
-                height: auto;
-                box-shadow: none;
-                page-break-after: always;
-            }
-            .print-button-container {
-                display: none;
-            }
-            /* Giữ dòng tổng tiền không bị ngắt trang */
-            tr.summary-row {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-            thead {
-                display: table-header-group;
-            }
+        /* CSS CẤU TRÚC TRANG */
+        body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
+        .page { width: 21cm; min-height: 29.7cm; padding: 1.0cm 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
+        @page { size: A4; margin: 10mm; }
+        
+        @media print { 
+            html, body { width: 21cm; } 
+            .page { margin: 0; border: initial; box-shadow: initial; background: initial; padding: 0; } 
+            .print-button-container { display: none; } 
+            tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
+            thead { display: table-header-group; }
         }
 
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
-        .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; font-family: sans-serif; }
+        .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* --- CÁC PHẦN TỬ BÊN TRONG --- */
-        
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        /* --- HEADER --- */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; color: #000; }
         
-        /* Tên công ty */
+        /* Tên công ty: Size 12pt */
         .company-name {
             font-size: 12pt; 
             font-weight: bold;
@@ -78,11 +35,11 @@
             line-height: 1.2;
         }
 
-        /* Địa chỉ & Liên hệ (Size 10pt) */
-        .address-line, .info-line {
+        /* Thông tin công ty: Size 10pt */
+        .info-line {
             font-size: 10pt;      
-            line-height: 1.15;
-            margin-bottom: 1px;
+            line-height: 1.15;    
+            margin-bottom: 1px;   
             display: block;
         }
         .contact-group { margin-top: 0; }
@@ -93,46 +50,52 @@
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
-        /* TIÊU ĐỀ */
-        .title-section { text-align: center; margin-top: 25px; margin-bottom: 15px; } 
+        /* TIÊU ĐỀ & DỰ ÁN */
+        .title-section { text-align: center; margin-top: 30px; margin-bottom: 10px; } 
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
-        /* KHÁCH HÀNG */
-        .customer-info { margin-bottom: 10px; line-height: 1.4; font-size: 11pt; }
+        /* --- THÔNG TIN KHÁCH HÀNG (ĐÃ CHỈNH SỬA) --- */
+        .customer-info { 
+            margin-bottom: 5px; 
+            line-height: 1.15; /* Giảm độ cao dòng cho sát lại */
+            font-size: 11pt; 
+        }
         .customer-info table { border-collapse: collapse; width: 100%; }
-        .customer-info td { padding: 2px 0; vertical-align: top; }
-        .customer-info td:first-child { width: 80px; white-space: nowrap; }
+        .customer-info td { 
+            padding: 0; /* Bỏ padding để các dòng sát nhau hơn */
+            vertical-align: top; 
+        }
+        .customer-info td:first-child { width: 90px; }
         
-        #customer_name { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
+        /* Tên khách hàng */
+        #customer_name {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-        .intro-line { margin-top: 5px; margin-bottom: 10px; }
+        .intro-line { margin-top: 0px; margin-bottom: 10px; }
 
         /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
-        table.products thead th { border: 1px solid #000; padding: 6px 4px; background-color: #e0e0e0; font-weight: bold; text-align: center; }
-        table.products tbody td { border: 1px solid #000; padding: 6px 4px; vertical-align: middle; }
-        
-        table.products tbody td:nth-child(1) { text-align: center; width: 5%; } /* STT */
-        table.products tbody td:nth-child(2) { text-align: left; } /* Tên SP */
-        table.products tbody td:nth-child(3) { text-align: center; width: 8%; } /* ĐVT */
-        table.products tbody td:nth-child(4) { text-align: right; width: 10%; } /* SL */
-        table.products tbody td:nth-child(5) { text-align: right; width: 13%; } /* Đơn giá */
-        table.products tbody td:nth-child(6) { text-align: right; width: 13%; } /* Thành tiền */
-        table.products tbody td:nth-child(7) { text-align: center; width: 8%; } /* VAT */
+        table.products thead th, table.products tbody td { border: 1px solid #000; padding: 5px; }
+        table.products thead th { background-color: #e0e0e0; font-weight: bold; text-align: center; }
+        table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
+        table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
 
         /* TỔNG TIỀN */
         .total-label { text-align: right; font-weight: bold; border-right: none !important; }
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
-        .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 10px 5px !important; }
+        .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 8px 5px !important; }
 
         /* FOOTER & CON DẤU */
-        .notes-block { margin-top: 5px; font-size: 10pt; }
-        .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 30px; page-break-inside: avoid; }
+        .notes-block { margin-top: 0px; font-size: 10pt; }
+        .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
         .stamp-container { height: 135px; margin-top: 5px; display: flex; justify-content: center; }
         #company_stamp { max-height: 135px; width: auto; }
 
-        .bank-info-container { display: flex; align-items: flex-start; margin-top: 20px; font-size: 10pt; page-break-inside: avoid; }
+        .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
 
         /* MÀU SẮC */
@@ -147,8 +110,13 @@
         <!-- Header -->
         <div class="header">
             <div class="company-info">
+                <!-- Tên công ty -->
                 <span class="company-name" id="company_name"></span>
+                
+                <!-- Địa chỉ -->
                 <div id="address_container"></div>
+                
+                <!-- Khối liên hệ -->
                 <div class="contact-group">
                     <div class="info-line">ĐT: <span id="company_phone"></span> &nbsp;|&nbsp; Email: <span id="company_email"></span></div>
                     <div class="info-line">MST: <span id="company_tax_code"></span> &nbsp;|&nbsp; Zalo: <a href="#" id="company_zalo_link"></a></div>
@@ -171,9 +139,18 @@
 
         <div class="customer-info">
             <table>
-                <tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr>
-                <tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr>
-                <tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr>
+                <tr>
+                    <td>Kính gởi</td>
+                    <td>: <strong id="customer_name"></strong></td>
+                </tr>
+                <tr>
+                    <td>Địa chỉ</td>
+                    <td>: <span id="customer_address"></span></td>
+                </tr>
+                <tr>
+                    <td>Liên hệ</td>
+                    <td>: <span id="contact_line"></span></td>
+                </tr>
             </table>
         </div>
         
@@ -182,8 +159,13 @@
         <table class="products">
             <thead>
                 <tr>
-                    <th>Stt</th><th>Tên sản phẩm</th><th>Đvt</th><th>SL</th>
-                    <th>Đơn giá<br>(chưa VAT)</th><th>Thành tiền<br>(chưa VAT)</th><th>Thuế VAT</th>
+                    <th style="width: 5%;">Stt</th>
+                    <th style="width: 35%;">Tên sản phẩm</th>
+                    <th style="width: 8%;">Đvt</th>
+                    <th style="width: 10%;">Số lượng</th>
+                    <th style="width: 14%;">Đơn giá<br>(chưa VAT)</th>
+                    <th style="width: 14%;">Thành tiền<br>(chưa VAT)</th>
+                    <th style="width: 10%;">Thuế VAT</th>
                 </tr>
             </thead>
             <tbody id="product_table_body"></tbody>
@@ -293,13 +275,13 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // Địa chỉ: Thay ; thành xuống dòng
+            // Xử lý địa chỉ: tách dòng và gán class info-line để đồng bộ style
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
             addrLines.forEach(line => {
                 if(line.trim() !== "") {
-                    addrHtml += `<div class="address-line">${line.trim()}</div>`;
+                    addrHtml += `<div class="info-line">${line.trim()}</div>`;
                 }
             });
             document.getElementById('address_container').innerHTML = addrHtml;
