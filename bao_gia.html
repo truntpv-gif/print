@@ -5,69 +5,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- CẤU HÌNH KHỔ GIẤY A4 CHUẨN --- */
+        /* --- CẤU HÌNH KHỔ GIẤY A4 (QUAN TRỌNG NHẤT) --- */
         @page {
             size: A4;
-            margin: 0; 
+            /* Thiết lập lề trực tiếp cho tờ giấy in */
+            /* Trên: 1.5cm | Phải: 1.5cm | Dưới: 1.5cm | Trái: 2.0cm */
+            margin: 15mm 15mm 15mm 20mm; 
         }
 
         body {
-            background-color: #525659;
+            background-color: #525659; /* Màu nền xám khi xem web */
             margin: 0;
             padding: 0;
             font-family: 'Times New Roman', Times, serif;
             font-size: 11pt;
         }
 
+        /* GIAO DIỆN KHI XEM TRÊN MÁY TÍNH (Giả lập tờ A4) */
         .page {
             width: 210mm;
             min-height: 297mm;
-            padding: 15mm 20mm; 
             margin: 10mm auto;
             background: white;
+            /* Padding này chỉ để xem trên web cho đẹp, khi in sẽ bị loại bỏ */
+            padding: 15mm 20mm; 
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
         }
         
+        /* --- CẤU HÌNH KHI BẤM LỆNH IN (FIX LỖI CỦA BẠN) --- */
         @media print { 
-            body { background: white; margin: 0; }
+            html, body { 
+                background: white; 
+                margin: 0; 
+                padding: 0;
+                height: auto; /* Cho phép chiều cao tự động */
+            }
             .page { 
-                width: 100%; margin: 0; padding: 15mm 20mm; 
-                border: none; box-shadow: none; min-height: auto; display: block;
-                page-break-after: always;
+                width: 100%;
+                margin: 0; 
+                padding: 0; /* QUAN TRỌNG: Xóa padding để không bị cộng dồn lề */
+                border: none; 
+                box-shadow: none; 
+                min-height: 0; /* QUAN TRỌNG: Xóa chiều cao tối thiểu để không sinh trang trắng */
+                display: block; 
+                overflow: visible;
             } 
             .print-button-container { display: none; } 
+            
+            /* Lặp lại tiêu đề bảng (Stt, Tên SP...) khi qua trang mới */
             thead { display: table-header-group; }
+            
+            /* Ngăn dòng bị cắt đôi giữa 2 trang */
             tr { page-break-inside: avoid; }
+            
+            /* Giữ các dòng tổng tiền luôn đi cùng nhau */
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
         }
 
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
-        /* --- HEADER (ĐÃ CHỈNH SỬA SIZE CHỮ NHỎ HƠN) --- */
+        /* --- STYLE NỘI DUNG (GIỮ NGUYÊN FORM ĐÃ DUYỆT) --- */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; color: #000; }
         
-        /* Tên công ty: Giảm xuống 11pt */
-        .company-name {
-            font-size: 11pt; /* Cũ là 12pt */
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-            display: block;
-            line-height: 1.2;
-        }
-
-        /* Thông tin công ty: Giảm xuống 9pt */
-        .info-line {
-            font-size: 9pt;   /* Cũ là 10pt */   
-            line-height: 1.2;    
-            margin-bottom: 1px;   
-            display: block;
-        }
+        /* Tên công ty: 11pt (theo yêu cầu trước) */
+        .company-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; display: block; line-height: 1.2; }
+        /* Thông tin công ty: 9pt (theo yêu cầu trước) */
+        .info-line { font-size: 9pt; line-height: 1.2; margin-bottom: 1px; display: block; }
         .contact-group { margin-top: 0; }
 
         .logo { width: 300px; height: auto; margin-bottom: 5px; }
@@ -76,17 +84,14 @@
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
-        /* TIÊU ĐỀ & DỰ ÁN */
         .title-section { text-align: center; margin-top: 30px; margin-bottom: 10px; } 
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
-        /* --- THÔNG TIN KHÁCH HÀNG --- */
         .customer-info { margin-bottom: 5px; line-height: 1.15; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
-        
         #customer_name { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
 
         .intro-line { margin-top: 0px; margin-bottom: 10px; }
@@ -274,7 +279,6 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // Xử lý địa chỉ
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
