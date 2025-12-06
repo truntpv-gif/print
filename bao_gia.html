@@ -259,14 +259,21 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
-            // --- ĐOẠN JS MỚI: TÁCH DÒNG LƯU Ý VÀ DKTM ---
+           // --- ĐOẠN JS MỚI: TÁCH DÒNG LƯU Ý VÀ DKTM ---
             if (data.notes_and_terms) {
                 // Tách theo ký tự ||BR|| hoặc xuống dòng
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
-                let notesHtml = "";
-                notesArr.forEach(note => {
+                let notesHtml = "<strong>Lưu ý: </strong>"; // Thêm chữ Lưu ý in đậm ở đầu
+                
+                // Nếu có nhiều dòng, dòng đầu tiên sẽ nằm sau chữ "Lưu ý:", các dòng sau xuống dòng
+                notesArr.forEach((note, index) => {
                     if(note.trim() !== "") {
-                        notesHtml += `<div style="margin-bottom: 2px;">${note.trim()}</div>`;
+                        if (index === 0) {
+                            notesHtml += `<span>${note.trim()}</span>`;
+                        } else {
+                            // Các dòng tiếp theo xuống dòng và thụt vào một chút cho đẹp (tùy chọn)
+                            notesHtml += `<div style="margin-top: 2px;">${note.trim()}</div>`;
+                        }
                     }
                 });
                 document.getElementById('notes_and_terms').innerHTML = notesHtml;
