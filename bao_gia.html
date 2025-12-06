@@ -310,16 +310,18 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
-            // --- XỬ LÝ LƯU Ý (TỰ THÊM CHỮ "LƯU Ý:" IN ĐẬM) ---
+            // --- XỬ LÝ LƯU Ý (TỰ THÊM CHỮ "LƯU Ý:" IN ĐẬM VÀ CANH LỀ) ---
             if (data.notes_and_terms) {
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
                 let notesHtml = "<strong>Lưu ý: </strong>"; 
                 notesArr.forEach((note, index) => {
                     if(note.trim() !== "") {
                         if (index === 0) {
+                            // Dòng đầu tiên nằm ngay sau chữ Lưu ý:
                             notesHtml += `<span>${note.trim()}</span>`;
                         } else {
-                            notesHtml += `<div style="margin-top: 2px;">${note.trim()}</div>`;
+                            // Dòng thứ 2 trở đi: Xuống dòng và thụt vào 48px cho thẳng hàng
+                            notesHtml += `<div style="margin-top: 2px; margin-left: 48px;">${note.trim()}</div>`;
                         }
                     }
                 });
