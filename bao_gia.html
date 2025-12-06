@@ -5,16 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* GIỮ NGUYÊN CSS CŨ CỦA BẠN 100% */
-        body { background-color: #fff; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
-        .page { width: 21cm; min-height: 29.7cm; padding: 1.0cm 1.2cm; margin: 1cm auto; border: 1px #D3D3D3 solid; background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); box-sizing: border-box; display: flex; flex-direction: column; }
-        @page { size: A4; margin: 0; }
+        /* --- CẤU HÌNH KHỔ GIẤY A4 (QUAN TRỌNG ĐỂ CÓ LỀ TRANG 2) --- */
+        @page {
+            size: A4;
+            /* Lề vật lý của tờ giấy: Trên/Dưới 1.5cm, Trái/Phải 2.0cm */
+            /* Điều này giúp MỌI TRANG đều có lề, không bị sát mép */
+            margin: 15mm 20mm; 
+        }
+
+        body {
+            background-color: #525659;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+        }
+
+        /* Giao diện xem trên màn hình */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 10mm auto;
+            background: white;
+            padding: 0; /* Padding đã được @page xử lý khi in */
+            /* Padding giả lập khi xem trên web để dễ nhìn */
+            padding-left: 20mm; padding-right: 20mm; padding-top: 15mm; padding-bottom: 15mm; 
+            
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
         
+        /* --- CẤU HÌNH KHI IN --- */
         @media print { 
-            html, body { background: white; margin: 0; padding: 0; height: auto; }
-            .page { width: 100%; margin: 0; padding: 0; border: none; box-shadow: none; min-height: 0; display: block; overflow: visible; padding: 15mm 20mm; } 
+            body { background: white; margin: 0; }
+            .page { 
+                width: 100%; margin: 0; 
+                padding: 0; /* Bỏ padding vì @page đã có lề */
+                border: none; box-shadow: none; 
+                min-height: auto; 
+                display: block; 
+            } 
             .print-button-container { display: none; } 
+            
+            /* Lặp lại tiêu đề bảng ở đầu mỗi trang */
             thead { display: table-header-group; }
+            
+            /* Không ngắt dòng giữa chừng */
             tr { page-break-inside: avoid; }
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
         }
@@ -22,38 +60,51 @@
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
 
+        /* --- STYLE NỘI DUNG --- */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .company-info { width: 65%; color: #000; }
+        
         .company-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; display: block; line-height: 1.2; }
         .info-line { font-size: 9pt; line-height: 1.2; margin-bottom: 1px; display: block; }
         .contact-group { margin-top: 0; }
+
         .logo { width: 300px; height: auto; margin-bottom: 5px; }
+        
         .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
+
         .title-section { text-align: center; margin-top: 30px; margin-bottom: 10px; } 
         .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
+
         .customer-info { margin-bottom: 5px; line-height: 1.15; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
         #customer_name { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
+
         .intro-line { margin-top: 0px; margin-bottom: 10px; }
+
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
         table.products thead th { border: 1px solid #000; padding: 5px; background-color: #e0e0e0; font-weight: bold; text-align: center; }
         table.products tbody td { border: 1px solid #000; padding: 5px; }
+        
         table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
         table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
+
         .total-label { text-align: right; font-weight: bold; border-right: none !important; }
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
         .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 8px 5px !important; }
+
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
         .stamp-container { height: 135px; margin-top: 5px; display: flex; justify-content: center; }
         #company_stamp { max-height: 135px; width: auto; }
+
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
+
         #quote_number, #quote_date, #customer_name, #company_name_signature { color: #002B5B; }
         .total-value, .amount-words { color: #002B5B; }
         #bank_account_number, #bank_name { font-weight: bold; color: #002B5B; }
@@ -106,7 +157,7 @@
             <tbody id="product_table_body"></tbody>
         </table>
 
-        <!-- ĐÃ SỬA: Bỏ chữ "Lưu ý:" cứng, chuyển thành DIV để JS điền nội dung đa dòng -->
+        <!-- DIV chứa ghi chú -->
         <div class="notes-block" id="notes_and_terms"></div>
         
         <div class="signatures-section">
@@ -259,19 +310,15 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
-           // --- ĐOẠN JS MỚI: TÁCH DÒNG LƯU Ý VÀ DKTM ---
+            // --- XỬ LÝ LƯU Ý (TỰ THÊM CHỮ "LƯU Ý:" IN ĐẬM) ---
             if (data.notes_and_terms) {
-                // Tách theo ký tự ||BR|| hoặc xuống dòng
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
-                let notesHtml = "<strong>Lưu ý: </strong>"; // Thêm chữ Lưu ý in đậm ở đầu
-                
-                // Nếu có nhiều dòng, dòng đầu tiên sẽ nằm sau chữ "Lưu ý:", các dòng sau xuống dòng
+                let notesHtml = "<strong>Lưu ý: </strong>"; 
                 notesArr.forEach((note, index) => {
                     if(note.trim() !== "") {
                         if (index === 0) {
                             notesHtml += `<span>${note.trim()}</span>`;
                         } else {
-                            // Các dòng tiếp theo xuống dòng và thụt vào một chút cho đẹp (tùy chọn)
                             notesHtml += `<div style="margin-top: 2px;">${note.trim()}</div>`;
                         }
                     }
