@@ -311,26 +311,33 @@
             `);
             
             // --- XỬ LÝ LƯU Ý (TỰ THÊM CHỮ "LƯU Ý:" IN ĐẬM VÀ CANH LỀ) ---
-            if (data.notes_and_terms) {
+             if (data.notes_and_terms) {
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
-                let notesHtml = "<strong>Lưu ý: </strong>"; 
+                
+                // Dùng Flexbox chia làm 2 phần: [Tiêu đề] và [Nội dung]
+                // Phần tiêu đề "Lưu ý:" nằm bên trái
+                // Phần nội dung nằm bên phải, tự động thẳng hàng với nhau
+                let notesHtml = '<div style="display: flex; align-items: baseline;">';
+                
+                // Cột trái: Chữ "Lưu ý:" cố định
+                notesHtml += '<div style="font-weight: bold; white-space: nowrap; margin-right: 5px;">Lưu ý:</div>';
+                
+                // Cột phải: Danh sách các dòng ghi chú
+                notesHtml += '<div>';
                 notesArr.forEach((note, index) => {
                     if(note.trim() !== "") {
-                        if (index === 0) {
-                            // Dòng đầu tiên nằm ngay sau chữ Lưu ý:
-                            notesHtml += `<span>${note.trim()}</span>`;
-                        } else {
-                            // Dòng thứ 2 trở đi: Xuống dòng và thụt vào 48px cho thẳng hàng
-                            notesHtml += `<div style="margin-top: 2px; margin-left: 48px;">${note.trim()}</div>`;
-                        }
+                        // Dòng thứ 2 trở đi cách dòng trên 2px cho thoáng
+                        let style = index > 0 ? 'style="margin-top: 2px;"' : '';
+                        notesHtml += `<div ${style}>${note.trim()}</div>`;
                     }
                 });
+                notesHtml += '</div></div>'; // Đóng thẻ
+                
                 document.getElementById('notes_and_terms').innerHTML = notesHtml;
             } else {
                 document.getElementById('notes_and_terms').innerHTML = "";
             }
             // ------------------------------------------------
-
             fill('company_name_signature', data.company_name);
             const stp = document.getElementById('company_stamp'); if(data.company_branch_code && stp) stp.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
 
