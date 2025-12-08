@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+a<!DOCTYPE html>
 <html>
 <head>
     <title>PHIẾU GIAO HÀNG</title>
@@ -64,6 +64,7 @@
                 <span id="company_email"></span>
             </div>
             <div class="delivery-details-container">
+                <!-- SỬA ĐỔI: Cập nhật đường dẫn logo chính xác -->
                 <img src="https://github.com/truntpv-gif/print/blob/main/logo.png?raw=true" alt="Logo" class="logo">
                 <div class="delivery-info-box">
                     <p>Số đơn hàng: <strong id="so_dh"></strong></p>
@@ -134,7 +135,6 @@
             
             if (isDemo) {
                 document.getElementById('watermark').style.display = 'block';
-                // Dữ liệu DEMO có chứa dòng "Miễn phí vận chuyển" để test tính năng ẩn
                 data = { company_name: "CN CÔNG TY TNHH XD TÍN THỊNH (DEMO)", company_address: "VP Miền Nam: Số 8/13, Đường số 16, P. Bình Hưng Hòa, TP HCM (DEMO)\\nVP Miền Trung: 123 Đường ABC, Đà Nẵng", company_phone: "0933 676 123 (DEMO)", company_zalo_display: "Siêu Thị Vật Tư (DEMO)", company_zalo_link: "https://zalo.me/sieuthivattu", company_email: "vattutinthinh@gmail.com (DEMO)", so_dh: "DH-DEMO-001", ten_kh: "CÔNG TY CỔ PHẦN ABC", ten_du_an: "Dự án Vinhome Grand Park (DEMO)", ngay_lap: "01/01/2025", dia_chi_giao: "123 Đường XYZ, Quận 1, TP. HCM\\nLầu 5, Tòa nhà Bitexco", nguoi_nhan_hang: "", ghi_chu_dh: "Giao hàng trong giờ hành chính.", nguoi_lap_ky: "Trần Thị B (b.tran@congty.com)", products: [{ ten_sanpham: 'Matit gắn thép Ramset Epcon G5', dvt: 'Chai', so_luong: 30, ghi_chu: 'Hàng dễ vỡ' }, { ten_sanpham: 'Súng bắn keo Ramset', dvt: 'Cái', so_luong: 2, ghi_chu: '' }, { ten_sanpham: 'Miễn phí vận chuyển', dvt: 'Chuyến', so_luong: 1, ghi_chu: '' }] };
             }
 
@@ -171,26 +171,14 @@
 
             const itemTableBody = document.getElementById('itemTableBody');
             itemTableBody.innerHTML = '';
-
-            // --- PHẦN SỬA ĐỔI: LỌC BỎ DÒNG VẬN CHUYỂN ---
-            // Lọc danh sách sản phẩm trước khi in ra
-            const productsToPrint = (data.products || []).filter(item => {
-                const name = (item.ten_sanpham || '').toLowerCase();
-                // Nếu tên chứa chữ "vận chuyển" thì trả về false (không in)
-                // Điều này sẽ loại bỏ cả "Miễn phí vận chuyển" và "Vận chuyển"
-                return !name.includes('vận chuyển');
-            });
-
-            // Duyệt qua danh sách đã lọc để in
-            productsToPrint.forEach((item, index) => {
+            (data.products || []).forEach((item, index) => {
                 const row = itemTableBody.insertRow();
-                row.insertCell(0).textContent = index + 1; // Số thứ tự sẽ tự động đánh lại từ 1
+                row.insertCell(0).textContent = index + 1;
                 row.insertCell(1).textContent = item.ten_sanpham || '';
                 row.insertCell(2).textContent = item.dvt || '';
                 row.insertCell(3).textContent = (item.so_luong != null) ? item.so_luong.toLocaleString('de-DE') : 0;
                 row.insertCell(4).textContent = item.ghi_chu || '';
             });
-            // ----------------------------------------------
         }
 
         document.addEventListener('DOMContentLoaded', populateData);
