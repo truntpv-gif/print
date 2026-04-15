@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BÁO GIÁ VẬT TƯ</title>
+    <title>Báo Giá</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- CẤU HÌNH KHỔ GIẤY A4 (QUAN TRỌNG ĐỂ CÓ LỀ TRANG 2) --- */
+        /* --- CẤU HÌNH KHỔ GIẤY A4 --- */
         @page {
             size: A4;
-            /* Lề vật lý của tờ giấy: Trên/Dưới 1.5cm, Trái/Phải 2.0cm */
-            /* Điều này giúp MỌI TRANG đều có lề, không bị sát mép */
             margin: 15mm 20mm; 
         }
 
@@ -21,16 +19,12 @@
             font-size: 11pt;
         }
 
-        /* Giao diện xem trên màn hình */
         .page {
             width: 210mm;
             min-height: 297mm;
             margin: 10mm auto;
             background: white;
-            padding: 0; /* Padding đã được @page xử lý khi in */
-            /* Padding giả lập khi xem trên web để dễ nhìn */
-            padding-left: 20mm; padding-right: 20mm; padding-top: 15mm; padding-bottom: 15mm; 
-            
+            padding: 15mm 20mm; 
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             display: flex;
@@ -42,54 +36,81 @@
             body { background: white; margin: 0; }
             .page { 
                 width: 100%; margin: 0; 
-                padding: 0; /* Bỏ padding vì @page đã có lề */
+                padding: 0; 
                 border: none; box-shadow: none; 
                 min-height: auto; 
                 display: block; 
             } 
-            .print-button-container { display: none; } 
-            
-            /* Lặp lại tiêu đề bảng ở đầu mỗi trang */
+            .print-button-container { display: none !important; } 
+            .print-modal { display: none !important; } /* Ẩn popup khi in */
             thead { display: table-header-group; }
-            
-            /* Không ngắt dòng giữa chừng */
             tr { page-break-inside: avoid; }
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
         }
 
+        /* --- NÚT BẤM IN GÓC TRÊN --- */
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
-        .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold;}
+        .print-button:hover { background-color: #0056b3; }
 
-        /* --- STYLE NỘI DUNG --- */
+        /* --- CSS CHO POPUP (HỘP THOẠI LỰA CHỌN IN) --- */
+        .print-modal {
+            display: none; /* Mặc định ẩn */
+            position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: #fff; padding: 25px; border-radius: 8px;
+            text-align: center; font-family: Arial, sans-serif; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 350px;
+        }
+        .modal-content p { margin-top: 0; font-size: 13pt; font-weight: bold; color: #333; }
+        .btn-option {
+            color: white; border: none; padding: 12px 15px; width: 100%;
+            margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 11pt; font-weight: bold;
+        }
+        .btn-with-stamp { background-color: #28a745; }
+        .btn-with-stamp:hover { background-color: #218838; }
+        .btn-no-stamp { background-color: #17a2b8; color: #000; }
+        .btn-no-stamp:hover { background-color: #e0a800; }
+        .btn-cancel { background-color: #dc3545; margin-top: 15px; }
+        .btn-cancel:hover { background-color: #c82333; }
+
+        /* --- HEADER & THÔNG TIN CÔNG TY --- */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-        .company-info { width: 65%; color: #000; }
+        .company-info { width: 60%; color: #000; }
         
-        .company-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; display: block; line-height: 1.2; }
-        .info-line { font-size: 9pt; line-height: 1.2; margin-bottom: 1px; display: block; }
+        .company-name { font-size: 12pt; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; display: block; line-height: 1.2; }
+        .info-line { font-size: 10pt; line-height: 1.15; margin-bottom: 1px; display: block; }
         .contact-group { margin-top: 0; }
 
-        .logo { width: 330px; height: auto; margin-bottom: 5px; }
+        .logo { width: 360px; height: auto; margin-bottom: 5px; }
         
-        .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 35%; }
+        .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 40%; }
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
-        .title-section { text-align: center; margin-top: 30px; margin-bottom: 10px; } 
-        .title-section h1 { font-size: 18pt; margin: 0 0 5px 0; font-weight: bold; }
+        /* --- TIÊU ĐỀ & DỰ ÁN --- */
+        .title-section { text-align: center; margin-top: 15px; margin-bottom: 5px; } 
+        .title-section h1 { font-size: 18pt; margin: 0 0 3px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
-        .customer-info { margin-bottom: 5px; line-height: 1.15; font-size: 11pt; }
+        /* --- THÔNG TIN KHÁCH HÀNG --- */
+        .customer-info { margin-top: 5px; margin-bottom: 3px; line-height: 1.15; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 0; vertical-align: top; }
         .customer-info td:first-child { width: 90px; }
+        
         #customer_name { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
+        .intro-line { margin-top: 3px; margin-bottom: 8px; }
 
-        .intro-line { margin-top: 0px; margin-bottom: 10px; }
-
+        /* BẢNG SẢN PHẨM */
         table.products { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 10px; }
         table.products thead th { border: 1px solid #000; padding: 5px; background-color: #e0e0e0; font-weight: bold; text-align: center; }
         table.products tbody td { border: 1px solid #000; padding: 5px; }
-        
         table.products tbody td:nth-child(1), table.products tbody td:nth-child(3), table.products tbody td:nth-child(7) { text-align: center; }
         table.products tbody td:nth-child(4), table.products tbody td:nth-child(5), table.products tbody td:nth-child(6) { text-align: right; }
 
@@ -99,8 +120,10 @@
 
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
+        
+        /* Giữ cố định chiều cao khu vực con dấu để khi ẩn đi không bị sụp dòng */
         .stamp-container { height: 135px; margin-top: 5px; display: flex; justify-content: center; }
-        #company_stamp { max-height: 135px; width: auto; }
+        #company_stamp { max-height: 135px; width: auto; transition: opacity 0.2s; }
 
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
@@ -111,8 +134,19 @@
     </style>
 </head>
 <body>
-    <div class="print-button-container"><button class="print-button" onclick="window.print()">In Báo Giá</button></div>
+    <!-- Nút bấm gọi Hộp thoại thay vì in trực tiếp -->
+    <div class="print-button-container"><button class="print-button" onclick="showPrintModal()">In Báo Giá</button></div>
     
+    <!-- HỘP THOẠI LỰA CHỌN IN -->
+    <div id="printModal" class="print-modal">
+        <div class="modal-content">
+            <p>Tùy chọn in báo giá</p>
+            <button class="btn-option btn-with-stamp" onclick="executePrint(true)">📄 In có con dấu</button>
+            <button class="btn-option btn-no-stamp" onclick="executePrint(false)">📄 In KHÔNG con dấu</button>
+            <button class="btn-option btn-cancel" onclick="closePrintModal()">❌ Hủy bỏ</button>
+        </div>
+    </div>
+
     <div class="page">
         <div class="header">
             <div class="company-info">
@@ -141,7 +175,7 @@
             <table>
                 <tr><td>Kính gởi</td><td>: <strong id="customer_name"></strong></td></tr>
                 <tr><td>Địa chỉ</td><td>: <span id="customer_address"></span></td></tr>
-                <tr><td>Liên hệ</td><td>: <span id="contact_line"></span></td></tr>
+                <tr><td>Người nhận</td><td>: <span id="contact_line"></span></td></tr>
             </table>
         </div>
         
@@ -150,8 +184,13 @@
         <table class="products">
             <thead>
                 <tr>
-                    <th style="width: 5%;">Stt</th><th style="width: 35%;">Tên sản phẩm</th><th style="width: 8%;">Đvt</th><th style="width: 10%;">Số lượng</th>
-                    <th style="width: 14%;">Đơn giá<br>(chưa VAT)</th><th style="width: 14%;">Thành tiền<br>(chưa VAT)</th><th style="width: 10%;">Thuế VAT</th>
+                    <th style="width: 5%;">Stt</th>
+                    <th style="width: 35%;">Tên sản phẩm</th>
+                    <th style="width: 8%;">Đvt</th>
+                    <th style="width: 10%;">Số lượng</th>
+                    <th style="width: 14%;">Đơn giá<br>(chưa VAT)</th>
+                    <th style="width: 14%;">Thành tiền<br>(chưa VAT)</th>
+                    <th style="width: 10%;">Thuế VAT</th>
                 </tr>
             </thead>
             <tbody id="product_table_body"></tbody>
@@ -185,6 +224,53 @@
         const BANK_BINS = {'techcombank':'970407','vietcombank':'970436','vpb':'970432','vpbank':'970432','viettinbank':'970415','bidv':'970418','agribank':'970405','acb':'970416','mbbank':'970422','mb':'970422','sacombank':'970403','shb':'970443','hdbank':'970437','tpbank':'970423','vib':'970441','seabank':'970440','ocb':'970448'};
         const BANK_FULL_NAMES = {'techcombank':'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)','vietcombank':'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)','vpb':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','vpbank':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','viettinbank':'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)','bidv':'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)','agribank':'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)','acb':'Ngân hàng TMCP Á Châu (ACB)','mbbank':'Ngân hàng TMCP Quân đội (MB)','mb':'Ngân hàng TMCP Quân đội (MB)','sacombank':'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)','shb':'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)','hdbank':'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)','tpbank':'Ngân hàng TMCP Tiên Phong (TPBank)','vib':'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)','seabank':'Ngân hàng TMCP Đông Nam Á (SeABank)','ocb':'Ngân hàng TMCP Phương Đông (OCB)'};
 
+        // --- CÁC HÀM ĐIỀU KHIỂN NÚT IN MỚI ---
+        function showPrintModal() {
+            document.getElementById('printModal').style.display = 'flex';
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
+
+        function executePrint(withStamp) {
+            closePrintModal(); // Đóng hộp thoại
+            
+            const stampImg = document.getElementById('company_stamp');
+            
+            // Xử lý ẩn/hiện con dấu
+            if (stampImg) {
+                if (withStamp) {
+                    stampImg.style.display = 'block'; // Có con dấu
+                } else {
+                    stampImg.style.display = 'none';  // Ẩn con dấu (Khoảng trống vẫn giữ nguyên nhờ class .stamp-container)
+                }
+            }
+
+            // Xử lý lưu tên file
+            let quoteNum = document.getElementById('quote_number').innerText;
+            if(quoteNum && quoteNum.trim() !== "") {
+                let safeName = String(quoteNum).replace(/[\\/:*?"<>|]/g, "-").trim();
+                document.title = "Báo giá " + safeName;
+            } else {
+                document.title = "Báo giá";
+            }
+
+            // Đợi một chút để trình duyệt cập nhật giao diện và thẻ title rồi bật lệnh in
+            setTimeout(function() { 
+                window.print(); 
+            }, 300); 
+        }
+
+        // Khôi phục lại con dấu luôn hiển thị sau khi hộp thoại in đóng lại
+        window.addEventListener('afterprint', function() {
+            const stampImg = document.getElementById('company_stamp');
+            if (stampImg) {
+                stampImg.style.display = 'block';
+            }
+        });
+        // ----------------------------------------
+
         function getDataString() {
             if (window.location.hash) {
                 let h = window.location.hash.substring(1); 
@@ -200,9 +286,9 @@
         }
 
         function docso(sotien) {
-            const chuSo = ["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"]; const hang = ["","nghìn","triệu","tỷ","nghìn tỷ","triệu tỷ"];
+            const chuSo =["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"]; const hang =["","nghìn","triệu","tỷ","nghìn tỷ","triệu tỷ"];
             function docNhom(nhom, first) {
-                let t = Math.floor(nhom/100), c = Math.floor((nhom%100)/10), d = nhom%10, kq = [];
+                let t = Math.floor(nhom/100), c = Math.floor((nhom%100)/10), d = nhom%10, kq =[];
                 if (t > 0) kq.push(chuSo[t], "trăm");
                 if (c > 1) { kq.push(chuSo[c], "mươi"); if (d==1) kq.push("mốt"); else if (d>1) kq.push(chuSo[d]); }
                 else if (c == 1) { kq.push("mười"); if (d==5) kq.push("lăm"); else if (d>0) kq.push(chuSo[d]); }
@@ -210,7 +296,7 @@
                 return kq;
             }
             if (!sotien || isNaN(sotien) || Number(sotien)===0) return "";
-            let s = String(Math.floor(Math.abs(Number(sotien)))), g = [], res = [];
+            let s = String(Math.floor(Math.abs(Number(sotien)))), g = [], res =[];
             while (s.length > 0) { g.push(s.slice(Math.max(s.length-3, 0))); s = s.slice(0, Math.max(s.length-3, 0)); }
             for (let i = g.length-1; i >= 0; i--) { 
                 let n = parseInt(g[i]); if(n===0) continue;
@@ -258,6 +344,12 @@
             }
 
             const data = expandData(raw);
+
+            if (data.quote_number) {
+                let safeName = String(data.quote_number).replace(/[\\/:*?"<>|]/g, "-").trim();
+                document.title = "Báo giá " + safeName;
+            }
+
             const fill = (id, v) => { const el = document.getElementById(id); if(el) el.innerHTML = (v||'').replace(/\\n/g, '<br>'); };
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
@@ -286,15 +378,13 @@
             if(data.customer_project) { fill('customer_project', "Dự án: "+data.customer_project); pjEl.style.display='block'; } else pjEl.style.display='none';
 
             const tbody = document.getElementById('product_table_body'); tbody.innerHTML = '';
-            let items = data.products || [], norm = [], ship = [];
+            let items = data.products || [], norm = [], ship =[];
             
             items.forEach(it => {
                 let obj = Array.isArray(it) ? {ten_sanpham:it[0], dvt:it[1], so_luong:it[2], don_gia:it[3], thanh_tien:it[4], thue_vat_rate:it[5]} : it;
                 let n = (obj.ten_sanpham||'').toLowerCase();
                 if(n.includes('vận chuyển')||n.includes('giao hàng')||n.includes('ship')) ship.push(obj); else norm.push(obj);
-            });
-            
-            [...norm, ...ship].forEach((it, i) => {
+            });[...norm, ...ship].forEach((it, i) => {
                 let row = tbody.insertRow();
                 row.innerHTML = `<td>${i+1}</td><td>${it.ten_sanpham}</td><td>${it.dvt}</td>
                 <td>${dec(it.so_luong)}</td><td>${fmt(it.don_gia)}</td><td>${fmt(it.thanh_tien)}</td><td>${(it.thue_vat_rate||0)*100}%</td>`;
@@ -310,34 +400,23 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
-            // --- XỬ LÝ LƯU Ý (TỰ THÊM CHỮ "LƯU Ý:" IN ĐẬM VÀ CANH LỀ) ---
-             if (data.notes_and_terms) {
+            if (data.notes_and_terms) {
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
-                
-                // Dùng Flexbox chia làm 2 phần: [Tiêu đề] và [Nội dung]
-                // Phần tiêu đề "Lưu ý:" nằm bên trái
-                // Phần nội dung nằm bên phải, tự động thẳng hàng với nhau
                 let notesHtml = '<div style="display: flex; align-items: baseline;">';
-                
-                // Cột trái: Chữ "Lưu ý:" cố định
                 notesHtml += '<div style="font-weight: bold; white-space: nowrap; margin-right: 5px;">Lưu ý:</div>';
-                
-                // Cột phải: Danh sách các dòng ghi chú
                 notesHtml += '<div>';
                 notesArr.forEach((note, index) => {
                     if(note.trim() !== "") {
-                        // Dòng thứ 2 trở đi cách dòng trên 2px cho thoáng
                         let style = index > 0 ? 'style="margin-top: 2px;"' : '';
                         notesHtml += `<div ${style}>${note.trim()}</div>`;
                     }
                 });
-                notesHtml += '</div></div>'; // Đóng thẻ
-                
+                notesHtml += '</div></div>';
                 document.getElementById('notes_and_terms').innerHTML = notesHtml;
             } else {
                 document.getElementById('notes_and_terms').innerHTML = "";
             }
-            // ------------------------------------------------
+
             fill('company_name_signature', data.company_name);
             const stp = document.getElementById('company_stamp'); if(data.company_branch_code && stp) stp.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
 
