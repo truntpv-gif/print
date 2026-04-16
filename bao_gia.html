@@ -45,23 +45,30 @@
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
         }
 
-        /* --- NÚT BẤM IN --- */
+        /* --- NÚT BẤM IN GÓC TRÊN --- */
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold;}
         .print-button:hover { background-color: #0056b3; }
 
-        /* --- POPUP LỰA CHỌN IN --- */
+        /* --- CSS CHO POPUP (HỘP THOẠI LỰA CHỌN IN) --- */
         .print-modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);
+            display: none;
+            position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.6);
             justify-content: center; align-items: center;
         }
         .modal-content {
             background-color: #fff; padding: 25px; border-radius: 8px;
-            text-align: center; font-family: Arial, sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.3); width: 350px;
+            text-align: center; font-family: Arial, sans-serif; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 350px;
         }
         .modal-content p { margin-top: 0; font-size: 13pt; font-weight: bold; color: #333; }
-        .btn-option { color: white; border: none; padding: 12px 15px; width: 100%; margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 11pt; font-weight: bold; }
+        .btn-option {
+            color: white; border: none; padding: 12px 15px; width: 100%;
+            margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 11pt; font-weight: bold;
+        }
         .btn-with-stamp { background-color: #28a745; }
         .btn-with-stamp:hover { background-color: #218838; }
         .btn-no-stamp { background-color: #17a2b8; color: #000; }
@@ -69,27 +76,57 @@
         .btn-cancel { background-color: #dc3545; margin-top: 15px; }
         .btn-cancel:hover { background-color: #c82333; }
 
-        /* --- HEADER (ĐÃ CHỈNH LẠI TỶ LỆ ĐỂ LOGO TO HẾT CỠ) --- */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; gap: 10px; }
+        /* --- HEADER & THÔNG TIN CÔNG TY --- */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 5px; 
+            gap: 15px; 
+        }
         
-        /* Cột bên trái (Chữ): Chiếm 55% */
-        .company-info { width: 55%; color: #000; }
-        .company-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; display: block; line-height: 1.2; white-space: nowrap; }
+        .company-info { 
+            width: 55%; /* Giảm phần chữ xuống để nhường chỗ cho Logo */
+            color: #000; 
+        }
+        
+        .company-name { 
+            font-size: 11pt; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            margin-bottom: 3px; 
+            display: block; 
+            line-height: 1.2;
+            white-space: normal; 
+            word-wrap: break-word;
+        }
+        
         .info-line { font-size: 9pt; line-height: 1.2; margin-bottom: 1px; display: block; }
         .contact-group { margin-top: 0; }
 
-        /* Cột bên phải (Logo): Chiếm 45%, Logo max 400px */
-        .quote-details-container { display: flex; flex-direction: column; align-items: flex-end; width: 45%; margin-top: 3px; }
-        .logo { width: 100%; max-width: 400px; height: auto; margin-bottom: 5px; } 
+        /* --- ĐÃ CHỈNH LOGO TO THÊM 20% --- */
+        .quote-details-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            width: 45%; /* Tăng diện tích phần logo */
+        }
+        .logo { 
+            width: 100%; 
+            max-width: 380px; /* Tăng kích thước tối đa lên 380px */
+            height: auto; 
+            margin-bottom: 5px; 
+        }
         
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
 
-        /* --- TIÊU ĐỀ & KHÁCH HÀNG --- */
+        /* --- TIÊU ĐỀ & DỰ ÁN --- */
         .title-section { text-align: center; margin-top: 15px; margin-bottom: 5px; } 
         .title-section h1 { font-size: 18pt; margin: 0 0 3px 0; font-weight: bold; }
         #customer_project_line { margin: 0; font-size: 11pt; }
 
+        /* --- THÔNG TIN KHÁCH HÀNG --- */
         .customer-info { margin-top: 5px; margin-bottom: 3px; line-height: 1.15; font-size: 11pt; }
         .customer-info table { border-collapse: collapse; width: 100%; }
         .customer-info td { padding: 0; vertical-align: top; }
@@ -109,21 +146,25 @@
         .total-value { text-align: right; font-weight: bold; border-left: 1px solid #000; }
         .amount-words { text-align: center; font-style: italic; font-weight: bold; padding: 8px 5px !important; }
 
-        /* FOOTER */
         .notes-block { margin-top: 0px; font-size: 10pt; }
         .signatures-section { display: flex; justify-content: space-between; text-align: center; margin-top: 20px; page-break-inside: avoid; }
+        
         .stamp-container { height: 135px; margin-top: 5px; display: flex; justify-content: center; }
         #company_stamp { max-height: 135px; width: auto; transition: opacity 0.2s; }
+
         .bank-info-container { display: flex; align-items: flex-start; margin-top: 15px; font-size: 10pt; page-break-inside: avoid; }
         #vietqr_code_small { width: 90px; height: 90px; border: 1px solid #ccc; margin-right: 15px; }
+
         #quote_number, #quote_date, #customer_name, #company_name_signature { color: #002B5B; }
         .total-value, .amount-words { color: #002B5B; }
         #bank_account_number, #bank_name { font-weight: bold; color: #002B5B; }
     </style>
 </head>
 <body>
+    <!-- Nút bấm gọi Hộp thoại -->
     <div class="print-button-container"><button class="print-button" onclick="showPrintModal()">In Báo Giá</button></div>
     
+    <!-- HỘP THOẠI LỰA CHỌN IN -->
     <div id="printModal" class="print-modal">
         <div class="modal-content">
             <p>Tùy chọn in báo giá</p>
@@ -134,6 +175,7 @@
     </div>
 
     <div class="page">
+        <!-- Header -->
         <div class="header">
             <div class="company-info">
                 <span class="company-name" id="company_name"></span>
@@ -182,6 +224,7 @@
             <tbody id="product_table_body"></tbody>
         </table>
 
+        <!-- DIV chứa ghi chú -->
         <div class="notes-block" id="notes_and_terms"></div>
         
         <div class="signatures-section">
@@ -205,72 +248,73 @@
     </div>
 
     <script>
-        // Khai báo biến toàn cục chứa dữ liệu
-        let globalData = null;
-
-        // --- BƯỚC 1: TRÍCH XUẤT DỮ LIỆU, SỬA TÊN FILE VÀ XÓA URL NGAY LẬP TỨC ---
-        (function initApp() {
-            try {
-                let hashData = window.location.hash;
-                let rawDataStr = "";
-                
-                if (hashData && hashData.startsWith('#data=')) {
-                    rawDataStr = hashData.substring(6);
-                } else {
-                    rawDataStr = new URLSearchParams(window.location.search).get('data');
-                }
-
-                if (rawDataStr) {
-                    let decoded = decodeURIComponent(rawDataStr).replace(/(?<!\\)\n/g, '\\n');
-                    let clean = decoded.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1").replace(/,,\s*/g, ",");
-                    globalData = JSON.parse(clean);
-
-                    // Giải nén các từ khóa viết tắt
-                    const map = {'c_n':'company_name', 'c_t':'company_tax_code', 'c_a':'company_address', 'c_p':'company_phone', 'c_z':'company_zalo_link', 'c_e':'company_email', 'c_b':'company_branch_code', 'qn':'quote_number', 'qd':'quote_date', 'cn':'customer_name', 'ca':'customer_address', 'cp':'customer_phone', 'ce':'customer_email', 'cc':'customer_contact_person', 'pj':'customer_project', 'st':'subtotal', 'va':'vat_amount', 'gt':'grand_total', 'nt':'notes_and_terms', 'pr':'products', 'b_an':'bank_account_name', 'b_n':'bank_account_number', 'b_nm':'bank_name', 'ref':'payment_reference_text'};
-                    const rec = (obj) => {
-                        if (Array.isArray(obj)) return obj.map(rec);
-                        if (typeof obj === 'object' && obj !== null) return Object.keys(obj).reduce((a, k) => { a[map[k]||k] = rec(obj[k]); return a; }, {});
-                        return obj;
-                    };
-                    globalData = rec(globalData);
-
-                    // ĐỔI TÊN FILE PDF (Title)
-                    if (globalData.quote_number) {
-                        let safeName = String(globalData.quote_number).replace(/[\\/:*?"<>|\r\n]/g, "-").trim();
-                        document.title = "Báo giá " + safeName;
-                    }
-
-                    // *** QUAN TRỌNG: XÓA SẠCH URL DÀI ĐỂ CHROME KHÔNG BỊ LỖI ***
-                    if (window.history && window.history.replaceState) {
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                    }
-                }
-            } catch(e) {
-                console.error("Init error", e);
-            }
-        })();
-
-        // --- CÁC HÀM TIỆN ÍCH ---
+        // Các hằng số ngân hàng
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = {'techcombank':'970407','vietcombank':'970436','vpb':'970432','vpbank':'970432','viettinbank':'970415','bidv':'970418','agribank':'970405','acb':'970416','mbbank':'970422','mb':'970422','sacombank':'970403','shb':'970443','hdbank':'970437','tpbank':'970423','vib':'970441','seabank':'970440','ocb':'970448'};
         const BANK_FULL_NAMES = {'techcombank':'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)','vietcombank':'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)','vpb':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','vpbank':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','viettinbank':'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)','bidv':'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)','agribank':'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)','acb':'Ngân hàng TMCP Á Châu (ACB)','mbbank':'Ngân hàng TMCP Quân đội (MB)','mb':'Ngân hàng TMCP Quân đội (MB)','sacombank':'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)','shb':'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)','hdbank':'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)','tpbank':'Ngân hàng TMCP Tiên Phong (TPBank)','vib':'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)','seabank':'Ngân hàng TMCP Đông Nam Á (SeABank)','ocb':'Ngân hàng TMCP Phương Đông (OCB)'};
 
-        function showPrintModal() { document.getElementById('printModal').style.display = 'flex'; }
-        function closePrintModal() { document.getElementById('printModal').style.display = 'none'; }
+        // --- HÀM XỬ LÝ LỖI TRỐNG TÊN FILE PDF ---
+        function setSafeTitleAndCleanUrl() {
+            let quoteNum = document.getElementById('quote_number').innerText;
+            if(quoteNum && quoteNum.trim() !== "") {
+                let safeName = String(quoteNum).replace(/[\\/:*?"<>|]/g, "-").trim();
+                document.title = "Báo giá " + safeName;
+            } else {
+                document.title = "Báo giá";
+            }
+            
+            // Xóa đoạn URL dài ngoằng để tránh Chrome bị lỗi không xuất được Tên File
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // --- CÁC HÀM ĐIỀU KHIỂN NÚT IN ---
+        function showPrintModal() {
+            document.getElementById('printModal').style.display = 'flex';
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
 
         function executePrint(withStamp) {
             closePrintModal(); 
-            const stampImg = document.getElementById('company_stamp');
-            if (stampImg) { stampImg.style.display = withStamp ? 'block' : 'none'; }
             
-            // In ngay vì URL đã bị xóa sạch từ lúc load trang
-            setTimeout(function() { window.print(); }, 200); 
+            const stampImg = document.getElementById('company_stamp');
+            if (stampImg) {
+                stampImg.style.display = withStamp ? 'block' : 'none';
+            }
+
+            // Gọi hàm sửa tên file và dọn dẹp URL
+            setSafeTitleAndCleanUrl();
+
+            // Chờ 500ms rồi gọi hộp thoại in
+            setTimeout(function() { 
+                window.print(); 
+            }, 500); 
         }
 
+        // Khôi phục con dấu sau khi in
         window.addEventListener('afterprint', function() {
             const stampImg = document.getElementById('company_stamp');
             if (stampImg) stampImg.style.display = 'block';
         });
+
+        // --- HÀM ĐỌC DỮ LIỆU ---
+        function getDataString() {
+            if (window.location.hash) {
+                let h = window.location.hash.substring(1); 
+                if(h.startsWith('data=')) return h.substring(5);
+                return h;
+            }
+            return new URLSearchParams(window.location.search).get('data');
+        }
+
+        function cleanJson(str) {
+            if (!str) return "{}";
+            return str.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1").replace(/,,\s*/g, ",");
+        }
 
         function docso(sotien) {
             const chuSo =["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"]; const hang =["","nghìn","triệu","tỷ","nghìn tỷ","triệu tỷ"];
@@ -300,24 +344,50 @@
             img.src = `https://api.vietqr.io/image/${bin}-${acN}-G4l0bO1.jpg?amount=${String(am||0).replace(/\D/g,'')}&addInfo=${encodeURIComponent(desc||'')}&accountName=${encodeURIComponent(acName||'')}`;
         }
 
-        // --- HÀM VẼ GIAO DIỆN ---
-        function renderData() {
-            if (!globalData) {
-                document.body.innerHTML = "<h3 style='color:red; padding:20px'>Không có dữ liệu báo giá!</h3>";
+        function expandData(short) {
+            const map = {
+                'c_n':'company_name', 'c_t':'company_tax_code', 'c_a':'company_address', 'c_p':'company_phone', 'c_z':'company_zalo_link', 'c_e':'company_email', 'c_b':'company_branch_code',
+                'qn':'quote_number', 'qd':'quote_date', 'cn':'customer_name', 'ca':'customer_address', 'cp':'customer_phone', 'ce':'customer_email', 'cc':'customer_contact_person', 'pj':'customer_project',
+                'st':'subtotal', 'va':'vat_amount', 'gt':'grand_total', 'nt':'notes_and_terms', 'pr':'products',
+                'b_an':'bank_account_name', 'b_n':'bank_account_number', 'b_nm':'bank_name', 'ref':'payment_reference_text'
+            };
+            const rec = (obj) => {
+                if (Array.isArray(obj)) return obj.map(rec);
+                if (typeof obj === 'object' && obj !== null) return Object.keys(obj).reduce((a, k) => { a[map[k]||k] = rec(obj[k]); return a; }, {});
+                return obj;
+            };
+            return rec(short);
+        }
+
+        function populateData() {
+            const hash = getDataString();
+            if (!hash) { alert("Không tìm thấy dữ liệu báo giá!"); return; }
+
+            let raw = {};
+            try {
+                const decoded = decodeURIComponent(hash).replace(/(?<!\\)\n/g, '\\n');
+                const clean = cleanJson(decoded); 
+                raw = JSON.parse(clean);
+            } catch (e) {
+                console.error(e);
+                alert("Lỗi dữ liệu JSON");
                 return;
             }
 
-            const data = globalData;
+            const data = expandData(raw);
+
             const fill = (id, v) => { const el = document.getElementById(id); if(el) el.innerHTML = (v||'').replace(/\\n/g, '<br>'); };
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
-            // Địa chỉ công ty
+            // Xử lý địa chỉ
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
             addrLines.forEach(line => {
-                if(line.trim() !== "") { addrHtml += `<div class="info-line">${line.trim()}</div>`; }
+                if(line.trim() !== "") {
+                    addrHtml += `<div class="info-line">${line.trim()}</div>`;
+                }
             });
             document.getElementById('address_container').innerHTML = addrHtml;
 
@@ -329,12 +399,11 @@
 
             fill('quote_number', data.quote_number); fill('quote_date', data.quote_date);
             fill('customer_name', data.customer_name); fill('customer_address', data.customer_address);
-            fill('contact_line', [data.customer_contact_person, data.customer_phone, data.customer_email].filter(Boolean).join(' | '));
+            fill('contact_line',[data.customer_contact_person, data.customer_phone, data.customer_email].filter(Boolean).join(' | '));
             
             const pjEl = document.getElementById('customer_project_line');
             if(data.customer_project) { fill('customer_project', "Dự án: "+data.customer_project); pjEl.style.display='block'; } else pjEl.style.display='none';
 
-            // Bảng sản phẩm
             const tbody = document.getElementById('product_table_body'); tbody.innerHTML = '';
             let items = data.products || [], norm = [], ship =[];
             
@@ -350,7 +419,6 @@
                 <td>${dec(it.so_luong)}</td><td>${fmt(it.don_gia)}</td><td>${fmt(it.thanh_tien)}</td><td>${(it.thue_vat_rate||0)*100}%</td>`;
             });
 
-            // Tổng cộng
             const strAmt = String(data.grand_total||0).replace(/\D/g,'');
             const amtInWords = Number(strAmt)>0 ? `(Bằng chữ: ${docso(strAmt)} đồng).` : '';
             
@@ -361,7 +429,7 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
-            // Ghi chú
+            // XỬ LÝ LƯU Ý
             if (data.notes_and_terms) {
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
                 let notesHtml = '<div style="display: flex; align-items: baseline;">';
@@ -387,10 +455,12 @@
             fill('bank_name', BANK_FULL_NAMES[bnKey] || data.bank_name);
             fill('payment_reference_text', data.payment_reference_text);
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number||''}`, data.bank_account_name);
-        }
 
-        // Chạy hàm vẽ giao diện khi DOM đã load
-        document.addEventListener('DOMContentLoaded', renderData);
+            // Set title mặc định cho lần tải đầu
+            setSafeTitleAndCleanUrl();
+        }
+        
+        document.addEventListener('DOMContentLoaded', populateData);
     </script>
 </body>
 </html>
