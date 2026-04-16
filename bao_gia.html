@@ -1,37 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Báo giá</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SCRIPT CHẠY ĐẦU TIÊN ĐỂ ÉP CHROME ĐỔI TÊN FILE PDF TRƯỚC KHI RENDER -->
-    <script>
-        function setEarlyTitle() {
-            try {
-                let hashData = window.location.hash.substring(1);
-                if(hashData.startsWith('data=')) hashData = hashData.substring(5);
-                if (!hashData) hashData = new URLSearchParams(window.location.search).get('data');
-                
-                if(hashData) {
-                    let decoded = decodeURIComponent(hashData).replace(/(?<!\\)\n/g, '\\n');
-                    let clean = decoded.replace(/,(\s*])/g, "$1").replace(/,(\s*})/g, "$1").replace(/,,\s*/g, ",");
-                    let raw = JSON.parse(clean);
-                    // Lấy số báo giá (từ khóa viết tắt 'qn' hoặc 'quote_number')
-                    let qNum = raw.qn || raw.quote_number;
-                    if(qNum) {
-                        let safeName = String(qNum).replace(/[\\/:*?"<>|]/g, "-").trim();
-                        document.title = "Báo giá " + safeName;
-                    } else {
-                        document.title = "Báo giá";
-                    }
-                }
-            } catch(e) { document.title = "Báo giá"; }
-        }
-        setEarlyTitle();
-    </script>
-    
-    <title>Báo giá</title>
-
     <style>
         /* --- CẤU HÌNH KHỔ GIẤY A4 --- */
         @page {
@@ -66,17 +38,19 @@
                 border: none; box-shadow: none; min-height: auto; 
                 display: block; 
             } 
-            .print-button-container, .print-modal { display: none !important; } 
+            .print-button-container { display: none !important; } 
+            .print-modal { display: none !important; } 
             thead { display: table-header-group; }
             tr { page-break-inside: avoid; }
             tr.summary-row { page-break-inside: avoid; page-break-after: auto; }
         }
 
-        /* --- NÚT BẤM VÀ POPUP IN --- */
+        /* --- NÚT BẤM IN GÓC TRÊN --- */
         .print-button-container { position: fixed; top: 10px; right: 10px; z-index: 100; }
         .print-button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold;}
         .print-button:hover { background-color: #0056b3; }
 
+        /* --- CSS CHO POPUP (HỘP THOẠI LỰA CHỌN IN) --- */
         .print-modal {
             display: none;
             position: fixed; z-index: 1000; left: 0; top: 0;
@@ -91,7 +65,10 @@
             width: 350px;
         }
         .modal-content p { margin-top: 0; font-size: 13pt; font-weight: bold; color: #333; }
-        .btn-option { color: white; border: none; padding: 12px 15px; width: 100%; margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 11pt; font-weight: bold; }
+        .btn-option {
+            color: white; border: none; padding: 12px 15px; width: 100%;
+            margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 11pt; font-weight: bold;
+        }
         .btn-with-stamp { background-color: #28a745; }
         .btn-with-stamp:hover { background-color: #218838; }
         .btn-no-stamp { background-color: #17a2b8; color: #000; }
@@ -105,35 +82,41 @@
             justify-content: space-between; 
             align-items: flex-start; 
             margin-bottom: 5px; 
-            gap: 10px;
+            gap: 15px; 
         }
         
         .company-info { 
-            width: 60%; /* Dành 60% cho chữ */
+            width: 55%; /* Giảm phần chữ xuống để nhường chỗ cho Logo */
             color: #000; 
         }
         
-        /* Tên công ty: Đã giảm size xuống 10.5pt để không chiếm chỗ */
         .company-name { 
-            font-size: 10.5pt; 
+            font-size: 11pt; 
             font-weight: bold; 
             text-transform: uppercase; 
             margin-bottom: 3px; 
             display: block; 
             line-height: 1.2;
+            white-space: normal; 
+            word-wrap: break-word;
         }
         
         .info-line { font-size: 9pt; line-height: 1.2; margin-bottom: 1px; display: block; }
         .contact-group { margin-top: 0; }
 
-        /* Logo: Đã tăng lên 340px */
+        /* --- ĐÃ CHỈNH LOGO TO THÊM 20% --- */
         .quote-details-container { 
             display: flex; 
             flex-direction: column; 
             align-items: flex-end; 
-            width: 40%; /* Dành 40% cho logo */
+            width: 45%; /* Tăng diện tích phần logo */
         }
-        .logo { width: 100%; max-width: 340px; height: auto; margin-bottom: 5px; } 
+        .logo { 
+            width: 100%; 
+            max-width: 380px; /* Tăng kích thước tối đa lên 380px */
+            height: auto; 
+            margin-bottom: 5px; 
+        }
         
         .quote-info-box { margin-top: 0px; text-align: right; line-height: 1.3; font-size: 11pt; }
         .quote-info-box p { margin: 2px 0; }
@@ -185,13 +168,14 @@
     <div id="printModal" class="print-modal">
         <div class="modal-content">
             <p>Tùy chọn in báo giá</p>
-            <button class="btn-option btn-with-stamp" onclick="executePrint(true)">📄 In có con dấu</button>
+            <button class="btn-option btn-with-stamp" onclick="executePrint(true)">📄 In CÓ con dấu</button>
             <button class="btn-option btn-no-stamp" onclick="executePrint(false)">📄 In KHÔNG con dấu</button>
             <button class="btn-option btn-cancel" onclick="closePrintModal()">❌ Hủy bỏ</button>
         </div>
     </div>
 
     <div class="page">
+        <!-- Header -->
         <div class="header">
             <div class="company-info">
                 <span class="company-name" id="company_name"></span>
@@ -240,6 +224,7 @@
             <tbody id="product_table_body"></tbody>
         </table>
 
+        <!-- DIV chứa ghi chú -->
         <div class="notes-block" id="notes_and_terms"></div>
         
         <div class="signatures-section">
@@ -263,31 +248,60 @@
     </div>
 
     <script>
+        // Các hằng số ngân hàng
         const GITHUB_SIGNATURE_BASE_URL = "https://github.com/truntpv-gif/print/blob/main/";
         const BANK_BINS = {'techcombank':'970407','vietcombank':'970436','vpb':'970432','vpbank':'970432','viettinbank':'970415','bidv':'970418','agribank':'970405','acb':'970416','mbbank':'970422','mb':'970422','sacombank':'970403','shb':'970443','hdbank':'970437','tpbank':'970423','vib':'970441','seabank':'970440','ocb':'970448'};
         const BANK_FULL_NAMES = {'techcombank':'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)','vietcombank':'Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)','vpb':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','vpbank':'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)','viettinbank':'Ngân hàng TMCP Công Thương Việt Nam (VietinBank)','bidv':'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)','agribank':'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam (Agribank)','acb':'Ngân hàng TMCP Á Châu (ACB)','mbbank':'Ngân hàng TMCP Quân đội (MB)','mb':'Ngân hàng TMCP Quân đội (MB)','sacombank':'Ngân hàng TMCP Sài Gòn Thương Tín (Sacombank)','shb':'Ngân hàng TMCP Sài Gòn - Hà Nội (SHB)','hdbank':'Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh (HDBank)','tpbank':'Ngân hàng TMCP Tiên Phong (TPBank)','vib':'Ngân hàng TMCP Quốc Tế Việt Nam (VIB)','seabank':'Ngân hàng TMCP Đông Nam Á (SeABank)','ocb':'Ngân hàng TMCP Phương Đông (OCB)'};
 
-        function showPrintModal() { document.getElementById('printModal').style.display = 'flex'; }
-        function closePrintModal() { document.getElementById('printModal').style.display = 'none'; }
+        // --- HÀM XỬ LÝ LỖI TRỐNG TÊN FILE PDF ---
+        function setSafeTitleAndCleanUrl() {
+            let quoteNum = document.getElementById('quote_number').innerText;
+            if(quoteNum && quoteNum.trim() !== "") {
+                let safeName = String(quoteNum).replace(/[\\/:*?"<>|]/g, "-").trim();
+                document.title = "Báo giá " + safeName;
+            } else {
+                document.title = "Báo giá";
+            }
+            
+            // Xóa đoạn URL dài ngoằng để tránh Chrome bị lỗi không xuất được Tên File
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // --- CÁC HÀM ĐIỀU KHIỂN NÚT IN ---
+        function showPrintModal() {
+            document.getElementById('printModal').style.display = 'flex';
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
 
         function executePrint(withStamp) {
             closePrintModal(); 
+            
             const stampImg = document.getElementById('company_stamp');
             if (stampImg) {
                 stampImg.style.display = withStamp ? 'block' : 'none';
             }
-            
-            // Gọi lại hàm setEarlyTitle() để chắc chắn 1 lần nữa trước khi in
-            setEarlyTitle();
 
-            setTimeout(function() { window.print(); }, 300); 
+            // Gọi hàm sửa tên file và dọn dẹp URL
+            setSafeTitleAndCleanUrl();
+
+            // Chờ 500ms rồi gọi hộp thoại in
+            setTimeout(function() { 
+                window.print(); 
+            }, 500); 
         }
 
+        // Khôi phục con dấu sau khi in
         window.addEventListener('afterprint', function() {
             const stampImg = document.getElementById('company_stamp');
-            if (stampImg) { stampImg.style.display = 'block'; }
+            if (stampImg) stampImg.style.display = 'block';
         });
 
+        // --- HÀM ĐỌC DỮ LIỆU ---
         function getDataString() {
             if (window.location.hash) {
                 let h = window.location.hash.substring(1); 
@@ -366,6 +380,7 @@
             const fmt = (n) => new Intl.NumberFormat('de-DE').format(Math.round(n||0));
             const dec = (n) => new Intl.NumberFormat('de-DE', {minimumFractionDigits:2}).format(n||0);
 
+            // Xử lý địa chỉ
             let addr = data.company_address || "";
             let addrLines = addr.split(/;|\\n/);
             let addrHtml = "";
@@ -414,6 +429,7 @@
                 <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
             `);
             
+            // XỬ LÝ LƯU Ý
             if (data.notes_and_terms) {
                 let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
                 let notesHtml = '<div style="display: flex; align-items: baseline;">';
@@ -439,6 +455,9 @@
             fill('bank_name', BANK_FULL_NAMES[bnKey] || data.bank_name);
             fill('payment_reference_text', data.payment_reference_text);
             generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number||''}`, data.bank_account_name);
+
+            // Set title mặc định cho lần tải đầu
+            setSafeTitleAndCleanUrl();
         }
         
         document.addEventListener('DOMContentLoaded', populateData);
