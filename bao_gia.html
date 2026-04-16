@@ -355,4 +355,42 @@
             const amtInWords = Number(strAmt)>0 ? `(Bằng chữ: ${docso(strAmt)} đồng).` : '';
             
             tbody.insertAdjacentHTML('beforeend', `
-                <tr cla
+                <tr class="summary-row"><td colspan="5" class="total-label">Tổng thành Tiền:</td><td colspan="2" class="total-value">${fmt(data.subtotal)}</td></tr>
+                <tr class="summary-row"><td colspan="5" class="total-label">Thuế VAT:</td><td colspan="2" class="total-value">${fmt(data.vat_amount)}</td></tr>
+                <tr class="summary-row"><td colspan="5" class="total-label">Tổng tiền đơn hàng:</td><td colspan="2" class="total-value">${fmt(data.grand_total)}</td></tr>
+                <tr class="summary-row"><td colspan="7" class="amount-words">${amtInWords}</td></tr>
+            `);
+            
+            // Ghi chú
+            if (data.notes_and_terms) {
+                let notesArr = data.notes_and_terms.split(/\|\|BR\|\||\\n|\n/);
+                let notesHtml = '<div style="display: flex; align-items: baseline;">';
+                notesHtml += '<div style="font-weight: bold; white-space: nowrap; margin-right: 5px;">Lưu ý:</div>';
+                notesHtml += '<div>';
+                notesArr.forEach((note, index) => {
+                    if(note.trim() !== "") {
+                        let style = index > 0 ? 'style="margin-top: 2px;"' : '';
+                        notesHtml += `<div ${style}>${note.trim()}</div>`;
+                    }
+                });
+                notesHtml += '</div></div>';
+                document.getElementById('notes_and_terms').innerHTML = notesHtml;
+            } else {
+                document.getElementById('notes_and_terms').innerHTML = "";
+            }
+
+            fill('company_name_signature', data.company_name);
+            const stp = document.getElementById('company_stamp'); if(data.company_branch_code && stp) stp.src = GITHUB_SIGNATURE_BASE_URL + data.company_branch_code + ".jpg?raw=true";
+
+            fill('bank_account_name', data.bank_account_name); fill('bank_account_number', data.bank_account_number);
+            const bnKey = (data.bank_name||'').toLowerCase().replace(/\s/g,'');
+            fill('bank_name', BANK_FULL_NAMES[bnKey] || data.bank_name);
+            fill('payment_reference_text', data.payment_reference_text);
+            generateVietQR(data.bank_name, data.bank_account_number, data.grand_total, `TT BG ${data.quote_number||''}`, data.bank_account_name);
+        }
+
+        // Chạy hàm vẽ giao diện khi DOM đã load
+        document.addEventListener('DOMContentLoaded', renderData);
+    </script>
+</body>
+</html>
