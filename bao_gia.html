@@ -280,19 +280,21 @@
 
         function executePrint(withStamp) {
             closePrintModal(); 
-            
             const stampImg = document.getElementById('company_stamp');
             if (stampImg) {
                 stampImg.style.display = withStamp ? 'block' : 'none';
             }
 
-            // Gọi hàm sửa tên file và dọn dẹp URL
-            setSafeTitleAndCleanUrl();
+            // Ép đổi tên lần nữa ngay sát lúc gọi lệnh in
+            let quoteNum = document.getElementById('quote_number').innerText;
+            if(quoteNum) {
+                document.title = "Báo giá " + quoteNum.replace(/[\\/:*?"<>|]/g, "-").trim();
+            }
 
-            // Chờ 500ms rồi gọi hộp thoại in
+            // CHỈNH SỬA Ở ĐÂY: Tăng thời gian chờ lên 1000ms (1 giây)
             setTimeout(function() { 
                 window.print(); 
-            }, 500); 
+            }, 1000); 
         }
 
         // Khôi phục con dấu sau khi in
